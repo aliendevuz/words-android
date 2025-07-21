@@ -1,0 +1,26 @@
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt" >
+  <aapt:attr name="android:drawable">
+    <vector
+        android:width="108dp"
+        android:height="108dp"
+        android:viewportWidth="108"
+        android:viewportHeight="108">
+      <group android:scaleX="0.84"
+          android:scaleY="0.84"
+          android:translateX="1.92"
+          android:translateY="1.92">
+        <group android:scaleX="0.5"
+            android:scaleY="0.5"
+            android:translateX="35"
+            android:translateY="35">
+          <path
+              android:pathData="m28.73,87.35q0.3,-5.82 0.3,-11.58 0,-26.32 -2.86,-36.55 -2.85,-10.22 -10.13,-10.22 -6.87,0 -16.03,14.34l1.53,-7.99q10.39,-14.69 20.15,-14.69 18.05,0 18.05,47.41l-0.07,5.99q19.93,-28.44 22.75,-51.41l5.46,-1.29q7.99,25.79 7.99,51.29 8.58,-11.1 14.57,-23.37 5.99,-12.29 5.99,-18.63 0,-3.71 -2.59,-8.58l13.16,-0.7q1.01,2.7 1.01,4.99 0,4.7 -5.41,14.14 -5.41,9.43 -17.75,26.05l-3.17,4.3 -10.93,15.04 -5.94,1.48 0.18,-7.12q0,-23.92 -3,-39.2 -14.15,29.38 -26.91,44.84z"
+              android:strokeWidth="1"
+              android:strokeColor="@color/ic_words_splashscreen_line"
+              android:fillColor="@color/ic_words_splashscreen"/>
+        </group>
+      </group>
+    </vector>
+  </aapt:attr>
+</animated-vector>

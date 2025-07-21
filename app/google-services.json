@@ -1,0 +1,31 @@
+{
+  "project_info": {
+    "project_number": "968111631764",
+    "firebase_url": "https://dictup-4ff87-default-rtdb.firebaseio.com",
+    "project_id": "dictup-4ff87",
+    "storage_bucket": "dictup-4ff87.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:968111631764:android:dcfd80967caf45c6b4b381",
+        "android_client_info": {
+          "package_name": "uz.alien.dictup"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2wips749oHKtMP9Mh__cbGBn4Ezs_FDU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      },
+      "admob_app_id": "ca-app-pub-7031957988362944~6054415021"
+    }
+  ],
+  "configuration_version": "1"
+}

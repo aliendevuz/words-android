@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/l_welcome_logo_background"
+        android:layout_gravity="center"
+        android:layout_marginBottom="120sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_welcome_logo1"
+            android:layout_width="256dp"
+            android:layout_height="256dp"
+            android:layout_gravity="center"
+            android:src="@drawable/v_ilova_1" />
+
+        <ImageView
+            android:id="@+id/iv_welcome_logo2"
+            android:layout_width="256dp"
+            android:layout_height="256dp"
+            android:layout_gravity="center"
+            android:src="@drawable/v_ilova_2" />
+
+        <ImageView
+            android:id="@+id/iv_welcome_logo3"
+            android:layout_width="256dp"
+            android:layout_height="256dp"
+            android:layout_gravity="center"
+            android:src="@drawable/v_ilova_3" />
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tv_welcome_brand"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Ilova.uz"
+        android:textColor="@color/welcome_text"
+        android:textSize="28sp"
+        android:fontFamily="@font/shuttle_x"
+        android:layout_marginTop="40dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_gravity="center"
+        android:id="@+id/tv_welcome_product"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="66dp"
+        android:fontFamily="@font/shuttle_x"
+        android:text="taqdim etadi"
+        android:textColor="@color/welcome_text" />
+
+</FrameLayout>

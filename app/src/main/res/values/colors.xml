@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+
+    <color name="logo">#E1FFE8</color>
+    <color name="logo_line">#E1FFE8</color>
+    <color name="logo_background">#03C03C</color>
+    <color name="ic_words_splashscreen">#E1FFE8</color>
+    <color name="ic_words_splashscreen_line">#00E1FFE8</color>
+    <color name="ic_words_splashscreen_background">#29C258</color>
+
+    <color name="background">#C8CBD0</color>
+    <color name="background_nomalum">#DEE8F4</color>
+    <color name="books_background">#DDE3E9</color>
+    <color name="book_background">#EEF5F8</color>
+    <color name="books_background_ripple">#80D4FF</color>
+
+
+    <color name="blue_back">#00AAFF</color>
+    <color name="blue_text">#CC00C4FF</color>
+
+    <color name="item_text">#2F3645</color>
+
+    <color name="books_title">#5B8DA8</color>
+
+    <color name="unit_card">#E0E0E2</color>
+
+
+
+    <color name="blue2">#8080FF</color>
+    <color name="purple2">#B380FF</color>
+    <color name="red_pink">#FF8080</color>
+    <color name="pink">#FF80B3</color>
+
+    <color name="layer">#0000</color>
+
+    <color name="book1">#64DD17</color>
+    <color name="book2">#FF6D00</color>
+    <color name="book3">#0091EA</color>
+    <color name="book4">#AA00FF</color>
+    <color name="book5">#00BFA5</color>
+    <color name="book6">#304FFE</color>
+
+    <color name="green">#00e05d</color>
+
+    <color name="green2">#19AD58</color>
+    <color name="green2_ripple">#0F6132</color>
+
+
+
+    <color name="blue">#0091EA</color>
+    <color name="purple">#C51162</color>
+    <color name="red">#DD0000</color>
+    <color name="yellow">#FFE500</color>
+    <color name="color_welcome_text">#0C6A96</color>
+    <color name="color_welcome_gradient_start">#30FF00AA</color>
+    <color name="color_welcome_gradient_end">#4000AAFF</color>
+
+    <color name="logo_cube_1">#0040FF</color>
+    <color name="logo_cube_2">#FF0030</color>
+    <color name="logo_cube_3">#FFFFFF</color>
+    <color name="logo_cube_stroke_1">#800040FF</color>
+    <color name="logo_cube_stroke_2">#80FF0030</color>
+    <color name="logo_cube_stroke_3">#40000000</color>
+
+    <color name="v_image">#A3FFFFFF</color>
+    <color name="v_ilova">#2B73B3</color>
+    <color name="v_bars">#416678</color>
+    <color name="back_drawer">#DDE3E9</color>
+    <color name="navigation_view">#DDE3E9</color>
+    <color name="app_bar">#DDE3E9</color>
+    <color name="app_bar_text">#416678</color>
+    <color name="back_general_units">#DDE3E9</color>
+    <color name="general_button">#19AD58</color>
+    <color name="general_button_text">#D8F6E4</color>
+    <color name="general_button_ripple">#0F6132</color>
+    <color name="back_item_lesson_book">#EEF5F8</color>
+    <color name="lesson_progress_indicator">#3EAD6D</color>
+    <color name="lesson_progress_indicator_low">#F23030</color>
+    <color name="lesson_progress_indicator_track">#B9C6CE</color>
+    <color name="item_lesson_unit_text">#416678</color>
+    <color name="item_lesson_unit_text_percentage">#416678</color>
+    <color name="back_item_lesson_unit">#EEF5F8</color>
+    <color name="back_item_lesson_unit_ripple">#80D4FF</color>
+    <color name="general_progress_indicator">#3EAD6D</color>
+    <color name="general_progress_indicator_low">#F23030</color>
+    <color name="general_progress_indicator_track">#B9C6CE</color>
+    <color name="item_general_unit_text">#5B8DA8</color>
+    <color name="item_general_unit_text_percentage">#5B8DA8</color>
+    <color name="back_item_general_unit">#EEF5F8</color>
+    <color name="back_item_general_unit_ripple">#80D4FF</color>
+    <color name="welcome_text">#2B73B3</color>
+    <color name="back_lesson_units">#DDE3E9</color>
+    <color name="back_item_general_book">#EEF5F8</color>
+    <color name="back_general_books">#DDE3E9</color>
+</resources>
+<!--     <color name="green">#00BB00</color> -->
+<!--    <color name="background">@color/white</color>-->
+<!--    <color name="green2">#B9DBC0</color>-->
+<!--    <color name="buttons_title">#4A6852</color>-->
+<!--    <color name="indicator">#3EAD6D</color>-->
+<!--    <color name="indicator0">#F2D230</color>-->
+<!--     <color name="logo_cube_1">#0040FF</color> -->
+<!--     <color name="logo_cube_2">#FF0030</color> -->
+<!--     <color name="logo_cube_3">#FFFFFF</color> -->
+<!--     <color name="logo_cube_stroke_1">#800040FF</color> -->
+<!--     <color name="logo_cube_stroke_2">#80FF0030</color> -->
+<!--     <color name="logo_cube_stroke_3">#40000000</color> -->
+<!--    <color name="back_splashscreen">#F7FFF9</color>-->
+<!--    <color name="logo_line">#51B069</color>-->
+<!--    <color name="logo_splashscreen">#5AC775</color>-->
+<!--    <color name="logo_line_splashscreen">#5AC775</color>-->
+<!--    <color name="back_splashscreen">#F6F6FF</color>-->
+<!--    <color name="logo_line">#00E05E</color>-->
+<!--    <color name="logo_splashscreen">#CC00E05E</color>-->
+<!--    <color name="back_splashscreen">#F6F6FF</color>-->
+<!--    <color name="logo_back">#E1FFE8</color>-->
+<!--    <color name="logo">#03C03C</color>-->
+<!--    <color name="logo_line">#03C03C</color>-->
+<!--    <color name="splashscreen_back">#F7FFF9</color>-->
+<!--    <color name="splashscreen">#03C03C</color>-->
+<!--    <color name="splashscreen_line">#03C03C</color>-->
+<!--    <color name="logo">#2B73B3</color>-->
+<!--    <color name="logo_back">#DEE8F4</color>-->
+<!--    <color name="logo_line">#3871A2</color>-->
+<!--    <color name="splashscreen">#2B73B3</color>-->
+<!--    <color name="splashscreen_back">#DEE8F4</color>-->
+<!--    <color name="splashscreen_line">#3871A2</color>-->
+<!--    <color name="logo">#F9F9F9</color>-->
+<!--    <color name="logo_back">#1FB15E</color>-->
+<!--    <color name="logo_line">#F9F9F9</color>-->
+<!--    <color name="splashscreen">#F9F9F9</color>-->
+<!--    <color name="splashscreen_back">#1FB15E</color>-->
+<!--    <color name="splashscreen_line">#00E1FFE8</color>-->
+<!--    <color name="logo_line">#1976D2</color>-->
+<!--    <color name="back_splashscreen">#E3F2FD</color>-->
+<!--    <color name="logo_splashscreen">#1976D2</color>-->
+<!--    <color name="logo_line">#E3F2FD</color>-->
+<!--    <color name="back_splashscreen">#1E88E5</color>-->
+<!--    <color name="logo_splashscreen">#E3F2FD</color>-->

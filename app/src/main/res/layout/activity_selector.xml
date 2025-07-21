@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:orientation="vertical">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvBook"
+        android:outlineSpotShadowColor="@color/black"
+        android:elevation="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="16dp"
+        android:clipToPadding="false"
+        android:background="@drawable/back_general_books"
+        android:padding="12dp">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/vpBook"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+
+    <LinearLayout
+        android:clipToPadding="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="64dp"
+            android:elevation="4dp"
+            android:outlineSpotShadowColor="@color/black"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/b_start"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginBottom="64dp"
+            android:layout_weight="1"
+            android:background="@drawable/back_general_button"
+            android:clickable="true"
+            android:contentDescription="Testni boshlash"
+            android:elevation="4dp"
+            android:focusable="true"
+            android:fontFamily="@font/golos"
+            android:gravity="center"
+            android:importantForAccessibility="yes"
+            android:outlineSpotShadowColor="@color/black"
+            android:text="Testni boshlash"
+            android:textAllCaps="true"
+            android:textColor="@color/general_button_text" />
+
+        <ImageButton
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="64dp"
+            android:elevation="4dp"
+            android:outlineSpotShadowColor="@color/black"
+            android:visibility="invisible" />
+
+    </LinearLayout>
+
+</LinearLayout>
