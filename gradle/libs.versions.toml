@@ -19,10 +19,14 @@ coil = "2.4.0"
 integrity = "1.4.0"
 installReferrer = "2.2"
 googleGmsGoogleServices = "4.4.3"
-firebaseConfig = "22.1.2"
-firebaseMessaging = "24.1.2"
+firebaseConfig = "23.0.0"
+firebaseMessaging = "25.0.0"
 firebaseAnalyticsKtx = "22.5.0"
 playServicesAds = "24.4.0"
+roomRuntime = "2.7.2"
+roomCompiler = "2.7.2"
+ksp = "2.0.21-1.0.25"
+lifecycleViewmodelAndroid = "2.9.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -46,8 +50,12 @@ firebase-config = { group = "com.google.firebase", name = "firebase-config", ver
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
 firebase-analytics-ktx = { group = "com.google.firebase", name = "firebase-analytics-ktx", version.ref = "firebaseAnalyticsKtx" }
 play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "playServicesAds" }
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
+androidx-lifecycle-viewmodel-android = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-android", version.ref = "lifecycleViewmodelAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

@@ -13,7 +13,7 @@
         android:theme="@style/Theme._4000Words">
 
         <activity
-            android:name=".button_animation.MainActivity"
+            android:name=".todo.presenter.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

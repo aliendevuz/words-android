@@ -1,6 +1,7 @@
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.android)
+  alias(libs.plugins.ksp)
 }
 
 android {
@@ -45,6 +46,9 @@ dependencies {
   implementation(libs.androidx.viewpager2)
   implementation(libs.gson)
   implementation(libs.com.squareup.okhttp3)
+  implementation(libs.androidx.room.runtime)
+  implementation(libs.androidx.lifecycle.viewmodel.android)
+  ksp(libs.androidx.room.compiler)
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)
   androidTestImplementation(libs.androidx.espresso.core)
