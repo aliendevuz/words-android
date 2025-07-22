@@ -9,42 +9,25 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import uz.alien.test.R
 import uz.alien.test.databinding.TodoActivityMainBinding
 import uz.alien.test.databinding.TodoDialogAddTodoBinding
-import uz.alien.test.todo.data.local.TodoDatabase
-import uz.alien.test.todo.data.repository.TodoRepositoryImpl
-import uz.alien.test.todo.di.TodoViewModelFactory
 import uz.alien.test.todo.domain.model.Todo
-import uz.alien.test.todo.domain.usecase.AddTodoUseCase
-import uz.alien.test.todo.domain.usecase.DeleteTodoUseCase
-import uz.alien.test.todo.domain.usecase.GetTodosUseCase
-import uz.alien.test.todo.domain.usecase.UpdateTodoUseCase
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
   private lateinit var binding: TodoActivityMainBinding
   private lateinit var adapter: TodoAdapter
-  private lateinit var viewModel: ToDoViewModel
+  private val viewModel: TodoViewModel by viewModels()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     binding = TodoActivityMainBinding.inflate(layoutInflater)
     setContentView(binding.root)
-
-    // Room va Repositoryni qo‘lda ulaymiz
-    val db = TodoDatabase.getInstance(applicationContext)
-    val repo = TodoRepositoryImpl(db.todoDao())
-
-    val viewModelFactory = TodoViewModelFactory(
-      GetTodosUseCase(repo),
-      AddTodoUseCase(repo),
-      UpdateTodoUseCase(repo),
-      DeleteTodoUseCase(repo)
-    )
-    viewModel = viewModels<ToDoViewModel> { viewModelFactory }.value
 
     setupRecyclerView()
     observeViewModel()

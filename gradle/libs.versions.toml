@@ -27,6 +27,7 @@ roomRuntime = "2.7.2"
 roomCompiler = "2.7.2"
 ksp = "2.0.21-1.0.25"
 lifecycleViewmodelAndroid = "2.9.2"
+hilt = "2.56.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -53,9 +54,12 @@ play-services-ads = { group = "com.google.android.gms", name = "play-services-ad
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
 androidx-lifecycle-viewmodel-android = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-android", version.ref = "lifecycleViewmodelAndroid" }
+hilt = { group = "com.google.dagger", name = "hilt-android", version.ref="hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref="hilt" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt"}
