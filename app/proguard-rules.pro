@@ -1,5 +1,5 @@
 # uz.alien.dictup.model ichidagi barcha klasslar saqlansin
--keep class uz.alien.dictup.model.** { *; }
+-keep class uz.alien.dictup.archive.model.** { *; }
 
 # GSON TypeToken uchun generik tiplarda ishlashi uchun kerak:
 -keepattributes Signature

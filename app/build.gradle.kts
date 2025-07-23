@@ -1,17 +1,21 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.google.gms.google.services)
+  alias(libs.plugins.ksp)
+  alias(libs.plugins.hilt)
 }
 
 android {
   namespace = "uz.alien.dictup"
-  compileSdk = 35
+  compileSdk = 36
 
   defaultConfig {
     applicationId = "uz.alien.dictup"
     minSdk = 24
-    targetSdk = 35
+    targetSdk = 36
     versionCode = 19
     versionName = "5.0.1"
 
@@ -29,8 +33,10 @@ android {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
   }
-  kotlinOptions {
-    jvmTarget = "11"
+  kotlin {
+    compilerOptions {
+      jvmTarget.set(JvmTarget.JVM_11)
+    }
   }
   buildFeatures {
     viewBinding = true
@@ -57,6 +63,11 @@ dependencies {
   implementation(libs.firebase.messaging)
   implementation(libs.firebase.analytics.ktx)
   implementation(libs.play.services.ads)
+  implementation(libs.androidx.room.runtime)
+  implementation(libs.androidx.lifecycle.viewmodel.android)
+  implementation(libs.hilt)
+  ksp(libs.androidx.room.compiler)
+  ksp(libs.hilt.compiler)
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)
   androidTestImplementation(libs.androidx.espresso.core)
