@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/statusBarPadding"
+        android:background="@color/app_bar"
+        android:outlineSpotShadowColor="@color/black"
+        android:elevation="8dp"
+        android:paddingTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize">
+
+            <LinearLayout
+                android:gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/drawerButton"
+                    android:src="@drawable/v_bars"
+                    android:contentDescription="Open drawer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:layout_margin="8dp"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:text="Choose Unit"
+                    android:textAllCaps="true"
+                    android:textSize="18sp"
+                    android:textColor="@color/app_bar_text"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/golos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="12dp"
+        android:background="@drawable/back_lesson_units"
+        android:orientation="vertical"
+        android:outlineSpotShadowColor="@color/black"
+        android:elevation="8dp"
+        android:layout_marginHorizontal="8dp"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvBooks"
+            android:padding="12dp"
+            android:clipToPadding="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <uz.alien.dictup.utils.NestedScrollableHost
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/vpUnits"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </uz.alien.dictup.utils.NestedScrollableHost>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="64dp"
+            android:elevation="4dp"
+            android:outlineSpotShadowColor="@color/black"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/b_general"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="64dp"
+            android:layout_weight="1"
+            android:background="@drawable/back_general_button"
+            android:clickable="true"
+            android:contentDescription="Testni boshlash"
+            android:elevation="4dp"
+            android:focusable="true"
+            android:fontFamily="@font/golos"
+            android:gravity="center"
+            android:importantForAccessibility="yes"
+            android:outlineSpotShadowColor="@color/black"
+            android:text="Davom etish"
+            android:textAllCaps="true"
+            android:textColor="@color/general_button_text" />
+
+        <ImageButton
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="64dp"
+            android:elevation="4dp"
+            android:outlineSpotShadowColor="@color/black"
+            android:visibility="invisible" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,6 +1,7 @@
 package uz.alien.test.payment
 
 import android.content.Context
+import androidx.core.content.edit
 
 class PrefsManager private constructor(context: Context) {
 
@@ -21,7 +22,7 @@ class PrefsManager private constructor(context: Context) {
   }
 
   fun saveString(key: String, value: String) {
-    settingsPrefs.edit().putString(key, value).apply()
+    settingsPrefs.edit { putString(key, value) }
   }
 
   fun getString(key: String, default: String? = null): String? {
@@ -29,7 +30,7 @@ class PrefsManager private constructor(context: Context) {
   }
 
   fun saveBool(key: String, value: Boolean) {
-    settingsPrefs.edit().putBoolean(key, value).apply()
+    settingsPrefs.edit { putBoolean(key, value) }
   }
 
   fun getBool(key: String, default: Boolean = false): Boolean {

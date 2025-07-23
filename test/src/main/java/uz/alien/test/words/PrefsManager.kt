@@ -1,6 +1,7 @@
 package uz.alien.test.words
 
 import android.content.Context
+import androidx.core.content.edit
 
 class PrefsManager private constructor(context: Context) {
 
@@ -24,7 +25,7 @@ class PrefsManager private constructor(context: Context) {
   }
 
   fun saveString(key: String, value: String) {
-    settingsPrefs.edit().putString(key, value).apply()
+    settingsPrefs.edit { putString(key, value) }
   }
 
   fun getString(key: String, default: String? = null): String? {
@@ -32,7 +33,7 @@ class PrefsManager private constructor(context: Context) {
   }
 
   fun saveInt(key: String, value: Int) {
-    settingsPrefs.edit().putInt(key, value).apply()
+      settingsPrefs.edit { putInt(key, value) }
   }
 
   fun getInt(key: String, default: Int = 0): Int {
@@ -40,7 +41,7 @@ class PrefsManager private constructor(context: Context) {
   }
 
   fun saveBool(key: String, value: Boolean) {
-    settingsPrefs.edit().putBoolean(key, value).apply()
+    settingsPrefs.edit { putBoolean(key, value) }
   }
 
   fun getBool(key: String, default: Boolean = false): Boolean {

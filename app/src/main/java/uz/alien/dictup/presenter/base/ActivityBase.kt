@@ -29,7 +29,7 @@ import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.material.navigation.NavigationView
 import uz.alien.dictup.R
-import uz.alien.dictup.archive.manager.ReferralManager
+import uz.alien.dictup.data.ReferralManager
 import uz.alien.dictup.databinding.ActivityBaseBinding
 import uz.alien.dictup.databinding.NavigationBinding
 

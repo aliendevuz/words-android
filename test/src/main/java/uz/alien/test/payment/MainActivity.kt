@@ -1,5 +1,6 @@
 package uz.alien.test.payment
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -42,6 +43,7 @@ class MainActivity : AppCompatActivity() {
 
   private val isPremium = "isPremium"
 
+  @SuppressLint("HardwareIds")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
@@ -161,7 +163,7 @@ class MainActivity : AppCompatActivity() {
 
       override fun onResponse(call: Call, response: Response) {
         if (response.isSuccessful) {
-          val body = response.body?.string()
+          val body = response.body.string()
           onResult(body)
         } else {
           onResult(null)

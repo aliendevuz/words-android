@@ -27,18 +27,14 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <!-- Fayl ochishda ishlatiladigan scheme'lar -->
                 <data android:scheme="content" />
                 <data android:scheme="file" />
+                <data android:mimeType="text/x-dsrc" />
 
-                <!-- MIME turi umumiy bo'lishi mumkin -->
-                <data android:mimeType="text/x-csrc" />
-
-                <!-- Faqat .d fayllar uchun -->
-                <data android:pathPattern=".*\\.d" />
             </intent-filter>
         </activity>
 

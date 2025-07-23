@@ -22,6 +22,8 @@ import androidx.core.view.WindowInsetsCompat
 import uz.alien.test.databinding.ActivityMainBinding
 import uz.alien.test.payment.MainActivity
 import kotlin.random.Random
+import androidx.core.graphics.toColorInt
+import androidx.core.graphics.drawable.toDrawable
 
 
 class MainActivity : AppCompatActivity() {
@@ -29,7 +31,7 @@ class MainActivity : AppCompatActivity() {
   private lateinit var binding: ActivityMainBinding
 
   // Hozirgi ranglar holatini saqlash
-  private var currentBackgroundColor = Color.parseColor("#FFFF8080")
+  private var currentBackgroundColor = "#FFFF8080".toColorInt()
   private var currentStrokeColor = Color.BLACK
   private var currentTextColor = Color.BLACK
 
@@ -60,13 +62,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     val rippleDrawable = RippleDrawable(
-      ColorStateList.valueOf(Color.parseColor("#80FFFFFF")),
+      ColorStateList.valueOf("#80FFFFFF".toColorInt()),
       normalDrawable,
       null
     )
 
     binding.tvHello.background = rippleDrawable
-    val rootDrawable = ColorDrawable(currentBackgroundColor)
+    val rootDrawable = currentBackgroundColor.toDrawable()
     binding.root.background = rootDrawable
 
     binding.tvHello.setTextColor(currentTextColor)

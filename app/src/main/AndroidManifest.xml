@@ -20,7 +20,7 @@
         tools:targetApi="31">
 
         <activity
-            android:name=".archive.activity.MainActivity"
+            android:name=".presenter.main.ActivityMain"
             android:theme="@style/Theme.App.SplashScreen"
             android:exported="true">
 
@@ -66,14 +66,14 @@
 
         </activity>
 
-        <activity android:name=".archive.activity.PickerActivity" />
-        <activity android:name=".archive.activity.SelectorActivity" />
-        <activity android:name=".archive.activity.LessonActivity" />
-        <activity android:name=".archive.activity.DetailsActivity" />
-        <activity android:name=".archive.activity.TestActivity" />
-        <activity android:name=".archive.activity.ResultActivity" />
+        <activity android:name=".presenter.pick.ActivityPick" />
+        <activity android:name=".presenter.select.ActivitySelect" />
+        <activity android:name=".presenter.lesson.ActivityLesson" />
+        <activity android:name=".presenter.detail.ActivityDetail" />
+        <activity android:name=".presenter.quiz.ActivityQuiz" />
+        <activity android:name=".presenter.result.ActivityResult" />
 
-        <service android:name=".archive.service.MyFirebaseInstanceIDService"
+        <service android:name=".service.MyFirebaseInstanceIDService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
