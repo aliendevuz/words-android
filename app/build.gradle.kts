@@ -16,8 +16,8 @@ android {
     applicationId = "uz.alien.dictup"
     minSdk = 24
     targetSdk = 36
-    versionCode = 19
-    versionName = "5.0.1"
+    versionCode = 20
+    versionName = "5.0.2"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
