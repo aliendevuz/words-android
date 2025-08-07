@@ -1,0 +1,9 @@
+package uz.alien.dictup.domain.usecase.main
+
+data class MainUseCases(
+    val getAllWordsUseCase: GetAllWordsUseCase,
+    val getAllStoryUseCase: GetAllStoryUseCase,
+    val getAllNativeWordUseCase: GetAllNativeWordUseCase,
+    val getAllNativeStoryUseCase: GetAllNativeStoryUseCase,
+    val getAllScoreUseCase: GetAllScoreUseCase
+)

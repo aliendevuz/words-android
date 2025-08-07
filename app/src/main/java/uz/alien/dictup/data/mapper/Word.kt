@@ -1,6 +1,6 @@
 package uz.alien.dictup.data.mapper
 
-import uz.alien.dictup.data.local.room.word.WordEntity
+import uz.alien.dictup.data.local.room.entity.WordEntity
 import uz.alien.dictup.data.remote.retrofit.dto.WordDto
 import uz.alien.dictup.domain.model.Word
 

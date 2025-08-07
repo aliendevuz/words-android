@@ -5,23 +5,24 @@ import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import uz.alien.dictup.domain.usecase.on_internet_connected.OnInternetConnectedUseCases
-import javax.inject.Inject
+import uz.alien.dictup.di.InternetSyncEntryPoint
 
-//@AndroidEntryPoint
 class ConnectionReceiver() : BroadcastReceiver() {
-
-//  @Inject
-//  private lateinit var onInternetConnectedUseCases: OnInternetConnectedUseCases
 
   override fun onReceive(context: Context, intent: Intent?) {
     if (isConnected(context)) {
       CoroutineScope(Dispatchers.IO).launch {
-//        onInternetConnectedUseCases.syncDataUseCase()
+
+        val entryPoint = EntryPointAccessors.fromApplication(
+          context.applicationContext,
+          InternetSyncEntryPoint::class.java
+        )
+
+        entryPoint.onInternetConnectedUseCases().syncDataUseCaseAndSetupScore()
       }
     }
   }

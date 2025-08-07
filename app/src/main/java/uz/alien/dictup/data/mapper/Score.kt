@@ -1,6 +1,6 @@
 package uz.alien.dictup.data.mapper
 
-import uz.alien.dictup.data.local.room.score.ScoreEntity
+import uz.alien.dictup.data.local.room.entity.ScoreEntity
 import uz.alien.dictup.domain.model.Score
 
 fun ScoreEntity.toScore(): Score {

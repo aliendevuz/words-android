@@ -1,10 +1,10 @@
-package uz.alien.dictup.data.local.room.native_story
+package uz.alien.dictup.data.local.room.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import uz.alien.dictup.data.local.room.story.StoryEntity
+import uz.alien.dictup.data.local.room.entity.StoryEntity
 
 @Entity(
     tableName = "native_stories",

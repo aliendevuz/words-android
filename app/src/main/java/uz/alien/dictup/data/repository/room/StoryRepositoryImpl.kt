@@ -1,6 +1,6 @@
 package uz.alien.dictup.data.repository.room
 
-import uz.alien.dictup.data.local.room.story.StoryDao
+import uz.alien.dictup.data.local.room.dao.StoryDao
 import uz.alien.dictup.data.mapper.toStory
 import uz.alien.dictup.data.mapper.toStoryEntity
 import uz.alien.dictup.domain.model.Story

@@ -5,7 +5,7 @@ import uz.alien.dictup.data.remote.retrofit.api.NativeWordApi
 import uz.alien.dictup.domain.model.NativeWord
 import uz.alien.dictup.domain.repository.retrofit.RemoteNativeWordRepository
 
-class RemoteNativeWordRepository(
+class RemoteNativeWordRepositoryImpl(
     private val api: NativeWordApi
 ) : RemoteNativeWordRepository {
 

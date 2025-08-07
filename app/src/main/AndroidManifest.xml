@@ -73,6 +73,8 @@
         <activity android:name=".presentation.features.quiz.QuizActivity" />
         <activity android:name=".presentation.features.result.ResultActivity" />
 
+        <activity android:name=".presentation.features.test.TestActivity" />
+
         <service android:name=".infrastructure.service.MyFirebaseInstanceIDService"
             android:exported="false">
             <intent-filter>
@@ -80,12 +82,12 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".infrastructure.receiver.ConnectionReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
+<!--        <receiver android:name=".infrastructure.receiver.ConnectionReceiver"-->
+<!--            android:exported="false">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
@@ -99,6 +101,16 @@
 <!--            android:name="android.adservices.AD_SERVICES_CONFIG"-->
 <!--            android:resource="@xml/gma_ad_services_config"-->
 <!--            tools:replace="android:resource" />-->
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="uz.alien.dictup.initializer.AppInitializerImpl"
+                android:value="androidx.startup" />
+        </provider>
 
     </application>
 

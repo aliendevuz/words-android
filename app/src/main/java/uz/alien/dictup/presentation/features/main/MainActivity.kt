@@ -16,12 +16,14 @@ import android.view.animation.AnimationSet
 import android.view.animation.LinearInterpolator
 import android.view.animation.TranslateAnimation
 import androidx.activity.addCallback
+import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.postDelayed
 import androidx.core.view.GravityCompat
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
+import dagger.hilt.android.AndroidEntryPoint
 import uz.alien.dictup.R
 import uz.alien.dictup.databinding.ActivityMainBinding
 import uz.alien.dictup.databinding.ScreenHomeBinding
@@ -30,8 +32,12 @@ import uz.alien.dictup.presentation.features.base.BaseActivity
 import uz.alien.dictup.presentation.features.select.SelectActivity
 import uz.alien.dictup.presentation.common.AutoLayoutManager
 import uz.alien.dictup.presentation.common.MarginItemDecoration
+import uz.alien.dictup.presentation.features.test.TestActivity
 
+@AndroidEntryPoint
 class MainActivity : BaseActivity() {
+
+    private val viewModel: MainViewModel by viewModels()
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var mainBinding: ScreenHomeBinding
@@ -168,10 +174,13 @@ class MainActivity : BaseActivity() {
         mainBinding.rvEssential.adapter = AdapterBookEssential(essentialBooks, this)
 
         mainBinding.bOpenSelector.setOnClickListener {
-            val intent = Intent(this, SelectActivity::class.java)
-            intent.putExtra("picked_book", 2)
-            intent.putExtra("amount_of_book", 6)
-            setOpenSwipeAnimation(intent)
+//            val intent = Intent(this, SelectActivity::class.java)
+//            intent.putExtra("picked_book", 2)
+//            intent.putExtra("amount_of_book", 6)
+//            setOpenSwipeAnimation(intent)
+//            viewModel.printWords()
+            val intent = Intent(this, TestActivity::class.java)
+            startActivity(intent)
         }
 
         mainBinding.drawerButton.setOnClickListener {

@@ -1,11 +1,11 @@
-package uz.alien.dictup.data.local.room.attempt
+package uz.alien.dictup.data.local.room.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import uz.alien.dictup.data.local.room.user.UserEntity
-import uz.alien.dictup.data.local.room.word.WordEntity
+import uz.alien.dictup.data.local.room.entity.UserEntity
+import uz.alien.dictup.data.local.room.entity.WordEntity
 
 @Entity(
     tableName = "attempts",

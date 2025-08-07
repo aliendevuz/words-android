@@ -6,18 +6,18 @@ import kotlin.text.lowercase
 
 object Logger {
 
-    const val LOGGING_IS_AVAILABLE = true
     const val TAG = "LOGGER"
 
     fun logToLogcat(level: String, tag: String, msg: String) {
-        if (BuildConfig.DEBUG) {
-            if (LOGGING_IS_AVAILABLE) {
-                when (level.lowercase()) {
-                    "debug" -> Log.d(tag, msg)
-                    "info" -> Log.i(tag, msg)
-                    "warn" -> Log.w(tag, msg)
-                    "error" -> Log.e(tag, msg)
-                }
+        if (
+            BuildConfig.LOGGING_IS_AVAILABLE &&
+            (BuildConfig.DEBUG || BuildConfig.DISABLE_LOGGING_ON_PROD)
+        ) {
+            when (level.lowercase()) {
+                "debug" -> Log.d(tag, msg)
+                "info" -> Log.i(tag, msg)
+                "warn" -> Log.w(tag, msg)
+                "error" -> Log.e(tag, msg)
             }
         }
     }

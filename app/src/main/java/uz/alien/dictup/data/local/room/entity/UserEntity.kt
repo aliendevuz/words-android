@@ -1,4 +1,4 @@
-package uz.alien.dictup.data.local.room.user
+package uz.alien.dictup.data.local.room.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

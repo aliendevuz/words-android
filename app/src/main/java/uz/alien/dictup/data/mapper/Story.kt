@@ -1,6 +1,6 @@
 package uz.alien.dictup.data.mapper
 
-import uz.alien.dictup.data.local.room.story.StoryEntity
+import uz.alien.dictup.data.local.room.entity.StoryEntity
 import uz.alien.dictup.data.remote.retrofit.dto.StoryDto
 import uz.alien.dictup.domain.model.Story
 

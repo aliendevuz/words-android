@@ -1,7 +1,6 @@
 package uz.alien.dictup.data.repository.room
 
-import uz.alien.dictup.data.local.room.word.WordDao
-import uz.alien.dictup.data.local.room.word.WordEntity
+import uz.alien.dictup.data.local.room.dao.WordDao
 import uz.alien.dictup.data.mapper.toWord
 import uz.alien.dictup.data.mapper.toWordEntity
 import uz.alien.dictup.domain.model.Word

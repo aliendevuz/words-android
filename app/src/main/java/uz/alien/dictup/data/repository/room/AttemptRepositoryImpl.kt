@@ -1,6 +1,6 @@
 package uz.alien.dictup.data.repository.room
 
-import uz.alien.dictup.data.local.room.attempt.AttemptDao
+import uz.alien.dictup.data.local.room.dao.AttemptDao
 import uz.alien.dictup.data.mapper.toAttempt
 import uz.alien.dictup.data.mapper.toAttemptEntity
 import uz.alien.dictup.domain.model.Attempt

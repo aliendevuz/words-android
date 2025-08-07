@@ -6,6 +6,8 @@ interface ScoreRepository {
 
     suspend fun insertScore(score: Score)
 
+    suspend fun insertScores(scores: List<Score>)
+
     suspend fun updateScore(score: Score)
 
     suspend fun deleteScore(score: Score)

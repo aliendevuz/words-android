@@ -1,19 +1,22 @@
-package uz.alien.dictup.data.local.room.native_word
+package uz.alien.dictup.data.local.room.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
+import uz.alien.dictup.data.local.room.entity.NativeWordEntity
 
 @Dao
 interface NativeWordDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insertNativeWord(nativeWord: NativeWordEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insertNativeWords(nativeWords: List<NativeWordEntity>)
 
     @Update

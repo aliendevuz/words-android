@@ -1,19 +1,22 @@
-package uz.alien.dictup.data.local.room.native_story
+package uz.alien.dictup.data.local.room.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
+import uz.alien.dictup.data.local.room.entity.NativeStoryEntity
 
 @Dao
 interface NativeStoryDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insertNativeStory(nativeStory: NativeStoryEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insertNativeStories(nativeStories: List<NativeStoryEntity>)
 
     @Update

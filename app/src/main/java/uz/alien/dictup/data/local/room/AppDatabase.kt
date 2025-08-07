@@ -2,20 +2,20 @@ package uz.alien.dictup.data.local.room
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import uz.alien.dictup.data.local.room.attempt.AttemptDao
-import uz.alien.dictup.data.local.room.attempt.AttemptEntity
-import uz.alien.dictup.data.local.room.native_story.NativeStoryDao
-import uz.alien.dictup.data.local.room.native_story.NativeStoryEntity
-import uz.alien.dictup.data.local.room.native_word.NativeWordDao
-import uz.alien.dictup.data.local.room.native_word.NativeWordEntity
-import uz.alien.dictup.data.local.room.score.ScoreDao
-import uz.alien.dictup.data.local.room.score.ScoreEntity
-import uz.alien.dictup.data.local.room.story.StoryDao
-import uz.alien.dictup.data.local.room.story.StoryEntity
-import uz.alien.dictup.data.local.room.user.UserDao
-import uz.alien.dictup.data.local.room.user.UserEntity
-import uz.alien.dictup.data.local.room.word.WordDao
-import uz.alien.dictup.data.local.room.word.WordEntity
+import uz.alien.dictup.data.local.room.dao.AttemptDao
+import uz.alien.dictup.data.local.room.entity.AttemptEntity
+import uz.alien.dictup.data.local.room.dao.NativeStoryDao
+import uz.alien.dictup.data.local.room.entity.NativeStoryEntity
+import uz.alien.dictup.data.local.room.dao.NativeWordDao
+import uz.alien.dictup.data.local.room.entity.NativeWordEntity
+import uz.alien.dictup.data.local.room.dao.ScoreDao
+import uz.alien.dictup.data.local.room.entity.ScoreEntity
+import uz.alien.dictup.data.local.room.dao.StoryDao
+import uz.alien.dictup.data.local.room.entity.StoryEntity
+import uz.alien.dictup.data.local.room.dao.UserDao
+import uz.alien.dictup.data.local.room.entity.UserEntity
+import uz.alien.dictup.data.local.room.dao.WordDao
+import uz.alien.dictup.data.local.room.entity.WordEntity
 
 @Database(
     entities = [

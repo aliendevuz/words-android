@@ -1,18 +1,21 @@
-package uz.alien.dictup.data.local.room.attempt
+package uz.alien.dictup.data.local.room.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
+import uz.alien.dictup.data.local.room.entity.AttemptEntity
 
 @Dao
 interface AttemptDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insertAttempt(attempt: AttemptEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insertAttempts(attempts: List<AttemptEntity>)
 
     @Delete

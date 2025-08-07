@@ -1,4 +1,4 @@
-package uz.alien.dictup.data.local.room.user
+package uz.alien.dictup.data.local.room.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,15 +6,15 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import uz.alien.dictup.domain.model.User
+import uz.alien.dictup.data.local.room.entity.UserEntity
 
 @Dao
 interface UserDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insertUser(user: UserEntity): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insertUsers(users: List<UserEntity>)
 
     @Update

@@ -1,10 +1,11 @@
-package uz.alien.dictup.data.local.room.word
+package uz.alien.dictup.data.local.room.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "words")
-data class WordEntity (
+data class
+WordEntity (
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val word: String,

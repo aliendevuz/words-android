@@ -34,6 +34,7 @@ androidFragmentKtx = "1.8.8"
 retrofit = "3.0.0"
 kotlinxCoroutinesPlayServices = "1.10.2"
 dataStore = "1.1.7"
+startup = "1.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -68,6 +69,7 @@ retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = 
 converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutinesPlayServices" }
 data-store = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "dataStore" }
+startup = { group = "androidx.startup", name = "startup-runtime", version.ref = "startup" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

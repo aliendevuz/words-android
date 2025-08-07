@@ -1,19 +1,22 @@
-package uz.alien.dictup.data.local.room.score
+package uz.alien.dictup.data.local.room.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
+import uz.alien.dictup.data.local.room.entity.ScoreEntity
 
 @Dao
 interface ScoreDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.Companion.IGNORE)
     suspend fun insertScore(score: ScoreEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.Companion.IGNORE)
     suspend fun insertScores(scores: List<ScoreEntity>)
 
     @Update
