@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.android)
+  alias(libs.plugins.kotlin.parcelize)
   alias(libs.plugins.ksp)
   alias(libs.plugins.hilt)
 }
@@ -54,8 +55,11 @@ dependencies {
   implementation(libs.androidx.room.runtime)
   implementation(libs.androidx.lifecycle.viewmodel.android)
   implementation(libs.hilt)
+  implementation(libs.glide)
+  implementation(libs.android.fragment.ktx)
   ksp(libs.androidx.room.compiler)
   ksp(libs.hilt.compiler)
+  ksp(libs.glide)
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)
   androidTestImplementation(libs.androidx.espresso.core)

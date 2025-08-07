@@ -14,7 +14,7 @@
         android:theme="@style/Theme._4000Words">
 
         <activity
-            android:name=".todo.presenter.MainActivity"
+            android:name=".lesson.LessonActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,6 +39,7 @@
         </activity>
 
         <activity android:name=".payment.PaymentActivity" />
+        <activity android:name=".picture.presenter.PictureActivity" />
 
     </application>
 

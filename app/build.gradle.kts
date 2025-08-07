@@ -4,6 +4,7 @@ plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.google.gms.google.services)
+  alias(libs.plugins.kotlin.parcelize)
   alias(libs.plugins.ksp)
   alias(libs.plugins.hilt)
 }
@@ -23,7 +24,13 @@ android {
   }
 
   buildTypes {
+    debug {
+      isMinifyEnabled = false
+      isShrinkResources = false
+      buildConfigField("String", "BASE_URL", "\"https://assets.4000.uz/\"")
+    }
     release {
+      buildConfigField("String", "BASE_URL", "\"https://assets.4000.uz/\"")
       isMinifyEnabled = true
       isShrinkResources = true
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -40,6 +47,7 @@ android {
   }
   buildFeatures {
     viewBinding = true
+    buildConfig = true
   }
 }
 
@@ -66,6 +74,10 @@ dependencies {
   implementation(libs.androidx.room.runtime)
   implementation(libs.androidx.lifecycle.viewmodel.android)
   implementation(libs.hilt)
+  implementation(libs.retrofit)
+  implementation(libs.converter.gson)
+  implementation(libs.kotlinx.coroutines.play.services)
+  implementation(libs.data.store)
   ksp(libs.androidx.room.compiler)
   ksp(libs.hilt.compiler)
   testImplementation(libs.junit)

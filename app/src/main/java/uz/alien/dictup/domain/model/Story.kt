@@ -1,6 +1,10 @@
 package uz.alien.dictup.domain.model
 
 data class Story(
-  val h: String,  // header
-  val b: String   // body
+    val id: Int? = null,
+    val title: String,
+    val content: String,
+    val collectionId: Int? = null,
+    val partId: Int? = null,
+    val unitId: Int? = null
 )

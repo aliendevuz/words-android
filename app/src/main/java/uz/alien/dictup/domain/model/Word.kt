@@ -1,9 +1,13 @@
 package uz.alien.dictup.domain.model
 
 data class Word(
-  val w: String,  // word
-  val t: String,  // transcript
-  val ty: String, // type
-  val d: String,  // description
-  val s: String   // sample
+    val id: Int? = null,
+    val word: String,
+    val transcription: String,
+    val type: String,
+    val definition: String,
+    val sentence: String,
+    val collectionId: Int? = null,
+    val partId: Int? = null,
+    val unitId: Int? = null
 )
