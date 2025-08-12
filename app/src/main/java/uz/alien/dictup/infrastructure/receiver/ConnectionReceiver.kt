@@ -5,24 +5,47 @@ import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import uz.alien.dictup.core.utils.Logger
 import uz.alien.dictup.di.InternetSyncEntryPoint
+import uz.alien.dictup.infrastructure.worker.SyncWorker
 
-class ConnectionReceiver() : BroadcastReceiver() {
+class ConnectionReceiver : BroadcastReceiver() {
+
+  private val workerName = "internet_sync_work"
+
+  fun scheduleSyncWork(context: Context) {
+
+    val workRequest = OneTimeWorkRequestBuilder<SyncWorker>()
+      .setConstraints(
+        Constraints.Builder()
+          .setRequiredNetworkType(NetworkType.CONNECTED)
+          .build()
+      )
+      .build()
+
+    WorkManager.getInstance(context).enqueueUniqueWork(
+      workerName,
+      ExistingWorkPolicy.KEEP,
+      workRequest
+    )
+  }
 
   override fun onReceive(context: Context, intent: Intent?) {
-    if (isConnected(context)) {
-      CoroutineScope(Dispatchers.IO).launch {
 
-        val entryPoint = EntryPointAccessors.fromApplication(
-          context.applicationContext,
-          InternetSyncEntryPoint::class.java
-        )
-
-        entryPoint.onInternetConnectedUseCases().syncDataUseCaseAndSetupScore()
+    CoroutineScope(Dispatchers.IO).launch {
+      if (isConnected(context)) {
+        scheduleSyncWork(context)
+      } else {
+        WorkManager.getInstance(context).cancelUniqueWork(workerName)
       }
     }
   }

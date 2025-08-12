@@ -8,16 +8,21 @@ import android.os.Handler
 import android.os.Looper
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.viewpager2.widget.ViewPager2
-import uz.alien.dictup.databinding.ActivityDetailBinding
+import uz.alien.dictup.databinding.DetailActivityBinding
+import uz.alien.dictup.presentation.common.extention.setClearEdge
+import uz.alien.dictup.presentation.common.extention.setExitZoomAnimation
+import uz.alien.dictup.presentation.common.extention.setSystemPadding
 import uz.alien.dictup.presentation.features.base.BaseActivity
 
 class DetailActivity : BaseActivity() {
 
-  private lateinit var binding: ActivityDetailBinding
+  private lateinit var binding: DetailActivityBinding
   private var lastDragOffset = 0f
 
-  override fun onReady(savedInstanceState: Bundle?) {
-    binding = ActivityDetailBinding.inflate(layoutInflater)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+
+    binding = DetailActivityBinding.inflate(layoutInflater)
     setClearEdge()
     setContentLayout {
       binding.root

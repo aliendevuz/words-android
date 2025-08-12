@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import uz.alien.dictup.R
-import uz.alien.dictup.databinding.ItemGeneralBookBinding
+import uz.alien.dictup.databinding.SelectItemBookBinding
 
 class AdapterGeneralBook(
   private val count: Int,
@@ -20,16 +20,16 @@ class AdapterGeneralBook(
   private var selectedIndex = 0
 
   class BookViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    val binding = ItemGeneralBookBinding.bind(view)
+    val binding = SelectItemBookBinding.bind(view)
   }
 
   override fun getItemCount(): Int = count
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookViewHolder {
     val view = if (isSmall) {
-      LayoutInflater.from(parent.context).inflate(R.layout.item_general_books, parent, false)
+      LayoutInflater.from(parent.context).inflate(R.layout.select_item_books, parent, false)
     } else {
-      LayoutInflater.from(parent.context).inflate(R.layout.item_general_book, parent, false)
+      LayoutInflater.from(parent.context).inflate(R.layout.select_item_book, parent, false)
     }
     return BookViewHolder(view)
   }

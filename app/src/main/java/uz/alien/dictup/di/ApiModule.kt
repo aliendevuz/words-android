@@ -5,6 +5,7 @@ import dagger.Provides
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import uz.alien.dictup.BuildConfig
@@ -21,64 +22,62 @@ import uz.alien.dictup.domain.repository.retrofit.RemoteNativeWordRepository
 import uz.alien.dictup.domain.repository.retrofit.RemoteStoryRepository
 import uz.alien.dictup.domain.repository.retrofit.RemoteWordRepository
 import uz.alien.dictup.domain.usecase.on_internet_connected.OnInternetConnectedUseCases
+import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object ApiModule {
 
     @Provides
-    fun provideWordApi(): WordApi {
+    @Singleton
+    fun provideOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .connectTimeout(8, TimeUnit.SECONDS)
+            .readTimeout(8, TimeUnit.SECONDS)
+            .writeTimeout(8, TimeUnit.SECONDS)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRetrofit(client: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
+            .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(WordApi::class.java)
     }
 
     @Provides
-    fun provideStoryApi(): StoryApi {
-        return Retrofit.Builder()
-            .baseUrl(BuildConfig.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(StoryApi::class.java)
-    }
+    fun provideWordApi(retrofit: Retrofit): WordApi =
+        retrofit.create(WordApi::class.java)
 
     @Provides
-    fun provideNativeWordApi(): NativeWordApi {
-        return Retrofit.Builder()
-            .baseUrl(BuildConfig.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(NativeWordApi::class.java)
-    }
+    fun provideStoryApi(retrofit: Retrofit): StoryApi =
+        retrofit.create(StoryApi::class.java)
 
     @Provides
-    fun provideNativeStoryApi(): NativeStoryApi {
-        return Retrofit.Builder()
-            .baseUrl(BuildConfig.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(NativeStoryApi::class.java)
-    }
+    fun provideNativeWordApi(retrofit: Retrofit): NativeWordApi =
+        retrofit.create(NativeWordApi::class.java)
 
     @Provides
-    fun provideWordRepository(api: WordApi): RemoteWordRepository {
-        return RemoteWordRepositoryImpl(api)
-    }
+    fun provideNativeStoryApi(retrofit: Retrofit): NativeStoryApi =
+        retrofit.create(NativeStoryApi::class.java)
 
     @Provides
-    fun provideStoryRepository(api: StoryApi): RemoteStoryRepository {
-        return RemoteStoryRepositoryImpl(api)
-    }
+    fun provideWordRepository(api: WordApi): RemoteWordRepository =
+        RemoteWordRepositoryImpl(api)
 
     @Provides
-    fun provideNativeWordRepository(api: NativeWordApi): RemoteNativeWordRepository {
-        return RemoteNativeWordRepositoryImpl(api)
-    }
+    fun provideStoryRepository(api: StoryApi): RemoteStoryRepository =
+        RemoteStoryRepositoryImpl(api)
 
     @Provides
-    fun provideNativeStoryRepository(api: NativeStoryApi): RemoteNativeStoryRepository {
-        return RemoteNativeStoryRepositoryImpl(api)
-    }
+    fun provideNativeWordRepository(api: NativeWordApi): RemoteNativeWordRepository =
+        RemoteNativeWordRepositoryImpl(api)
+
+    @Provides
+    fun provideNativeStoryRepository(api: NativeStoryApi): RemoteNativeStoryRepository =
+        RemoteNativeStoryRepositoryImpl(api)
 }

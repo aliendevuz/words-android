@@ -10,10 +10,10 @@ import androidx.core.os.postDelayed
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import uz.alien.dictup.R
-import uz.alien.dictup.databinding.PageBooksBinding
+import uz.alien.dictup.databinding.SelectPageBooksBinding
 import uz.alien.dictup.presentation.features.base.BaseActivity
-import uz.alien.dictup.presentation.common.AutoLayoutManager
-import uz.alien.dictup.presentation.common.MarginItemDecoration
+import uz.alien.dictup.presentation.common.component.AutoLayoutManager
+import uz.alien.dictup.presentation.common.component.MarginItemDecoration
 
 class AdapterGeneralBooks(
     private val count: Int,
@@ -27,11 +27,11 @@ class AdapterGeneralBooks(
   val pagers = ArrayList<ViewPager2>()
 
   inner class GeneralBooksViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-    val binding = PageBooksBinding.bind(view)
+    val binding = SelectPageBooksBinding.bind(view)
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GeneralBooksViewHolder {
-    return GeneralBooksViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.page_books, parent, false))
+    return GeneralBooksViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.select_page_books, parent, false))
   }
 
   override fun getItemCount() = 2
@@ -44,15 +44,15 @@ class AdapterGeneralBooks(
       else -> 6
     }
 
-    holder.binding.rvBooks.layoutManager = AutoLayoutManager(activity, amount)
+    holder.binding.rvParts.layoutManager = AutoLayoutManager(activity, amount)
     val adapterBooks = AdapterSelectorChapter(
         amount,
         true
     ) { clickedIndex ->
         holder.binding.vpUnits.setCurrentItem(clickedIndex, true)
     }
-    holder.binding.rvBooks.adapter = adapterBooks
-    holder.binding.rvBooks.addItemDecoration(MarginItemDecoration((4 * dp).toInt(), amount))
+    holder.binding.rvParts.adapter = adapterBooks
+    holder.binding.rvParts.addItemDecoration(MarginItemDecoration(4.0f, activity.resources, amount))
 
 //    adapterBooks.setSelected(pick)
 

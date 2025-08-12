@@ -3,8 +3,8 @@ package uz.alien.dictup.presentation.features.pick
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import uz.alien.dictup.presentation.features.base.BaseActivity
-import uz.alien.dictup.presentation.common.AutoLayoutManager
-import uz.alien.dictup.presentation.common.MarginItemDecoration
+import uz.alien.dictup.presentation.common.component.AutoLayoutManager
+import uz.alien.dictup.presentation.common.component.MarginItemDecoration
 
 class AdapterPagerPickerUnits(
     private val count: Int,
@@ -26,7 +26,7 @@ class AdapterPagerPickerUnits(
     )
     val spanCount = if (count == 4) 2 else 3
     rv.layoutManager = AutoLayoutManager(activity, spanCount)
-    rv.addItemDecoration(MarginItemDecoration((3.2 * dp).toInt(), spanCount))
+    rv.addItemDecoration(MarginItemDecoration(3.2f, activity.resources, spanCount))
     return ViewHolder(rv)
   }
 

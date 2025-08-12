@@ -9,6 +9,7 @@
 
     <color name="background">#22232A</color>
     <color name="background_nomalum">#22232A</color>
+    <color name="dialog_background">#22232A</color>
 
 <!--    <color name="ilova">#92ADC8</color>-->
 
@@ -20,10 +21,10 @@
 
     <color name="unit_card">#22232A</color>
 
-    <color name="blue2">#6363D3</color>
-    <color name="purple2">#884FDB</color>
-    <color name="red_pink">#E27272</color>
-    <color name="pink">#CA5C82</color>
+    <color name="beginner_1">#388E3C</color>
+    <color name="beginner_2">#FBC02D</color>
+    <color name="beginner_3">#F57C00</color>
+    <color name="beginner_4">#E64A19</color>
 
     <color name="layer">#20808080</color>
 
@@ -79,7 +80,7 @@
     <color name="app_bar">#2F3645</color>
     <color name="app_bar_text">#B7C4E2</color>
     <color name="back_general_units">#2F3645</color>
-    <color name="general_button">#1EA633</color>
+    <color name="general_button">#42A450</color>
     <color name="general_button_text">#DEFFE3</color>
     <color name="general_button_ripple">#0F6132</color>
     <color name="back_item_lesson_book">#475168</color>
@@ -101,6 +102,13 @@
     <color name="back_lesson_units">#2F3645</color>
     <color name="back_item_general_book">#475168</color>
     <color name="back_general_books">#2F3645</color>
+
+    <!--    Pick Features Colors-->
+    <color name="pick_item_part_background_color">#475168</color>
+    <color name="pick_item_part_background_current_color">#CCD1E4</color>
+    <color name="pick_item_part_text_color">#CCD1E4</color>
+    <color name="pick_item_part_text_current_color">#475168</color>
+
 </resources>
 <!--    <color name="logo">#FFFFFF</color>-->
 <!--    <color name="logo_back">#2A3138</color>-->

@@ -30,6 +30,7 @@ android {
             buildConfigField("String", "BASE_URL", "\"https://assets.4000.uz/\"")
             buildConfigField("Boolean", "DISABLE_LOGGING_ON_PROD", "false")
             buildConfigField("Boolean", "LOGGING_IS_AVAILABLE", "true")
+            buildConfigField("Long", "DURATION", "274L")
         }
         release {
             isMinifyEnabled = true
@@ -37,6 +38,7 @@ android {
             buildConfigField("String", "BASE_URL", "\"https://assets.4000.uz/\"")
             buildConfigField("Boolean", "DISABLE_LOGGING_ON_PROD", "true")
             buildConfigField("Boolean", "LOGGING_IS_AVAILABLE", "true")
+            buildConfigField("Long", "DURATION", "274L")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
@@ -78,6 +80,7 @@ dependencies {
     implementation(libs.firebase.analytics.ktx)
     implementation(libs.play.services.ads)
     implementation(libs.androidx.room.runtime)
+    implementation(libs.android.fragment.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.android)
     implementation(libs.hilt)
     implementation(libs.retrofit)
@@ -85,6 +88,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.data.store)
     implementation(libs.startup)
+    implementation(libs.work)
     ksp(libs.androidx.room.compiler)
     ksp(libs.hilt.compiler)
     testImplementation(libs.junit)

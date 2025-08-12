@@ -6,18 +6,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import uz.alien.dictup.databinding.TestActivityTestBinding
+import uz.alien.dictup.databinding.TestActivityBinding
 
 @AndroidEntryPoint
 class TestActivity : AppCompatActivity() {
 
-    private lateinit var binding: TestActivityTestBinding
+    private lateinit var binding: TestActivityBinding
     private val viewModel: TestViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = TestActivityTestBinding.inflate(layoutInflater)
+        binding = TestActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         viewModel.getData()

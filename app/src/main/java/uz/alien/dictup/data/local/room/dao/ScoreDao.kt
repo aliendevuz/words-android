@@ -42,4 +42,38 @@ interface ScoreDao {
 
     @Query("DELETE FROM scores")
     suspend fun clearAllScores()
+
+    @Query("""
+        SELECT s.* 
+        FROM scores AS s
+        INNER JOIN words AS w ON s.wordId = w.id
+        WHERE w.collectionId = :collectionId
+    """)
+    suspend fun getScoresByCollectionId(collectionId: Int): List<ScoreEntity>
+
+    @Query("""
+        SELECT s.* 
+        FROM scores AS s
+        INNER JOIN words AS w ON s.wordId = w.id
+        WHERE w.collectionId = :collectionId 
+          AND w.partId = :partId
+    """)
+    suspend fun getScoresByCollectionAndPart(
+        collectionId: Int,
+        partId: Int
+    ): List<ScoreEntity>
+
+    @Query("""
+        SELECT s.* 
+        FROM scores AS s
+        INNER JOIN words AS w ON s.wordId = w.id
+        WHERE w.collectionId = :collectionId
+          AND w.partId = :partId
+          AND w.unitId = :unitId
+    """)
+    suspend fun getScoresByFullPath(
+        collectionId: Int,
+        partId: Int,
+        unitId: Int
+    ): List<ScoreEntity>
 }

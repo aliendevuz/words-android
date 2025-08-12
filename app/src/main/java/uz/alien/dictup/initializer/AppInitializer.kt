@@ -7,8 +7,10 @@ import javax.inject.Singleton
 @Singleton
 class AppInitializer @Inject constructor(
     private val startupUseCases: StartupUseCases
+
 ) {
     suspend fun run() {
         startupUseCases.createUserUseCase()
+        startupUseCases.fetchAndActivateUseCase()
     }
 }

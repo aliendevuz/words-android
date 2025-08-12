@@ -34,6 +34,25 @@ class ScoreRepositoryImpl(
         return scoreDao.getAllScores().map { it.toScore() }
     }
 
+    override suspend fun getScoresByCollectionId(collectionId: Int): List<Score> {
+        return scoreDao.getScoresByCollectionId(collectionId).map { it.toScore() }
+    }
+
+    override suspend fun getScoresByCollectionAndPart(
+        collectionId: Int,
+        partId: Int
+    ): List<Score> {
+        return scoreDao.getScoresByCollectionAndPart(collectionId, partId).map { it.toScore() }
+    }
+
+    override suspend fun getScoresByFullPath(
+        collectionId: Int,
+        partId: Int,
+        unitId: Int
+    ): List<Score> {
+        return scoreDao.getScoresByFullPath(collectionId, partId, unitId).map { it.toScore() }
+    }
+
     override suspend fun clearAllScores() {
         scoreDao.clearAllScores()
     }

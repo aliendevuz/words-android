@@ -1,0 +1,94 @@
+package uz.alien.dictup.presentation.common.extention
+
+import android.app.Activity.OVERRIDE_TRANSITION_OPEN
+import android.content.Intent
+import android.os.Build
+import androidx.appcompat.app.AppCompatActivity
+import uz.alien.dictup.R
+
+fun AppCompatActivity.setAlphaAnimation(intent: Intent? = null) {
+    intent?.let { startActivity(it) }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        overrideActivityTransition(
+            OVERRIDE_TRANSITION_OPEN,
+            R.anim.fade_in,
+            R.anim.fade_out
+        )
+    } else {
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+    }
+}
+
+fun AppCompatActivity.setAlphaAnimationOnly() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        overrideActivityTransition(
+            OVERRIDE_TRANSITION_OPEN,
+            R.anim.fade_in,
+            R.anim.fade_out
+        )
+    } else {
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+    }
+}
+
+fun AppCompatActivity.startWithSwipeAnimation(intent: Intent? = null) {
+    intent?.let { startActivity(it) }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        overrideActivityTransition(
+            OVERRIDE_TRANSITION_OPEN,
+            R.anim.slide_in_right,
+            R.anim.slide_out_left
+        )
+    } else {
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+    }
+}
+
+fun AppCompatActivity.setExitSwipeAnimation() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        overrideActivityTransition(
+            OVERRIDE_TRANSITION_OPEN,
+            R.anim.slide_in_left,
+            R.anim.slide_out_right
+        )
+    } else {
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+    }
+}
+
+fun AppCompatActivity.setOpenZoomAnimation(intent: Intent? = null) {
+    intent?.let { startActivity(it) }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        overrideActivityTransition(
+            OVERRIDE_TRANSITION_OPEN,
+            R.anim.zoom_in_out,
+            R.anim.zoom_out_in
+        )
+    } else {
+        overridePendingTransition(R.anim.zoom_in_out, R.anim.zoom_out_in)
+    }
+}
+
+fun AppCompatActivity.setExitZoomAnimation() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        overrideActivityTransition(
+            OVERRIDE_TRANSITION_OPEN,
+            R.anim.zoom_in_in,
+            R.anim.zoom_out_out
+        )
+    } else {
+        overridePendingTransition(R.anim.zoom_in_in, R.anim.zoom_out_out)
+    }
+}
+
+fun AppCompatActivity.setExitZoomAnimationReverse() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        overrideActivityTransition(
+            OVERRIDE_TRANSITION_OPEN,
+            R.anim.zoom_out_out_reverse,
+            R.anim.zoom_in_in_reverse
+        )
+    } else {
+        overridePendingTransition(R.anim.zoom_out_out_reverse, R.anim.zoom_in_in_reverse)
+    }
+}

@@ -3,18 +3,24 @@ package uz.alien.dictup.presentation.features.select
 import android.content.Intent
 import android.os.Bundle
 import androidx.viewpager2.widget.ViewPager2
-import uz.alien.dictup.presentation.common.AutoLayoutManager
-import uz.alien.dictup.presentation.common.MarginItemDecoration
-import uz.alien.dictup.databinding.ActivitySelectBinding
+import uz.alien.dictup.presentation.common.extention.dp
+import uz.alien.dictup.presentation.common.component.AutoLayoutManager
+import uz.alien.dictup.presentation.common.component.MarginItemDecoration
+import uz.alien.dictup.databinding.SelectActivityBinding
+import uz.alien.dictup.presentation.common.extention.setClearEdge
+import uz.alien.dictup.presentation.common.extention.setExitSwipeAnimation
+import uz.alien.dictup.presentation.common.extention.setSystemPadding
 import uz.alien.dictup.presentation.features.base.BaseActivity
 import uz.alien.dictup.presentation.features.quiz.QuizActivity
 
 class SelectActivity : BaseActivity() {
 
-  private lateinit var binding: ActivitySelectBinding
+  private lateinit var binding: SelectActivityBinding
 
-  override fun onReady(savedInstanceState: Bundle?) {
-    binding = ActivitySelectBinding.inflate(layoutInflater)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+
+    binding = SelectActivityBinding.inflate(layoutInflater)
     setClearEdge()
     setSystemPadding(binding.root)
     setContentLayout {
@@ -33,15 +39,15 @@ class SelectActivity : BaseActivity() {
 
     binding.rvBook.layoutManager = AutoLayoutManager(this, 2)
     val adapterBook = AdapterGeneralBook(2, false) { clickedIndex ->
-        binding.vpBook.setCurrentItem(clickedIndex, true)
+      binding.vpBook.setCurrentItem(clickedIndex, true)
     }
     binding.rvBook.adapter = adapterBook
-    binding.rvBook.addItemDecoration(MarginItemDecoration((12 * dp()).toInt(), 2))
+    binding.rvBook.addItemDecoration(MarginItemDecoration(12.0f, resources, 2))
 
     adapterBook.setSelected(book)
 
     val vpAdapter =
-        AdapterGeneralBooks(2, this, dp(), pick, size, binding.vpBook)
+      AdapterGeneralBooks(2, this, dp(), pick, size, binding.vpBook)
     binding.vpBook.adapter = vpAdapter
     binding.vpBook.setCurrentItem(book, false)
 

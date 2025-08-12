@@ -5,8 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import uz.alien.dictup.core.utils.Logger
-import uz.alien.dictup.domain.usecase.main.MainUseCases
+import uz.alien.dictup.domain.usecase.home.MainUseCases
 import javax.inject.Inject
 
 @HiltViewModel
@@ -65,14 +64,14 @@ class TestViewModel @Inject constructor(
 //            }
 //            _text.value += "\n"
 
-            val scores = mainUseCases.getAllScoreUseCase()
+            val scores = mainUseCases.getScoreOfBeginnerUseCase()
 
             if (scores.isEmpty()) {
                 _text.value += "No data for scores"
             } else {
-                scores.forEach { score ->
-                    _text.value += "${score.correctCount} ${score.incorrectCount}\n"
-                }
+//                scores.forEach { score ->
+//                    _text.value += "${score.correctCount} ${score.incorrectCount}\n"
+//                }
             }
         }
     }

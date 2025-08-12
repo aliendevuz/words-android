@@ -7,6 +7,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import uz.alien.dictup.domain.repository.DataStoreRepository
+import uz.alien.dictup.domain.repository.RemoteConfigRepository
 import uz.alien.dictup.domain.repository.retrofit.RemoteNativeStoryRepository
 import uz.alien.dictup.domain.repository.retrofit.RemoteNativeWordRepository
 import uz.alien.dictup.domain.repository.retrofit.RemoteStoryRepository
@@ -17,15 +18,20 @@ import uz.alien.dictup.domain.repository.room.ScoreRepository
 import uz.alien.dictup.domain.repository.room.StoryRepository
 import uz.alien.dictup.domain.repository.room.UserRepository
 import uz.alien.dictup.domain.repository.room.WordRepository
-import uz.alien.dictup.domain.usecase.main.GetAllNativeStoryUseCase
-import uz.alien.dictup.domain.usecase.main.GetAllNativeWordUseCase
-import uz.alien.dictup.domain.usecase.main.GetAllScoreUseCase
-import uz.alien.dictup.domain.usecase.main.GetAllStoryUseCase
-import uz.alien.dictup.domain.usecase.main.GetAllWordsUseCase
-import uz.alien.dictup.domain.usecase.main.MainUseCases
-import uz.alien.dictup.domain.usecase.on_internet_connected.OnInternetConnectedUseCases
-import uz.alien.dictup.domain.usecase.on_internet_connected.SyncDataUseCaseAndSetupScore
+import uz.alien.dictup.domain.usecase.home.GetAllNativeStoryUseCase
+import uz.alien.dictup.domain.usecase.home.GetAllNativeWordUseCase
+import uz.alien.dictup.domain.usecase.home.GetAllStoryUseCase
+import uz.alien.dictup.domain.usecase.home.GetAllWordsUseCase
+import uz.alien.dictup.domain.usecase.home.GetDataStoreRepositoryUseCase
+import uz.alien.dictup.domain.usecase.home.GetScoreOfBeginnerUseCase
+import uz.alien.dictup.domain.usecase.home.GetScoreOfEssentialUseCase
+import uz.alien.dictup.domain.usecase.home.IsSyncCompletedUseCase
+import uz.alien.dictup.domain.usecase.home.MainUseCases
+import uz.alien.dictup.domain.usecase.on_internet_connected.SyncDataUseCase
+import uz.alien.dictup.domain.usecase.pick.GetUnitsPercentUseCase
+import uz.alien.dictup.domain.usecase.pick.PickUseCases
 import uz.alien.dictup.domain.usecase.startup.CreateUserUseCase
+import uz.alien.dictup.domain.usecase.startup.FetchAndActivateUseCase
 import uz.alien.dictup.domain.usecase.startup.StartupUseCases
 
 @Module
@@ -38,19 +44,23 @@ object UseCaseModule {
         storyRepository: StoryRepository,
         nativeWordRepository: NativeWordRepository,
         nativeStoryRepository: NativeStoryRepository,
-        scoreRepository: ScoreRepository
+        scoreRepository: ScoreRepository,
+        dataStoreRepository: DataStoreRepository
     ): MainUseCases {
         return MainUseCases(
             GetAllWordsUseCase(wordRepository),
             GetAllStoryUseCase(storyRepository),
             GetAllNativeWordUseCase(nativeWordRepository),
             GetAllNativeStoryUseCase(nativeStoryRepository),
-            GetAllScoreUseCase(scoreRepository)
+            GetScoreOfBeginnerUseCase(scoreRepository),
+            GetScoreOfEssentialUseCase(scoreRepository),
+            IsSyncCompletedUseCase(dataStoreRepository),
+            GetDataStoreRepositoryUseCase(dataStoreRepository)
         )
     }
 
     @Provides
-    fun provideOnInternetConnectedUseCases(
+    fun provideSyncDataUseCaseAndSetupScore(
         @ApplicationContext context: Context,
         remoteWordRepository: RemoteWordRepository,
         remoteStoryRepository: RemoteStoryRepository,
@@ -62,34 +72,43 @@ object UseCaseModule {
         nativeWordRepository: NativeWordRepository,
         nativeStoryRepository: NativeStoryRepository,
         scoreRepository: ScoreRepository
-    ): OnInternetConnectedUseCases {
-        return OnInternetConnectedUseCases(
-            SyncDataUseCaseAndSetupScore(
-                context = context,
-                remoteWordRepository = remoteWordRepository,
-                remoteStoryRepository = remoteStoryRepository,
-                remoteNativeWordRepository = remoteNativeWordRepository,
-                remoteNativeStoryRepository = remoteNativeStoryRepository,
-                dataStoreRepository = dataStoreRepository,
-                wordRepository = wordRepository,
-                storyRepository = storyRepository,
-                nativeWordRepository = nativeWordRepository,
-                nativeStoryRepository = nativeStoryRepository,
-                scoreRepository = scoreRepository
-            )
+    ): SyncDataUseCase {
+        return SyncDataUseCase(
+            context = context,
+            remoteWordRepository = remoteWordRepository,
+            remoteStoryRepository = remoteStoryRepository,
+            remoteNativeWordRepository = remoteNativeWordRepository,
+            remoteNativeStoryRepository = remoteNativeStoryRepository,
+            dataStoreRepository = dataStoreRepository,
+            wordRepository = wordRepository,
+            storyRepository = storyRepository,
+            nativeWordRepository = nativeWordRepository,
+            nativeStoryRepository = nativeStoryRepository,
+            scoreRepository = scoreRepository
         )
     }
 
     @Provides
     fun provideStartupUseCases(
         userRepository: UserRepository,
-        dataStoreRepository: DataStoreRepository
+        dataStoreRepository: DataStoreRepository,
+        remoteConfigRepository: RemoteConfigRepository
     ): StartupUseCases {
         return StartupUseCases(
             CreateUserUseCase(
                 userRepository,
                 dataStoreRepository
-            )
+            ),
+            FetchAndActivateUseCase(remoteConfigRepository)
+        )
+    }
+
+    @Provides
+    fun providePickUseCases(
+        scoreRepository: ScoreRepository
+    ): PickUseCases {
+        return PickUseCases(
+            getUnitsPercentUseCase = GetUnitsPercentUseCase(scoreRepository)
         )
     }
 }

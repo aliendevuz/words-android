@@ -16,5 +16,18 @@ interface ScoreRepository {
 
     suspend fun getAllScores(): List<Score>
 
+    suspend fun getScoresByCollectionId(collectionId: Int): List<Score>
+
+    suspend fun getScoresByCollectionAndPart(
+        collectionId: Int,
+        partId: Int
+    ): List<Score>
+
+    suspend fun getScoresByFullPath(
+        collectionId: Int,
+        partId: Int,
+        unitId: Int
+    ): List<Score>
+
     suspend fun clearAllScores()
 }

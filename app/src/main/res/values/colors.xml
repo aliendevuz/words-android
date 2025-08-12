@@ -2,6 +2,7 @@
 <resources>
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
+    <color name="gray">#ADADAD</color>
 
     <color name="logo">#E1FFE8</color>
     <color name="logo_line">#E1FFE8</color>
@@ -15,6 +16,7 @@
     <color name="books_background">#DDE3E9</color>
     <color name="book_background">#EEF5F8</color>
     <color name="books_background_ripple">#80D4FF</color>
+    <color name="dialog_background">#EFF1F6</color>
 
 
     <color name="blue_back">#00AAFF</color>
@@ -28,10 +30,10 @@
 
 
 
-    <color name="blue2">#8080FF</color>
-    <color name="purple2">#B380FF</color>
-    <color name="red_pink">#FF8080</color>
-    <color name="pink">#FF80B3</color>
+    <color name="beginner_1">#388E3C</color>
+    <color name="beginner_2">#FBC02D</color>
+    <color name="beginner_3">#F57C00</color>
+    <color name="beginner_4">#E64A19</color>
 
     <color name="layer">#0000</color>
 
@@ -72,7 +74,7 @@
     <color name="app_bar">#DDE3E9</color>
     <color name="app_bar_text">#416678</color>
     <color name="back_general_units">#DDE3E9</color>
-    <color name="general_button">#19AD58</color>
+    <color name="general_button">#1FA458</color>
     <color name="general_button_text">#D8F6E4</color>
     <color name="general_button_ripple">#0F6132</color>
     <color name="back_item_lesson_book">#EEF5F8</color>
@@ -94,6 +96,14 @@
     <color name="back_lesson_units">#DDE3E9</color>
     <color name="back_item_general_book">#EEF5F8</color>
     <color name="back_general_books">#DDE3E9</color>
+
+    <!--    Pick Features Colors-->
+    <color name="pick_item_part_background_color">#EEF5F8</color>
+    <color name="pick_item_part_background_current_color">#2B73B3</color>
+    <color name="pick_item_part_text_color">#2B73B3</color>
+    <color name="pick_item_part_text_current_color">#EEF5F8</color>
+
+
 </resources>
 <!--     <color name="green">#00BB00</color> -->
 <!--    <color name="background">@color/white</color>-->
