@@ -22,6 +22,7 @@ class CollectionViewHolder(
         binding.tvCollection.text = collection.title
 
         val backgroundRes = when {
+            isSelected and isCurrent -> R.drawable.select_item_collection_background_current
             isSelected -> R.drawable.select_item_collection_background_selected
             isCurrent -> R.drawable.select_item_collection_background_current
             else -> R.drawable.select_item_collection_background

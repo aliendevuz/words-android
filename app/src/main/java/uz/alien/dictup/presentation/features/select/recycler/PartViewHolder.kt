@@ -22,6 +22,7 @@ class PartViewHolder(
         binding.tvPartNumber.text = part.title
 
         val backgroundRes = when {
+            isCurrent && isSelected -> R.drawable.select_item_part_background_current
             isCurrent -> R.drawable.select_item_part_background_current
             isSelected -> R.drawable.select_item_part_background_selected
             else -> R.drawable.select_item_part_background
