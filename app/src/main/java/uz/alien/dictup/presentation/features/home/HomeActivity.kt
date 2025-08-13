@@ -23,12 +23,10 @@ import uz.alien.dictup.core.utils.Logger
 import uz.alien.dictup.databinding.HomeActivityBinding
 import uz.alien.dictup.databinding.HomeDialogBinding
 import uz.alien.dictup.presentation.common.component.AutoLayoutManager
-import uz.alien.dictup.presentation.common.component.MarginItemDecoration
 import uz.alien.dictup.presentation.common.extention.getSystemStatusPadding
-import uz.alien.dictup.presentation.common.extention.setAlphaAnimationOnly
+import uz.alien.dictup.presentation.common.extention.overrideTransitionWithAlpha
 import uz.alien.dictup.presentation.common.extention.setClearEdge
-import uz.alien.dictup.presentation.common.extention.setOpenZoomAnimation
-import uz.alien.dictup.presentation.common.extention.startWithSwipeAnimation
+import uz.alien.dictup.presentation.common.extention.startActivityWithZoomAnimation
 import uz.alien.dictup.presentation.features.base.BaseActivity
 import uz.alien.dictup.presentation.features.home.extention.handleIntent
 import uz.alien.dictup.presentation.features.home.extention.initDialog
@@ -80,11 +78,6 @@ class HomeActivity : BaseActivity() {
 
         binding.statusBarPadding.setPadding(0, getStatusPadding(), 0, 0)
 
-        // boshqa narsa bu
-        Firebase.messaging.token.addOnCompleteListener { task ->
-            if (task.isSuccessful) Log.d("FCM", "Token: ${task.result}")
-        }
-
         // TODO: app update API ni ham ulab qo'yishim kerak
 
         if (isFirstTime()) {
@@ -95,7 +88,7 @@ class HomeActivity : BaseActivity() {
 
             welcomeLauncher.launch(intent)
 
-            setAlphaAnimationOnly()
+            overrideTransitionWithAlpha()
 
         } else {
 
@@ -116,8 +109,7 @@ class HomeActivity : BaseActivity() {
     private val welcomeLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if (result.resultCode == RESULT_OK) {
-
+        if (result.resultCode == RESULT_OK && !isReady()) {
             dialogBinding = HomeDialogBinding.inflate(layoutInflater)
 
             dialog = initDialog(this, dialogBinding)
@@ -149,6 +141,16 @@ class HomeActivity : BaseActivity() {
             }
         } else {
             Logger.w("Status padding is $padding")
+        }
+    }
+
+    private fun isReady(): Boolean {
+        return prefs.getBoolean("is_ready", false)
+    }
+
+    private fun setReady() {
+        prefs.edit {
+            putBoolean("is_ready", true)
         }
     }
 
@@ -197,44 +199,48 @@ class HomeActivity : BaseActivity() {
     private fun initViews() {
 
         beginnerBookAdapter = BeginnerBookAdapter { part ->
-//            if (viewModel.syncManager.shouldShowProgress.value) {
-//                viewModel.askForNoInternet()
-//            } else {
+            if (isReady()) {
                 val intent = Intent(this, PickActivity::class.java)
                 intent.putExtra("collection", WordCollection.BEGINNER.id)
                 intent.putExtra("part", part.id)
-                setOpenZoomAnimation(intent)
-//            }
+                startActivityWithZoomAnimation(intent)
+            } else {
+                if (!isConnected(this)) {
+                    showNoInternet(dialogBinding, dialog)
+                }
+            }
         }
 
         essentialBookAdapter = EssentialBookAdapter { part ->
-//            if (viewModel.syncManager.shouldShowProgress.value) {
-//                viewModel.askForNoInternet()
-//            } else {
+            if (isReady()) {
                 val intent = Intent(this, PickActivity::class.java)
                 intent.putExtra("collection", WordCollection.ESSENTIAL.id)
                 intent.putExtra("part", part.id)
-                setOpenZoomAnimation(intent)
-//            }
+                startActivityWithZoomAnimation(intent)
+            } else {
+                if (!isConnected(this)) {
+                    showNoInternet(dialogBinding, dialog)
+                }
+            }
         }
 
         binding.rvBeginner.layoutManager = AutoLayoutManager(this, 4)
-        binding.rvBeginner.addItemDecoration(MarginItemDecoration(4.0f, resources, 4))
         (binding.rvBeginner.itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
         binding.rvBeginner.adapter = beginnerBookAdapter
 
         binding.rvEssential.layoutManager = AutoLayoutManager(this, 3)
-        binding.rvEssential.addItemDecoration(MarginItemDecoration(4.0f, resources, 3))
         (binding.rvEssential.itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
         binding.rvEssential.adapter = essentialBookAdapter
 
         binding.bOpenSelector.setOnClickListener {
-//            if (viewModel.syncManager.shouldShowProgress.value) {
-//                viewModel.askForNoInternet()
-//            } else {
+            if (isReady()) {
                 val intent = Intent(this, SelectActivity::class.java)
-                startWithSwipeAnimation(intent)
-//            }
+                startActivityWithZoomAnimation(intent)
+            } else {
+                if (!isConnected(this)) {
+                    showNoInternet(dialogBinding, dialog)
+                }
+            }
         }
 
         binding.drawerButton.setOnClickListener {
@@ -264,6 +270,7 @@ class HomeActivity : BaseActivity() {
                 if (isCompleted) {
                     viewModel.updateBook()
                     dialog.dismiss()
+                    setReady()
                     return@collectLatest
                 } else {
                     if (isConnected(this@HomeActivity)) {
@@ -278,10 +285,22 @@ class HomeActivity : BaseActivity() {
                 }
             }
         }
+
+        lifecycleScope.launch {
+            viewModel.dataStoreRepository.getWordVersion("en", "beginner").collect { version ->
+                if (version != 0.0 && !isReady()) {
+                    showStarting(
+                        "Yuklab olish jarayoni davom etmoqda...",
+                        dialogBinding,
+                        dialog
+                    )
+                }
+            }
+        }
     }
 
     fun isConnected(context: Context): Boolean {
-        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val cm = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
         val nw = cm.activeNetwork ?: return false
         val caps = cm.getNetworkCapabilities(nw) ?: return false
         return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)

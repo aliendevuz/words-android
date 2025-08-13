@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:paddingHorizontal="12dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/back_general_units"
+        android:elevation="4dp"
+        android:orientation="vertical"
+        android:outlineSpotShadowColor="@color/black">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvPart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:paddingHorizontal="8.8dp"
+            android:paddingTop="8.8dp"
+            android:paddingBottom="3.2dp" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:paddingHorizontal="8.8dp"
+            android:paddingVertical="8dp">
+
+            <TextView
+                android:id="@+id/bClearAll"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="1.6dp"
+                android:background="@drawable/select_button_background"
+                android:elevation="4dp"
+                android:outlineSpotShadowColor="@color/black"
+                android:paddingVertical="2dp"
+                android:text="Clear All"
+                android:textAlignment="center"
+                android:textColor="@color/select_item_collection_text_selected_color"
+                app:layout_constraintEnd_toStartOf="@id/bInvert"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/bInvert"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="1.6dp"
+                android:background="@drawable/select_button_background"
+                android:elevation="4dp"
+                android:outlineSpotShadowColor="@color/black"
+                android:paddingVertical="2dp"
+                android:text="Invert"
+                android:textAlignment="center"
+                android:textColor="@color/select_item_collection_text_selected_color"
+                app:layout_constraintEnd_toStartOf="@id/bRandom"
+                app:layout_constraintStart_toEndOf="@id/bClearAll"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/bRandom"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="1.6dp"
+                android:background="@drawable/select_button_background"
+                android:elevation="4dp"
+                android:outlineSpotShadowColor="@color/black"
+                android:paddingVertical="2dp"
+                android:text="Random"
+                android:textAlignment="center"
+                android:textColor="@color/select_item_collection_text_selected_color"
+                app:layout_constraintEnd_toStartOf="@id/bSelectAll"
+                app:layout_constraintStart_toEndOf="@id/bInvert"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/bSelectAll"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="1.6dp"
+                android:background="@drawable/select_button_background"
+                android:elevation="4dp"
+                android:outlineSpotShadowColor="@color/black"
+                android:paddingVertical="2dp"
+                android:text="Select All"
+                android:textAlignment="center"
+                android:textColor="@color/select_item_collection_text_selected_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/bRandom"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <uz.alien.dictup.presentation.features.select.component.NestedScrollableHost
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/vpPart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </uz.alien.dictup.presentation.features.select.component.NestedScrollableHost>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/select_item_unit_background"
+            android:elevation="2dp"
+            android:orientation="horizontal"
+            android:outlineSpotShadowColor="@color/black"
+            android:paddingVertical="7.4dp">
+
+            <SeekBar
+                android:id="@+id/sbQuizCount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="1.34dp"
+                android:max="3"
+                android:progress="3"
+                android:progressTint="@color/select_item_unit_text_color"
+                android:thumbTint="@color/select_item_unit_text_color"
+                android:tickMark="@drawable/select_seek_bar_tick"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/tv_test_count"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_test_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:gravity="end"
+                android:minWidth="40dp"
+                android:text="20"
+                android:textColor="@color/select_item_unit_text_color"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

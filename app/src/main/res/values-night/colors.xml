@@ -96,18 +96,39 @@
     <color name="general_progress_indicator_track">#647599</color>
     <color name="item_general_unit_text">#B7C4E2</color>
     <color name="item_general_unit_text_percentage">#B7C4E2</color>
-    <color name="back_item_general_unit">#475168</color>
     <color name="back_item_general_unit_ripple">#8899BF</color>
     <color name="welcome_text">#CCD1E4</color>
     <color name="back_lesson_units">#2F3645</color>
     <color name="back_item_general_book">#475168</color>
     <color name="back_general_books">#2F3645</color>
 
-    <!--    Pick Features Colors-->
+    <!--    Pick Features Colors    -->
     <color name="pick_item_part_background_color">#475168</color>
     <color name="pick_item_part_background_current_color">#CCD1E4</color>
     <color name="pick_item_part_text_color">#CCD1E4</color>
     <color name="pick_item_part_text_current_color">#475168</color>
+
+    <!--    Select Features Colors    -->
+    <color name="select_item_unit_background_color">#475168</color>
+    <color name="select_item_unit_background_selected_color">#CCD1E4</color>
+    <color name="select_item_unit_text_color">#CCD1E4</color>
+    <color name="select_item_unit_text_selected_color">#475168</color>
+    <color name="select_item_unit_stroke_color">#CCD1E4</color>
+    <color name="select_item_unit_ripple_color">#CCD1E4</color>
+
+    <color name="select_item_part_background_color">#475168</color>
+    <color name="select_item_part_background_selected_color">#CCD1E4</color>
+    <color name="select_item_part_text_color">#CCD1E4</color>
+    <color name="select_item_part_text_selected_color">#475168</color>
+    <color name="select_item_part_stroke_color">#CCD1E4</color>
+    <color name="select_item_part_ripple_color">#CCD1E4</color>
+
+    <color name="select_item_collection_background_color">#475168</color>
+    <color name="select_item_collection_background_selected_color">#CCD1E4</color>
+    <color name="select_item_collection_text_color">#CCD1E4</color>
+    <color name="select_item_collection_text_selected_color">#475168</color>
+    <color name="select_item_collection_stroke_color">#CCD1E4</color>
+    <color name="select_item_collection_ripple_color">#CCD1E4</color>
 
 </resources>
 <!--    <color name="logo">#FFFFFF</color>-->

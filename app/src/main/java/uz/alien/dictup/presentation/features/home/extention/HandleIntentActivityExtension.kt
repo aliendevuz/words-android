@@ -1,8 +1,8 @@
 package uz.alien.dictup.presentation.features.home.extention
 
 import android.content.Intent
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import uz.alien.dictup.core.utils.Logger
 import uz.alien.dictup.presentation.common.extention.readTextFromUri
 
 fun AppCompatActivity.handleIntent(intent: Intent) {
@@ -14,7 +14,7 @@ fun AppCompatActivity.handleIntent(intent: Intent) {
                 (data.scheme == "file" || data.scheme == "content")) -> {
 
             val text = readTextFromUri(data)
-            Log.d("@@@@", "File content:\n$text")
+            Logger.d("@@@@", "File content:\n$text")
         }
 
         (Intent.ACTION_VIEW == action && data != null &&
@@ -24,15 +24,15 @@ fun AppCompatActivity.handleIntent(intent: Intent) {
             val queryParams = data.queryParameterNames.joinToString(", ") {
                 "$it = ${data.getQueryParameter(it)}"
             }
-            Log.d("@@@@", "Path: $path\nQuery: $queryParams")
+            Logger.d("@@@@", "Path: $path\nQuery: $queryParams")
         }
 
         (Intent.ACTION_MAIN == action) -> {
-            Log.d("@@@@", "By launcher")
+            Logger.d("@@@@", "By launcher")
         }
 
         else -> {
-            Log.d("@@@@", "Unknown launch type")
+            Logger.d("@@@@", "Unknown launch type")
         }
     }
 }

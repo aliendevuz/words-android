@@ -3,7 +3,7 @@ package uz.alien.dictup.presentation.features.result
 import android.os.Bundle
 import uz.alien.dictup.databinding.ResultActivityBinding
 import uz.alien.dictup.presentation.common.extention.setClearEdge
-import uz.alien.dictup.presentation.common.extention.setExitZoomAnimation
+import uz.alien.dictup.presentation.common.extention.applyExitZoomTransition
 import uz.alien.dictup.presentation.common.extention.setSystemPadding
 import uz.alien.dictup.presentation.features.base.BaseActivity
 
@@ -24,6 +24,6 @@ class ResultActivity : BaseActivity() {
 
   override fun finish() {
     super.finish()
-    setExitZoomAnimation()
+    applyExitZoomTransition()
   }
 }

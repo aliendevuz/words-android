@@ -55,7 +55,7 @@ class PickViewModel @Inject constructor(
                 UnitUIState(
                     id = unitIndex,
                     name = "Unit ${unitIndex + 1}",
-                    progress = (0..100).random(),
+                    progress = 0,
                     partId = part.id
                 )
             }
@@ -67,14 +67,11 @@ class PickViewModel @Inject constructor(
 
         viewModelScope.launch {
 
-            parts.value.forEach { part ->
+            val progressList = pickUseCases.getUnitsPercentUseCase(collection.value.id, currentPart.value)
 
-                val progressList = pickUseCases.getUnitsPercentUseCase(collection.value.id, part.id)
-
-                unitFlows[part.id].update { units ->
-                    units.mapIndexed { index, unit ->
-                        unit.copy(progress = 100 - (progressList.getOrNull(index) ?: unit.progress))
-                    }
+            unitFlows[currentPart.value].update { units ->
+                units.mapIndexed { index, unit ->
+                    unit.copy(progress = progressList.getOrNull(index) ?: unit.progress)
                 }
             }
         }
@@ -93,6 +90,8 @@ class PickViewModel @Inject constructor(
     }
 
     fun openLesson(unitId: Int? = null) {
+
+        // TODO: hali keyingi darsni avtomatik aniqlash algoritmini ishlab chiqqanim yo'q
         val nextLessonUnit = unitId ?: 0
         viewModelScope.launch {
             _navigationEvent.emit(

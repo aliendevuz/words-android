@@ -12,8 +12,8 @@ import kotlinx.coroutines.launch
 import uz.alien.dictup.databinding.PickActivityBinding
 import uz.alien.dictup.presentation.common.component.AutoLayoutManager
 import uz.alien.dictup.presentation.common.extention.setClearEdge
-import uz.alien.dictup.presentation.common.extention.setExitZoomAnimation
-import uz.alien.dictup.presentation.common.extention.setOpenZoomAnimation
+import uz.alien.dictup.presentation.common.extention.applyExitZoomTransition
+import uz.alien.dictup.presentation.common.extention.startActivityWithZoomAnimation
 import uz.alien.dictup.presentation.features.base.BaseActivity
 import uz.alien.dictup.presentation.features.lesson.LessonActivity
 import uz.alien.dictup.presentation.features.pick.model.NavigationEvent
@@ -111,7 +111,7 @@ class PickActivity : BaseActivity() {
             intent.putExtra("collection", event.collectionId)
             intent.putExtra("part", event.partId)
             intent.putExtra("unit", event.unitId)
-            setOpenZoomAnimation(intent)
+            startActivityWithZoomAnimation(intent)
           }
           null -> {}
         }
@@ -133,6 +133,6 @@ class PickActivity : BaseActivity() {
 
   override fun finish() {
     super.finish()
-    setExitZoomAnimation()
+    applyExitZoomTransition()
   }
 }

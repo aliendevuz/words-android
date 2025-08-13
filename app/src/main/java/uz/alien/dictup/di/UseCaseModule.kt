@@ -30,6 +30,8 @@ import uz.alien.dictup.domain.usecase.home.MainUseCases
 import uz.alien.dictup.domain.usecase.on_internet_connected.SyncDataUseCase
 import uz.alien.dictup.domain.usecase.pick.GetUnitsPercentUseCase
 import uz.alien.dictup.domain.usecase.pick.PickUseCases
+import uz.alien.dictup.domain.usecase.select.GetAllUnitsPercentUseCase
+import uz.alien.dictup.domain.usecase.select.SelectUseCases
 import uz.alien.dictup.domain.usecase.startup.CreateUserUseCase
 import uz.alien.dictup.domain.usecase.startup.FetchAndActivateUseCase
 import uz.alien.dictup.domain.usecase.startup.StartupUseCases
@@ -109,6 +111,15 @@ object UseCaseModule {
     ): PickUseCases {
         return PickUseCases(
             getUnitsPercentUseCase = GetUnitsPercentUseCase(scoreRepository)
+        )
+    }
+
+    @Provides
+    fun provideSelectUseCases(
+        scoreRepository: ScoreRepository
+    ): SelectUseCases {
+        return SelectUseCases(
+            getAllUnitsPercentUseCase = GetAllUnitsPercentUseCase(scoreRepository)
         )
     }
 }

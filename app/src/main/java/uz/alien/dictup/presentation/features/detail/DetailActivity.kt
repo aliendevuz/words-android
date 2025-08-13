@@ -10,7 +10,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.viewpager2.widget.ViewPager2
 import uz.alien.dictup.databinding.DetailActivityBinding
 import uz.alien.dictup.presentation.common.extention.setClearEdge
-import uz.alien.dictup.presentation.common.extention.setExitZoomAnimation
+import uz.alien.dictup.presentation.common.extention.applyExitZoomTransition
 import uz.alien.dictup.presentation.common.extention.setSystemPadding
 import uz.alien.dictup.presentation.features.base.BaseActivity
 
@@ -77,6 +77,6 @@ class DetailActivity : BaseActivity() {
 
   override fun finish() {
     super.finish()
-    setExitZoomAnimation()
+    applyExitZoomTransition()
   }
 }

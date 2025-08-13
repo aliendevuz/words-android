@@ -6,7 +6,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import uz.alien.dictup.R
 
-fun AppCompatActivity.setAlphaAnimation(intent: Intent? = null) {
+fun AppCompatActivity.startActivityWithAlphaAnimation(intent: Intent? = null) {
     intent?.let { startActivity(it) }
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
         overrideActivityTransition(
@@ -19,7 +19,7 @@ fun AppCompatActivity.setAlphaAnimation(intent: Intent? = null) {
     }
 }
 
-fun AppCompatActivity.setAlphaAnimationOnly() {
+fun AppCompatActivity.overrideTransitionWithAlpha() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
         overrideActivityTransition(
             OVERRIDE_TRANSITION_OPEN,
@@ -31,7 +31,7 @@ fun AppCompatActivity.setAlphaAnimationOnly() {
     }
 }
 
-fun AppCompatActivity.startWithSwipeAnimation(intent: Intent? = null) {
+fun AppCompatActivity.startActivityWithSlideAnimation(intent: Intent? = null) {
     intent?.let { startActivity(it) }
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
         overrideActivityTransition(
@@ -44,7 +44,7 @@ fun AppCompatActivity.startWithSwipeAnimation(intent: Intent? = null) {
     }
 }
 
-fun AppCompatActivity.setExitSwipeAnimation() {
+fun AppCompatActivity.applyExitSwipeAnimation() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
         overrideActivityTransition(
             OVERRIDE_TRANSITION_OPEN,
@@ -56,7 +56,7 @@ fun AppCompatActivity.setExitSwipeAnimation() {
     }
 }
 
-fun AppCompatActivity.setOpenZoomAnimation(intent: Intent? = null) {
+fun AppCompatActivity.startActivityWithZoomAnimation(intent: Intent? = null) {
     intent?.let { startActivity(it) }
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
         overrideActivityTransition(
@@ -69,7 +69,7 @@ fun AppCompatActivity.setOpenZoomAnimation(intent: Intent? = null) {
     }
 }
 
-fun AppCompatActivity.setExitZoomAnimation() {
+fun AppCompatActivity.applyExitZoomTransition() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
         overrideActivityTransition(
             OVERRIDE_TRANSITION_OPEN,
@@ -81,7 +81,7 @@ fun AppCompatActivity.setExitZoomAnimation() {
     }
 }
 
-fun AppCompatActivity.setExitZoomAnimationReverse() {
+fun AppCompatActivity.applyExitZoomReverseTransition() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
         overrideActivityTransition(
             OVERRIDE_TRANSITION_OPEN,

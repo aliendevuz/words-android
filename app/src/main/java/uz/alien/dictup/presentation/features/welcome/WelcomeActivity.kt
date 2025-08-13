@@ -5,7 +5,7 @@ import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
 import uz.alien.dictup.databinding.WelcomeActivityBinding
 import uz.alien.dictup.presentation.common.extention.setClearEdge
-import uz.alien.dictup.presentation.common.extention.setExitZoomAnimationReverse
+import uz.alien.dictup.presentation.common.extention.applyExitZoomReverseTransition
 
 class WelcomeActivity : AppCompatActivity() {
 
@@ -28,6 +28,6 @@ class WelcomeActivity : AppCompatActivity() {
     override fun finish() {
         setResult(RESULT_OK)
         super.finish()
-        setExitZoomAnimationReverse()
+        applyExitZoomReverseTransition()
     }
 }

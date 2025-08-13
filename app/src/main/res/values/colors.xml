@@ -90,19 +90,39 @@
     <color name="general_progress_indicator_track">#B9C6CE</color>
     <color name="item_general_unit_text">#5B8DA8</color>
     <color name="item_general_unit_text_percentage">#5B8DA8</color>
-    <color name="back_item_general_unit">#EEF5F8</color>
     <color name="back_item_general_unit_ripple">#80D4FF</color>
     <color name="welcome_text">#2B73B3</color>
     <color name="back_lesson_units">#DDE3E9</color>
     <color name="back_item_general_book">#EEF5F8</color>
     <color name="back_general_books">#DDE3E9</color>
 
-    <!--    Pick Features Colors-->
+    <!--    Pick Features Colors    -->
     <color name="pick_item_part_background_color">#EEF5F8</color>
     <color name="pick_item_part_background_current_color">#2B73B3</color>
     <color name="pick_item_part_text_color">#2B73B3</color>
     <color name="pick_item_part_text_current_color">#EEF5F8</color>
 
+    <!--    Select Features Colors    -->
+    <color name="select_item_unit_background_color">#EEF5F8</color>
+    <color name="select_item_unit_background_selected_color">#2B73B3</color>
+    <color name="select_item_unit_text_color">#2B73B3</color>
+    <color name="select_item_unit_text_selected_color">#EEF5F8</color>
+    <color name="select_item_unit_stroke_color">#2B73B3</color>
+    <color name="select_item_unit_ripple_color">#2B73B3</color>
+
+    <color name="select_item_part_background_color">#EEF5F8</color>
+    <color name="select_item_part_background_selected_color">#2B73B3</color>
+    <color name="select_item_part_text_color">#2B73B3</color>
+    <color name="select_item_part_text_selected_color">#EEF5F8</color>
+    <color name="select_item_part_stroke_color">#2B73B3</color>
+    <color name="select_item_part_ripple_color">#2B73B3</color>
+
+    <color name="select_item_collection_background_color">#EEF5F8</color>
+    <color name="select_item_collection_background_selected_color">#2B73B3</color>
+    <color name="select_item_collection_text_color">#2B73B3</color>
+    <color name="select_item_collection_text_selected_color">#EEF5F8</color>
+    <color name="select_item_collection_stroke_color">#2B73B3</color>
+    <color name="select_item_collection_ripple_color">#2B73B3</color>
 
 </resources>
 <!--     <color name="green">#00BB00</color> -->

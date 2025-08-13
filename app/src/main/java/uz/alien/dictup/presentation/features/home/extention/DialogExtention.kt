@@ -73,6 +73,7 @@ fun showStarting(message: String, binding: HomeDialogBinding, dialog: AlertDialo
         dialog.dismiss()
     }
 
+    binding.iProgress.visibility = View.VISIBLE
     binding.progressMessage.text = message
     binding.tbOk.visibility = View.GONE
     dialog.show()

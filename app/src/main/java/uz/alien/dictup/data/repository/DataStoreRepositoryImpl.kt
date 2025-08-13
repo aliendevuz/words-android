@@ -60,7 +60,7 @@ class DataStoreRepositoryImpl @Inject constructor(
     override suspend fun getWordVersion(targetLang: String, collection: String): Flow<Double> {
         return context.dataStore.data.map { prefs ->
             prefs[stringPreferencesKey("word.version.$targetLang.$collection")]?.toDoubleOrNull() ?: 0.0
-        }
+        }.distinctUntilChanged()
     }
 
     override suspend fun saveStoryVersion(targetLang: String, collection: String, version: Double) {

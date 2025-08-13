@@ -2,76 +2,110 @@ package uz.alien.dictup.presentation.features.select
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
+import androidx.core.content.edit
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
-import uz.alien.dictup.presentation.common.extention.dp
-import uz.alien.dictup.presentation.common.component.AutoLayoutManager
-import uz.alien.dictup.presentation.common.component.MarginItemDecoration
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import uz.alien.dictup.databinding.SelectActivityBinding
+import uz.alien.dictup.presentation.common.component.AutoLayoutManager
+import uz.alien.dictup.presentation.common.extention.applyExitZoomTransition
 import uz.alien.dictup.presentation.common.extention.setClearEdge
-import uz.alien.dictup.presentation.common.extention.setExitSwipeAnimation
 import uz.alien.dictup.presentation.common.extention.setSystemPadding
+import uz.alien.dictup.presentation.common.extention.startActivityWithAlphaAnimation
 import uz.alien.dictup.presentation.features.base.BaseActivity
 import uz.alien.dictup.presentation.features.quiz.QuizActivity
+import uz.alien.dictup.presentation.features.select.pager.CollectionPagerAdapter
+import uz.alien.dictup.presentation.features.select.recycler.CollectionAdapter
 
+@AndroidEntryPoint
 class SelectActivity : BaseActivity() {
 
-  private lateinit var binding: SelectActivityBinding
+    private lateinit var binding: SelectActivityBinding
+    private val viewModel: SelectViewModel by viewModels()
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+    private lateinit var collectionAdapter: CollectionAdapter
+    private lateinit var collectionPagerAdapter: CollectionPagerAdapter
 
-    binding = SelectActivityBinding.inflate(layoutInflater)
-    setClearEdge()
-    setSystemPadding(binding.root)
-    setContentLayout {
-      binding.root
+    private val prefs by lazy {
+        getSharedPreferences("app_prefs", MODE_PRIVATE)
     }
 
-    binding.bStart.setOnClickListener {
-      startActivity(Intent(this, QuizActivity::class.java))
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        binding = SelectActivityBinding.inflate(layoutInflater)
+        setContentLayout {
+            binding.root
+        }
+
+        setClearEdge()
+        setSystemPadding(binding.root)
+
+        initViews()
     }
 
-    val book = intent.getIntExtra("book", 1)
-    val pick = intent.getIntExtra("picked_book", 1)
-    val size = intent.getIntExtra("amount_of_book", 6)
+    private fun initViews() {
 
-    // aslida size 6 ni o'rniga intent orqali nechta kitob borligi va qaysi kitob tanlangani ko'rinishi kerak, yoki shared preferencesda, xullas har ikkisida ham ishlay verishi kerak
+        collectionAdapter = CollectionAdapter { selectedIndex ->
+            viewModel.setCurrentCollection(selectedIndex)
+            binding.vpCollection.currentItem = selectedIndex
+            saveLastCollectionId(selectedIndex)
+        }
 
-    binding.rvBook.layoutManager = AutoLayoutManager(this, 2)
-    val adapterBook = AdapterGeneralBook(2, false) { clickedIndex ->
-      binding.vpBook.setCurrentItem(clickedIndex, true)
+        val collections = viewModel.collectionsFlow.value
+
+        binding.rvCollection.layoutManager =
+            AutoLayoutManager(this, collections.size)
+        binding.rvCollection.adapter = collectionAdapter
+
+        collectionPagerAdapter = CollectionPagerAdapter(this, collections)
+        binding.vpCollection.adapter = collectionPagerAdapter
+
+        binding.vpCollection.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                viewModel.setCurrentCollection(position)
+                saveLastCollectionId(position)
+            }
+        })
+
+        val lastCollectionId = lastCollectionId()
+        binding.vpCollection.setCurrentItem(lastCollectionId, false)
+
+        var isFirst = true
+
+        lifecycleScope.launch {
+            viewModel.collectionsFlow.collectLatest { collections ->
+                collectionAdapter.submitList(collections)
+                if (isFirst) {
+                    binding.vpCollection.offscreenPageLimit = collections.size
+                    isFirst = false
+                }
+            }
+        }
+
+        binding.bStart.setOnClickListener {
+            val selectedUnits = viewModel.getSelectedUnits()
+            val intent = Intent(this, QuizActivity::class.java)
+            intent.putExtra("units", selectedUnits.toTypedArray())
+            startActivityWithAlphaAnimation(intent)
+        }
     }
-    binding.rvBook.adapter = adapterBook
-    binding.rvBook.addItemDecoration(MarginItemDecoration(12.0f, resources, 2))
 
-    adapterBook.setSelected(book)
+    private fun saveLastCollectionId(id: Int) {
+        prefs.edit {
+            putInt("last_collection_id", id)
+        }
+    }
 
-    val vpAdapter =
-      AdapterGeneralBooks(2, this, dp(), pick, size, binding.vpBook)
-    binding.vpBook.adapter = vpAdapter
-    binding.vpBook.setCurrentItem(book, false)
+    private fun lastCollectionId(): Int  {
+        return prefs.getInt("last_collection_id", 0)
+    }
 
-//    binding.vpBook.setPageTransformer { page, position ->
-//      val scale = 0.92f + (1 - abs(position)) * 0.08f
-//      page.scaleY = scale
-//      page.scaleX = scale
-//      page.alpha = 0.2f + (1 - abs(position)) * 0.8f
-//    }
-
-    binding.vpBook.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-      override fun onPageSelected(position: Int) {
-        adapterBook.setSelected(position)
-      }
-    })
-  }
-
-  override fun finish() {
-    super.finish()
-    withAnimation = true
-    setExitSwipeAnimation()
-  }
-
-  companion object {
-    var withAnimation = true
-  }
+    override fun finish() {
+        super.finish()
+        applyExitZoomTransition()
+    }
 }

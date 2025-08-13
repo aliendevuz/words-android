@@ -5,11 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import uz.alien.dictup.R
 import uz.alien.dictup.presentation.features.pick.model.UnitUIState
-import uz.alien.dictup.presentation.features.select.recycler_adapter.UnitDiffCallback
 
 class UnitAdapter(
     private val onItemClick: (position: Int) -> Unit
-) : ListAdapter<UnitUIState, UnitViewHolder>(UnitDiffCallback()) {
+) : ListAdapter<UnitUIState, UnitViewHolder>(UnitDiffUtilCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UnitViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.pick_item_unit, parent, false)
