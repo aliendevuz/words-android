@@ -38,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Ilova.uz"
+        android:text="Lova Inc."
         android:textColor="@color/welcome_text"
         android:textSize="28sp"
         android:fontFamily="@font/shuttle_x"
@@ -52,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="66dp"
         android:fontFamily="@font/shuttle_x"
-        android:text="taqdim etadi"
+        android:text="mahsuloti"
         android:textColor="@color/welcome_text" />
 
 </FrameLayout>

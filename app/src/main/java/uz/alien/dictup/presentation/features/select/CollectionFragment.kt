@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -93,6 +94,16 @@ class CollectionFragment : Fragment() {
         val lastPartId = lastPartId()
         binding.vpPart.setCurrentItem(lastPartId, false)
 
+        binding.sbQuizCount.setOnSeekBarChangeListener(
+            object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                    viewModel.setQuizCount(progress)
+                }
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            }
+        )
+
         var isFirst = true
 
         lifecycleScope.launch {
@@ -103,6 +114,21 @@ class CollectionFragment : Fragment() {
                     binding.vpPart.offscreenPageLimit = collection.partCount
                     isFirst = false
                 }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.selectedUnitsCount.collectLatest { count ->
+                if (count != 0 && count <= 5) {
+                    binding.sbQuizCount.max = count * 4 - 1
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.quizCount.collectLatest { count ->
+                binding.sbQuizCount.progress = count
+                binding.tvQuizCount.text = "${count * 5 + 5}"
             }
         }
     }

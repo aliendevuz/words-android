@@ -6,33 +6,27 @@ import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.SimpleItemAnimator
-import com.google.firebase.Firebase
-import com.google.firebase.messaging.messaging
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import uz.alien.dictup.core.utils.Logger
 import uz.alien.dictup.databinding.HomeActivityBinding
-import uz.alien.dictup.databinding.HomeDialogBinding
 import uz.alien.dictup.presentation.common.component.AutoLayoutManager
+import uz.alien.dictup.presentation.common.extention.dialog
 import uz.alien.dictup.presentation.common.extention.getSystemStatusPadding
 import uz.alien.dictup.presentation.common.extention.overrideTransitionWithAlpha
 import uz.alien.dictup.presentation.common.extention.setClearEdge
 import uz.alien.dictup.presentation.common.extention.startActivityWithZoomAnimation
 import uz.alien.dictup.presentation.features.base.BaseActivity
 import uz.alien.dictup.presentation.features.home.extention.handleIntent
-import uz.alien.dictup.presentation.features.home.extention.initDialog
-import uz.alien.dictup.presentation.features.home.extention.prepareDialogForFirstTime
-import uz.alien.dictup.presentation.features.home.extention.showNoInternet
-import uz.alien.dictup.presentation.features.home.extention.showStarting
+import uz.alien.dictup.presentation.common.extention.prepareDialogForFirstTime
+import uz.alien.dictup.presentation.common.extention.showNoInternet
+import uz.alien.dictup.presentation.common.extention.showStarting
 import uz.alien.dictup.presentation.features.home.recycler.BeginnerBookAdapter
 import uz.alien.dictup.presentation.features.home.recycler.EssentialBookAdapter
 import uz.alien.dictup.presentation.features.pick.PickActivity
@@ -44,8 +38,6 @@ import uz.alien.dictup.shared.WordCollection
 class HomeActivity : BaseActivity() {
 
     private lateinit var binding: HomeActivityBinding
-    private lateinit var dialogBinding: HomeDialogBinding
-    private lateinit var dialog: AlertDialog
 
     private var isSearchBarVisible = false
     private val viewModel: HomeViewModel by viewModels()
@@ -92,11 +84,7 @@ class HomeActivity : BaseActivity() {
 
         } else {
 
-            dialogBinding = HomeDialogBinding.inflate(layoutInflater)
-
-            dialog = initDialog(this, dialogBinding)
-
-            prepareDialogForFirstTime(dialog)
+            prepareDialogForFirstTime()
 
             collectSyncStatus()
         }
@@ -110,11 +98,8 @@ class HomeActivity : BaseActivity() {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == RESULT_OK && !isReady()) {
-            dialogBinding = HomeDialogBinding.inflate(layoutInflater)
 
-            dialog = initDialog(this, dialogBinding)
-
-            prepareDialogForFirstTime(dialog)
+            prepareDialogForFirstTime()
 
             collectSyncStatus()
         }
@@ -206,7 +191,7 @@ class HomeActivity : BaseActivity() {
                 startActivityWithZoomAnimation(intent)
             } else {
                 if (!isConnected(this)) {
-                    showNoInternet(dialogBinding, dialog)
+                    showNoInternet()
                 }
             }
         }
@@ -219,17 +204,17 @@ class HomeActivity : BaseActivity() {
                 startActivityWithZoomAnimation(intent)
             } else {
                 if (!isConnected(this)) {
-                    showNoInternet(dialogBinding, dialog)
+                    showNoInternet()
                 }
             }
         }
 
         binding.rvBeginner.layoutManager = AutoLayoutManager(this, 4)
-        (binding.rvBeginner.itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
+        binding.rvBeginner.itemAnimator = null
         binding.rvBeginner.adapter = beginnerBookAdapter
 
         binding.rvEssential.layoutManager = AutoLayoutManager(this, 3)
-        (binding.rvEssential.itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
+        binding.rvEssential.itemAnimator = null
         binding.rvEssential.adapter = essentialBookAdapter
 
         binding.bOpenSelector.setOnClickListener {
@@ -238,7 +223,7 @@ class HomeActivity : BaseActivity() {
                 startActivityWithZoomAnimation(intent)
             } else {
                 if (!isConnected(this)) {
-                    showNoInternet(dialogBinding, dialog)
+                    showNoInternet()
                 }
             }
         }
@@ -269,18 +254,16 @@ class HomeActivity : BaseActivity() {
             viewModel.dataStoreRepository.isSyncCompleted().collectLatest { isCompleted ->
                 if (isCompleted) {
                     viewModel.updateBook()
-                    dialog.dismiss()
+                    dialog?.dismiss()
                     setReady()
                     return@collectLatest
                 } else {
                     if (isConnected(this@HomeActivity)) {
                         showStarting(
-                            "Yuklab olish jarayoni davom etmoqda...",
-                            dialogBinding,
-                            dialog
+                            "Yuklab olish jarayoni davom etmoqda..."
                         )
                     } else {
-                        showNoInternet(dialogBinding, dialog)
+                        showNoInternet()
                     }
                 }
             }
@@ -290,9 +273,7 @@ class HomeActivity : BaseActivity() {
             viewModel.dataStoreRepository.getWordVersion("en", "beginner").collect { version ->
                 if (version != 0.0 && !isReady()) {
                     showStarting(
-                        "Yuklab olish jarayoni davom etmoqda...",
-                        dialogBinding,
-                        dialog
+                        "Yuklab olish jarayoni davom etmoqda..."
                     )
                 }
             }

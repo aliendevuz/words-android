@@ -1,8 +1,8 @@
-package uz.alien.dictup.domain.usecase.select
+package uz.alien.dictup.domain.usecase
 
 import uz.alien.dictup.domain.repository.room.ScoreRepository
 
-class GetAllUnitsPercentUseCase(
+class GetUnitsPercentUseCase(
     private val scoreRepository: ScoreRepository
 ) {
 

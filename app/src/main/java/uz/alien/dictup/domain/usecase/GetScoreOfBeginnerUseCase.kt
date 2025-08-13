@@ -1,14 +1,14 @@
-package uz.alien.dictup.domain.usecase.home
+package uz.alien.dictup.domain.usecase
 
 import uz.alien.dictup.domain.repository.room.ScoreRepository
 
-class GetScoreOfEssentialUseCase(
+class GetScoreOfBeginnerUseCase(
     private val scoreRepository: ScoreRepository
 ) {
 
     suspend operator fun invoke(): List<Int> {
-        return (0..5).map { part ->
-            val scores = scoreRepository.getScoresByCollectionAndPart(1, part)
+        return (0..3).map { part ->
+            val scores = scoreRepository.getScoresByCollectionAndPart(0, part)
             if (scores.isEmpty()) {
                 0
             } else {

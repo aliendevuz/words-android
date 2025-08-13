@@ -104,7 +104,7 @@
         <uz.alien.dictup.presentation.features.select.component.NestedScrollableHost
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@id/clCount"
+            app:layout_constraintBottom_toTopOf="@id/clQuizCount"
             app:layout_constraintTop_toBottomOf="@id/clButtons">
 
             <androidx.viewpager2.widget.ViewPager2
@@ -115,7 +115,7 @@
         </uz.alien.dictup.presentation.features.select.component.NestedScrollableHost>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/clCount"
+            android:id="@+id/clQuizCount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="12dp"
@@ -139,12 +139,12 @@
                 android:thumbTint="@color/select_item_unit_text_color"
                 android:tickMark="@drawable/select_seek_bar_tick"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/tv_test_count"
+                app:layout_constraintEnd_toStartOf="@id/tvQuizCount"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tv_test_count"
+                android:id="@+id/tvQuizCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="12dp"

@@ -89,6 +89,7 @@ class SelectActivity : BaseActivity() {
         binding.bStart.setOnClickListener {
             val selectedUnits = viewModel.getSelectedUnits()
             val intent = Intent(this, QuizActivity::class.java)
+            intent.putExtra("quiz_count", viewModel.getQuizCount())
             intent.putExtra("units", selectedUnits.toTypedArray())
             startActivityWithAlphaAnimation(intent)
         }

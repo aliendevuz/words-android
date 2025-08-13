@@ -38,7 +38,9 @@ class QuizActivity : BaseActivity() {
             intent.getParcelableArrayExtra("units")
         }
 
-        Logger.d("$units")
+        units?.forEach { unit ->
+            Logger.d("$unit")
+        }
 
         binding.tv.setOnClickListener {
             startActivity(Intent(this, ResultActivity::class.java))

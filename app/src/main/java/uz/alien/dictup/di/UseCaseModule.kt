@@ -18,51 +18,35 @@ import uz.alien.dictup.domain.repository.room.ScoreRepository
 import uz.alien.dictup.domain.repository.room.StoryRepository
 import uz.alien.dictup.domain.repository.room.UserRepository
 import uz.alien.dictup.domain.repository.room.WordRepository
-import uz.alien.dictup.domain.usecase.home.GetAllNativeStoryUseCase
-import uz.alien.dictup.domain.usecase.home.GetAllNativeWordUseCase
-import uz.alien.dictup.domain.usecase.home.GetAllStoryUseCase
-import uz.alien.dictup.domain.usecase.home.GetAllWordsUseCase
-import uz.alien.dictup.domain.usecase.home.GetDataStoreRepositoryUseCase
-import uz.alien.dictup.domain.usecase.home.GetScoreOfBeginnerUseCase
-import uz.alien.dictup.domain.usecase.home.GetScoreOfEssentialUseCase
-import uz.alien.dictup.domain.usecase.home.IsSyncCompletedUseCase
-import uz.alien.dictup.domain.usecase.home.MainUseCases
-import uz.alien.dictup.domain.usecase.on_internet_connected.SyncDataUseCase
-import uz.alien.dictup.domain.usecase.pick.GetUnitsPercentUseCase
-import uz.alien.dictup.domain.usecase.pick.PickUseCases
-import uz.alien.dictup.domain.usecase.select.GetAllUnitsPercentUseCase
-import uz.alien.dictup.domain.usecase.select.SelectUseCases
-import uz.alien.dictup.domain.usecase.startup.CreateUserUseCase
-import uz.alien.dictup.domain.usecase.startup.FetchAndActivateUseCase
-import uz.alien.dictup.domain.usecase.startup.StartupUseCases
+import uz.alien.dictup.domain.usecase.GetDataStoreRepositoryUseCase
+import uz.alien.dictup.domain.usecase.GetScoreOfBeginnerUseCase
+import uz.alien.dictup.domain.usecase.GetScoreOfEssentialUseCase
+import uz.alien.dictup.domain.usecase.GetUnitsPercentUseCase
+import uz.alien.dictup.domain.usecase.CreateUserUseCase
+import uz.alien.dictup.domain.usecase.FetchAndActivateUseCase
+import uz.alien.dictup.domain.usecase.SyncDataUseCase
 
 @Module
 @InstallIn(SingletonComponent::class)
 object UseCaseModule {
 
     @Provides
-    fun provideMainUseCases(
-        wordRepository: WordRepository,
-        storyRepository: StoryRepository,
-        nativeWordRepository: NativeWordRepository,
-        nativeStoryRepository: NativeStoryRepository,
-        scoreRepository: ScoreRepository,
-        dataStoreRepository: DataStoreRepository
-    ): MainUseCases {
-        return MainUseCases(
-            GetAllWordsUseCase(wordRepository),
-            GetAllStoryUseCase(storyRepository),
-            GetAllNativeWordUseCase(nativeWordRepository),
-            GetAllNativeStoryUseCase(nativeStoryRepository),
-            GetScoreOfBeginnerUseCase(scoreRepository),
-            GetScoreOfEssentialUseCase(scoreRepository),
-            IsSyncCompletedUseCase(dataStoreRepository),
-            GetDataStoreRepositoryUseCase(dataStoreRepository)
-        )
-    }
+    fun provideGetScoreOfBeginnerUseCase(
+        scoreRepository: ScoreRepository
+    ) = GetScoreOfBeginnerUseCase(scoreRepository)
 
     @Provides
-    fun provideSyncDataUseCaseAndSetupScore(
+    fun provideGetScoreOfEssentialUseCase(
+        scoreRepository: ScoreRepository
+    ) = GetScoreOfEssentialUseCase(scoreRepository)
+
+    @Provides
+    fun provideGetDataStoreRepositoryUseCase(
+        dataStoreRepository: DataStoreRepository
+    ) = GetDataStoreRepositoryUseCase(dataStoreRepository)
+
+    @Provides
+    fun provideSyncDataUseCase(
         @ApplicationContext context: Context,
         remoteWordRepository: RemoteWordRepository,
         remoteStoryRepository: RemoteStoryRepository,
@@ -91,35 +75,18 @@ object UseCaseModule {
     }
 
     @Provides
-    fun provideStartupUseCases(
+    fun provideCreateUserUseCase(
         userRepository: UserRepository,
-        dataStoreRepository: DataStoreRepository,
+        dataStoreRepository: DataStoreRepository
+    ) = CreateUserUseCase(userRepository, dataStoreRepository)
+
+    @Provides
+    fun provideFetchAndActivateUseCase(
         remoteConfigRepository: RemoteConfigRepository
-    ): StartupUseCases {
-        return StartupUseCases(
-            CreateUserUseCase(
-                userRepository,
-                dataStoreRepository
-            ),
-            FetchAndActivateUseCase(remoteConfigRepository)
-        )
-    }
+    ) = FetchAndActivateUseCase(remoteConfigRepository)
 
     @Provides
-    fun providePickUseCases(
+    fun provideGetUnitsPercentUseCase(
         scoreRepository: ScoreRepository
-    ): PickUseCases {
-        return PickUseCases(
-            getUnitsPercentUseCase = GetUnitsPercentUseCase(scoreRepository)
-        )
-    }
-
-    @Provides
-    fun provideSelectUseCases(
-        scoreRepository: ScoreRepository
-    ): SelectUseCases {
-        return SelectUseCases(
-            getAllUnitsPercentUseCase = GetAllUnitsPercentUseCase(scoreRepository)
-        )
-    }
+    ) = GetUnitsPercentUseCase(scoreRepository)
 }

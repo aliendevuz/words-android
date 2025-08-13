@@ -1,7 +1,6 @@
 package uz.alien.dictup.presentation.features.pick.recycler
 
 import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.view.View
 import android.view.animation.DecelerateInterpolator
 import androidx.recyclerview.widget.RecyclerView
@@ -16,18 +15,25 @@ class UnitViewHolder(
 
     private val binding = PickItemUnitBinding.bind(view)
 
+    private var oldProgress = 0
+
     fun bind(unit: UnitUIState) {
 
         binding.tvUnit.text = unit.name
 
-        val current = binding.progress.progress
-        val target = unit.progress
+        if (oldProgress != unit.progress) {
 
-        ObjectAnimator.ofInt(binding.progress, "progress", current, target).apply {
-            duration = BuildConfig.DURATION * 5
-            interpolator = DecelerateInterpolator()
-            start()
+            val currentProgress = oldProgress
+            val targetProgress = unit.progress
+            oldProgress = unit.progress
+
+            ObjectAnimator.ofInt(binding.progress, "progress", currentProgress, targetProgress).apply {
+                duration = BuildConfig.DURATION * 5
+                interpolator = DecelerateInterpolator()
+                start()
+            }
         }
+
 
         binding.tvPercent.text = "${unit.progress}%"
 

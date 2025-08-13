@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.alien.dictup.core.utils.Logger
-import uz.alien.dictup.domain.usecase.select.SelectUseCases
+import uz.alien.dictup.domain.usecase.GetUnitsPercentUseCase
 import uz.alien.dictup.presentation.features.select.model.CollectionUIState
 import uz.alien.dictup.presentation.features.select.model.PartUIState
 import uz.alien.dictup.presentation.features.select.model.SelectedUnit
@@ -20,7 +20,7 @@ import kotlin.random.Random.Default.nextBoolean
 
 @HiltViewModel
 class SelectViewModel @Inject constructor(
-    private val selectUseCases: SelectUseCases
+    private val getUnitsPercentUseCase: GetUnitsPercentUseCase
 ) : ViewModel() {
 
     private val collections = listOf(
@@ -47,6 +47,9 @@ class SelectViewModel @Inject constructor(
 
     val partsFlows: MutableList<MutableStateFlow<List<PartUIState>>> = mutableListOf()
     val unitFlows: MutableList<List<MutableStateFlow<List<UnitUIState>>>> = mutableListOf()
+
+    val quizCount = MutableStateFlow(3)
+    val selectedUnitsCount = MutableStateFlow(0)
 
     init {
         _collectionsFlow.value.forEachIndexed { collectionIndex, collection ->
@@ -84,7 +87,7 @@ class SelectViewModel @Inject constructor(
         viewModelScope.launch {
 
             currentParts[currentCollection]?.let { currentPart ->
-                val progressList = selectUseCases.getAllUnitsPercentUseCase(currentCollection, currentPart)
+                val progressList = getUnitsPercentUseCase(currentCollection, currentPart)
 
                 unitFlows[currentCollection][currentPart].update { units ->
                     units.mapIndexed { index, unit ->
@@ -104,6 +107,14 @@ class SelectViewModel @Inject constructor(
         }
         currentCollection = collectionId
         updateUnits()
+    }
+
+    fun setQuizCount(count: Int) {
+        quizCount.value = count
+    }
+
+    fun getQuizCount(): Int {
+        return quizCount.value * 5 + 5
     }
 
     fun setCurrentPart(partId: Int) {
@@ -230,6 +241,8 @@ class SelectViewModel @Inject constructor(
         val partId = unit.partId
 
         val isSelected = unit.isSelected
+
+        selectedUnitsCount.update { it + if (isSelected) 1 else -1 }
 
         partsFlows[collectionId].update { parts ->
             parts.map {

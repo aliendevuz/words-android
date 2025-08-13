@@ -70,11 +70,8 @@
         <activity android:name=".presentation.features.pick.PickActivity" />
         <activity android:name=".presentation.features.select.SelectActivity" />
         <activity android:name=".presentation.features.lesson.LessonActivity" />
-        <activity android:name=".presentation.features.detail.DetailActivity" />
         <activity android:name=".presentation.features.quiz.QuizActivity" />
         <activity android:name=".presentation.features.result.ResultActivity" />
-
-        <activity android:name=".presentation.features.test.TestActivity" />
 
         <service android:name=".infrastructure.service.MyFirebaseInstanceIDService"
             android:exported="false">

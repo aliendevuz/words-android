@@ -5,12 +5,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.activity.addCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import uz.alien.dictup.databinding.BaseActivityBinding
 import uz.alien.dictup.databinding.BaseNavigationBinding
+import uz.alien.dictup.databinding.BaseDialogBinding
+import uz.alien.dictup.presentation.common.extention.initDialog
 import uz.alien.dictup.presentation.common.extention.interstitialAd
 import uz.alien.dictup.presentation.common.extention.loadInterstitialAd
 import uz.alien.dictup.presentation.common.extention.setSystemExclusion

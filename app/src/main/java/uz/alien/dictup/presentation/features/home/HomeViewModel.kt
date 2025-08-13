@@ -10,12 +10,16 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.alien.dictup.R
-import uz.alien.dictup.domain.usecase.home.MainUseCases
+import uz.alien.dictup.domain.usecase.GetDataStoreRepositoryUseCase
+import uz.alien.dictup.domain.usecase.GetScoreOfBeginnerUseCase
+import uz.alien.dictup.domain.usecase.GetScoreOfEssentialUseCase
 import uz.alien.dictup.presentation.features.home.model.Book
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val mainUseCases: MainUseCases
+    getDataStoreRepositoryUseCase: GetDataStoreRepositoryUseCase,
+    private val getScoreOfBeginnerUseCase: GetScoreOfBeginnerUseCase,
+    private val getScoreOfEssentialUseCase: GetScoreOfEssentialUseCase
 ) : ViewModel() {
 
     val beginnerBooks = arrayListOf(
@@ -40,7 +44,7 @@ class HomeViewModel @Inject constructor(
     private val _essentialBooks = MutableStateFlow<List<Book>>(essentialBooks)
     val essentialBooksState: SharedFlow<List<Book>> = _essentialBooks
 
-    val dataStoreRepository = mainUseCases.getDataStoreRepositoryUseCase()
+    val dataStoreRepository = getDataStoreRepositoryUseCase()
 
     init {
         viewModelScope.launch {
@@ -50,12 +54,12 @@ class HomeViewModel @Inject constructor(
 
     suspend fun updateBook() {
 
-        val isSyncCompleted = mainUseCases.isSyncCompletedUseCase().firstOrNull() ?: false
+        val isSyncCompleted = dataStoreRepository.isSyncCompleted().firstOrNull() ?: false
 
         _beginnerBooks.update { it.map { book -> book.copy(isLoaded = isSyncCompleted) } }
         _essentialBooks.update { it.map { book -> book.copy(isLoaded = isSyncCompleted) } }
 
-        val beginnerPercents = mainUseCases.getScoreOfBeginnerUseCase()
+        val beginnerPercents = getScoreOfBeginnerUseCase()
 
         _beginnerBooks.update { books ->
             books.mapIndexed { index, book ->
@@ -63,7 +67,7 @@ class HomeViewModel @Inject constructor(
             }
         }
 
-        val essentialPercents = mainUseCases.getScoreOfEssentialUseCase()
+        val essentialPercents = getScoreOfEssentialUseCase()
 
         _essentialBooks.update { books ->
             books.mapIndexed { index, book ->

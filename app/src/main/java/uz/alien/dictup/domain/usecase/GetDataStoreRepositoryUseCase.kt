@@ -1,4 +1,4 @@
-package uz.alien.dictup.domain.usecase.home
+package uz.alien.dictup.domain.usecase
 
 import uz.alien.dictup.domain.repository.DataStoreRepository
 

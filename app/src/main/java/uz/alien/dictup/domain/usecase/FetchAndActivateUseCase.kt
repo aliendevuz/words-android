@@ -1,4 +1,4 @@
-package uz.alien.dictup.domain.usecase.startup
+package uz.alien.dictup.domain.usecase
 
 import uz.alien.dictup.domain.repository.RemoteConfigRepository
 

@@ -1,4 +1,4 @@
-package uz.alien.dictup.domain.usecase.on_internet_connected
+package uz.alien.dictup.domain.usecase
 
 import android.content.Context
 import kotlinx.coroutines.flow.firstOrNull
@@ -20,6 +20,7 @@ import uz.alien.dictup.domain.repository.room.ScoreRepository
 import uz.alien.dictup.domain.repository.room.StoryRepository
 import uz.alien.dictup.domain.repository.room.WordRepository
 import uz.alien.dictup.shared.WordCollection
+import kotlin.collections.iterator
 
 class SyncDataUseCase(
     private val context: Context,
@@ -127,7 +128,7 @@ class SyncDataUseCase(
 
             val remoteWords = remoteWordRepository.fetchWord(targetLang, collection)
 
-            val collectionId = WordCollection.fromKey(collection)?.id
+            val collectionId = WordCollection.Companion.fromKey(collection)?.id
                 ?: throw IllegalArgumentException("Unknown collection: $collection")
 
             val wordEntities = mutableListOf<Word>()
@@ -163,7 +164,7 @@ class SyncDataUseCase(
 
             val remoteStories = remoteStoryRepository.fetchStory(targetLang, collection)
 
-            val collectionId = WordCollection.fromKey(collection)?.id
+            val collectionId = WordCollection.Companion.fromKey(collection)?.id
                 ?: throw IllegalArgumentException("Unknown collection: $collection")
 
             val storyEntities = mutableListOf<Story>()
@@ -295,7 +296,7 @@ class SyncDataUseCase(
         Logger.d(SyncDataUseCase::class.java.simpleName, "Legacy Database already migrated!")
         if (isMigrated) return
 
-        val legacyDatabase = LegacyDatabase.getInstance(context)
+        val legacyDatabase = LegacyDatabase.Companion.getInstance(context)
         val legacyDao = legacyDatabase.wordDao()
         val legacyWords = legacyDao.getWords()
 
@@ -318,7 +319,7 @@ class SyncDataUseCase(
 
         legacyDao.clear()
 
-        LegacyDatabase.destroyInstance()
+        LegacyDatabase.Companion.destroyInstance()
 
         Logger.d(SyncDataUseCase::class.java.simpleName, "Legacy Database migrated!")
     }

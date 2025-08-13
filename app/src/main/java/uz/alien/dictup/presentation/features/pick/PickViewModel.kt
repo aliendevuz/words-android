@@ -9,8 +9,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import uz.alien.dictup.core.utils.Logger
-import uz.alien.dictup.domain.usecase.pick.PickUseCases
+import uz.alien.dictup.domain.usecase.GetUnitsPercentUseCase
 import uz.alien.dictup.presentation.features.pick.model.NavigationEvent
 import uz.alien.dictup.presentation.features.pick.model.PartUIState
 import uz.alien.dictup.presentation.features.pick.model.UnitUIState
@@ -19,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PickViewModel @Inject constructor(
-    private val pickUseCases: PickUseCases
+    private val getUnitsPercentUseCase: GetUnitsPercentUseCase
 ) : ViewModel() {
 
     private val _collection = MutableStateFlow(WordCollection.ESSENTIAL)
@@ -67,7 +66,7 @@ class PickViewModel @Inject constructor(
 
         viewModelScope.launch {
 
-            val progressList = pickUseCases.getUnitsPercentUseCase(collection.value.id, currentPart.value)
+            val progressList = getUnitsPercentUseCase(collection.value.id, currentPart.value)
 
             unitFlows[currentPart.value].update { units ->
                 units.mapIndexed { index, unit ->

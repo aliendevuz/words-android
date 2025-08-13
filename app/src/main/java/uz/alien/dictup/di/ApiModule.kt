@@ -2,7 +2,6 @@ package uz.alien.dictup.di
 
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
@@ -21,7 +20,6 @@ import uz.alien.dictup.domain.repository.retrofit.RemoteNativeStoryRepository
 import uz.alien.dictup.domain.repository.retrofit.RemoteNativeWordRepository
 import uz.alien.dictup.domain.repository.retrofit.RemoteStoryRepository
 import uz.alien.dictup.domain.repository.retrofit.RemoteWordRepository
-import uz.alien.dictup.domain.usecase.on_internet_connected.OnInternetConnectedUseCases
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
