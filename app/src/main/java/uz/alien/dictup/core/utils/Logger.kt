@@ -6,7 +6,7 @@ import kotlin.text.lowercase
 
 object Logger {
 
-    const val TAG = "LOGGER"
+    private const val TAG = "LOGGER"
 
     fun logToLogcat(level: String, tag: String, msg: String) {
         if (

@@ -16,5 +16,11 @@ interface NativeWordRepository {
 
     suspend fun getAllNativeWords(): List<NativeWord>
 
+    suspend fun getNativeWordsByFullPath(
+        collectionId: Int,
+        partId: Int,
+        unitId: Int
+    ): List<NativeWord>
+
     suspend fun clearAllNativeWords()
 }

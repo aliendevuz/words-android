@@ -9,7 +9,12 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import uz.alien.dictup.domain.model.Story
+import uz.alien.dictup.domain.usecase.GetNativeWordsByUnitUseCase
+import uz.alien.dictup.domain.usecase.GetScoresByUnitUseCase
+import uz.alien.dictup.domain.usecase.GetStoriesByUnitUseCase
 import uz.alien.dictup.domain.usecase.GetUnitsPercentUseCase
+import uz.alien.dictup.domain.usecase.GetWordsByUnitUseCase
 import uz.alien.dictup.presentation.features.pick.model.NavigationEvent
 import uz.alien.dictup.presentation.features.pick.model.PartUIState
 import uz.alien.dictup.presentation.features.pick.model.UnitUIState
@@ -18,7 +23,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PickViewModel @Inject constructor(
-    private val getUnitsPercentUseCase: GetUnitsPercentUseCase
+    private val getUnitsPercentUseCase: GetUnitsPercentUseCase,
+    private val getWordsByUnitUseCase: GetWordsByUnitUseCase,
+    private val getNativeWordsByUnitUseCase: GetNativeWordsByUnitUseCase,
+    private val getScoresByUnitUseCase: GetScoresByUnitUseCase,
+    private val getStoriesByUnitUseCase: GetStoriesByUnitUseCase
 ) : ViewModel() {
 
     private val _collection = MutableStateFlow(WordCollection.ESSENTIAL)
@@ -92,9 +101,27 @@ class PickViewModel @Inject constructor(
 
         // TODO: hali keyingi darsni avtomatik aniqlash algoritmini ishlab chiqqanim yo'q
         val nextLessonUnit = unitId ?: 0
+
         viewModelScope.launch {
+
+            val collectionId = collection.value.id
+            val partId = currentPart.value
+
+            val words = getWordsByUnitUseCase(collectionId, partId, nextLessonUnit)
+            val nativeWords = getNativeWordsByUnitUseCase(collectionId, partId, nextLessonUnit)
+            val scores = getScoresByUnitUseCase(collectionId, partId, nextLessonUnit)
+            val stories = getStoriesByUnitUseCase(collectionId, partId, nextLessonUnit)
+
             _navigationEvent.emit(
-                NavigationEvent(collection.value.id, currentPart.value, nextLessonUnit)
+                NavigationEvent(
+                    collectionId,
+                    partId,
+                    nextLessonUnit,
+                    ArrayList(words),
+                    ArrayList(nativeWords),
+                    ArrayList(scores),
+                    ArrayList(stories)
+                )
             )
         }
     }

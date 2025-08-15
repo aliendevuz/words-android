@@ -45,6 +45,8 @@ class HomeActivity : BaseActivity() {
     private lateinit var beginnerBookAdapter: BeginnerBookAdapter
     private lateinit var essentialBookAdapter: EssentialBookAdapter
 
+    private var isOpened = false
+
     private val prefs by lazy {
         getSharedPreferences("app_prefs", MODE_PRIVATE)
     }
@@ -94,6 +96,11 @@ class HomeActivity : BaseActivity() {
         collectBooks()
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        isOpened = false
+    }
+
     private val welcomeLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -111,7 +118,7 @@ class HomeActivity : BaseActivity() {
 
     private fun setFirstTimeFalse() {
         prefs.edit {
-            putBoolean("first_time", false)
+            putBoolean("first_time", false).apply()
         }
     }
 
@@ -122,7 +129,7 @@ class HomeActivity : BaseActivity() {
     private fun setStatusPadding(padding: Int) {
         if (padding != 0) {
             prefs.edit {
-                putInt("status_padding", padding)
+                putInt("status_padding", padding).apply()
             }
         } else {
             Logger.w("Status padding is $padding")
@@ -135,7 +142,7 @@ class HomeActivity : BaseActivity() {
 
     private fun setReady() {
         prefs.edit {
-            putBoolean("is_ready", true)
+            putBoolean("is_ready", true).apply()
         }
     }
 
@@ -184,27 +191,40 @@ class HomeActivity : BaseActivity() {
     private fun initViews() {
 
         beginnerBookAdapter = BeginnerBookAdapter { part ->
-            if (isReady()) {
-                val intent = Intent(this, PickActivity::class.java)
-                intent.putExtra("collection", WordCollection.BEGINNER.id)
-                intent.putExtra("part", part.id)
-                startActivityWithZoomAnimation(intent)
-            } else {
-                if (!isConnected(this)) {
-                    showNoInternet()
+
+            if (!isOpened) {
+
+                if (isReady()) {
+
+                    isOpened = true
+
+                    val intent = Intent(this, PickActivity::class.java)
+                    intent.putExtra("collection", WordCollection.BEGINNER.id)
+                    intent.putExtra("part", part.id)
+                    startActivityWithZoomAnimation(intent)
+                } else {
+                    if (!isConnected(this)) {
+                        showNoInternet()
+                    }
                 }
             }
         }
 
         essentialBookAdapter = EssentialBookAdapter { part ->
-            if (isReady()) {
-                val intent = Intent(this, PickActivity::class.java)
-                intent.putExtra("collection", WordCollection.ESSENTIAL.id)
-                intent.putExtra("part", part.id)
-                startActivityWithZoomAnimation(intent)
-            } else {
-                if (!isConnected(this)) {
-                    showNoInternet()
+
+            if (!isOpened) {
+
+                isOpened = true
+
+                if (isReady()) {
+                    val intent = Intent(this, PickActivity::class.java)
+                    intent.putExtra("collection", WordCollection.ESSENTIAL.id)
+                    intent.putExtra("part", part.id)
+                    startActivityWithZoomAnimation(intent)
+                } else {
+                    if (!isConnected(this)) {
+                        showNoInternet()
+                    }
                 }
             }
         }
@@ -218,12 +238,18 @@ class HomeActivity : BaseActivity() {
         binding.rvEssential.adapter = essentialBookAdapter
 
         binding.bOpenSelector.setOnClickListener {
-            if (isReady()) {
-                val intent = Intent(this, SelectActivity::class.java)
-                startActivityWithZoomAnimation(intent)
-            } else {
-                if (!isConnected(this)) {
-                    showNoInternet()
+
+            if (!isOpened) {
+                if (isReady()) {
+
+                    isOpened = true
+
+                    val intent = Intent(this, SelectActivity::class.java)
+                    startActivityWithZoomAnimation(intent)
+                } else {
+                    if (!isConnected(this)) {
+                        showNoInternet()
+                    }
                 }
             }
         }

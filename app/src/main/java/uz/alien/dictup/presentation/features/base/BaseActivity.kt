@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.SeekBar
 import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -17,80 +18,131 @@ import uz.alien.dictup.presentation.common.extention.initDialog
 import uz.alien.dictup.presentation.common.extention.interstitialAd
 import uz.alien.dictup.presentation.common.extention.loadInterstitialAd
 import uz.alien.dictup.presentation.common.extention.setSystemExclusion
+import androidx.core.content.edit
 
 abstract class BaseActivity : AppCompatActivity() {
 
-  private lateinit var binding: BaseActivityBinding
-  private lateinit var drawerLayout: DrawerLayout
-  private lateinit var navigationBinding: BaseNavigationBinding
+    private lateinit var binding: BaseActivityBinding
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navigationBinding: BaseNavigationBinding
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+    private val prefs by lazy {
+        getSharedPreferences("app_prefs", MODE_PRIVATE)
+    }
 
-    installSplashScreen()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-    binding = BaseActivityBinding.inflate(layoutInflater)
-    navigationBinding = BaseNavigationBinding.inflate(layoutInflater)
-    drawerLayout = binding.root
-    binding.navigationView.addView(navigationBinding.root)
+        installSplashScreen()
 
-    initViews()
+        binding = BaseActivityBinding.inflate(layoutInflater)
+        navigationBinding = BaseNavigationBinding.inflate(layoutInflater)
+        drawerLayout = binding.root
+        binding.navigationView.addView(navigationBinding.root)
 
-    loadInterstitialAd()
+        initViews()
 
-    onBackPressedDispatcher.addCallback(this@BaseActivity) {
-      if (isDrawerOpen()) {
-        closeDrawer()
-      } else {
-        if (isEnabled) {
-          remove()
-          onBackPressedDispatcher.onBackPressed()
+        loadInterstitialAd()
+
+        onBackPressedDispatcher.addCallback(this@BaseActivity) {
+            if (isDrawerOpen()) {
+                closeDrawer()
+            } else {
+                if (isEnabled) {
+                    remove()
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
         }
-      }
+
+        setSystemExclusion(binding.root)
+
+        setContentView(binding.root)
     }
 
-    setSystemExclusion(binding.root)
+    private fun initViews() {
 
-    setContentView(binding.root)
-  }
+        navigationBinding.bShare.setOnClickListener {
+            val shareIntent = Intent(Intent.ACTION_SEND)
+            shareIntent.type = "text/plain"
+            val appLink = "https://play.google.com/store/apps/details?id=$packageName"
+            shareIntent.putExtra(Intent.EXTRA_TEXT, appLink)
+            startActivity(Intent.createChooser(shareIntent, "Share DictUp via"))
+        }
 
-  private fun initViews() {
+        navigationBinding.bShowAd.setOnClickListener {
+            interstitialAd?.show(this)
+        }
 
-    navigationBinding.bShare.setOnClickListener {
-      val shareIntent = Intent(Intent.ACTION_SEND)
-      shareIntent.type = "text/plain"
-      val appLink = "https://play.google.com/store/apps/details?id=$packageName"
-      shareIntent.putExtra(Intent.EXTRA_TEXT, appLink)
-      startActivity(Intent.createChooser(shareIntent, "Share DictUp via"))
+        navigationBinding.seekPitch.progress = (getPitch() * 100).toInt()
+        navigationBinding.seekSpeed.progress = (getSpeed() * 100).toInt()
+
+        navigationBinding.tvPitchValue.text = getPitch().toString()
+        navigationBinding.tvSpeedValue.text = getSpeed().toString()
+
+        navigationBinding.seekPitch.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val pitch = progress / 100f
+                navigationBinding.tvPitchValue.text = pitch.toString()
+                savePitch(pitch)
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        navigationBinding.seekSpeed.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val speed = progress / 100f
+                navigationBinding.tvSpeedValue.text = speed.toString()
+                saveSpeed(speed)
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
     }
 
-    navigationBinding.bShowAd.setOnClickListener {
-      interstitialAd?.show(this)
+    private fun getPitch(): Float {
+        return prefs.getFloat("pitch", 1.0f)
     }
-  }
 
-  protected fun setContentLayout(inflate: (LayoutInflater) -> View) {
-    val contentView = inflate(layoutInflater)
-    binding.contentFrame.addView(contentView)
-  }
+    private fun getSpeed(): Float {
+        return prefs.getFloat("speed", 1.0f)
+    }
 
-  protected fun isDrawerOpen(): Boolean {
-    return drawerLayout.isDrawerOpen(GravityCompat.START)
-  }
+    private fun savePitch(pitch: Float) {
+        prefs.edit {
+            putFloat("pitch", pitch)
+        }
+    }
 
-  protected fun closeDrawer() {
-    drawerLayout.closeDrawer(GravityCompat.START)
-  }
+    private fun saveSpeed(speed: Float) {
+        prefs.edit {
+            putFloat("speed", speed)
+        }
+    }
 
-  protected fun openDrawer() {
-    drawerLayout.openDrawer(GravityCompat.START)
-  }
+    protected fun setContentLayout(inflate: (LayoutInflater) -> View) {
+        val contentView = inflate(layoutInflater)
+        binding.contentFrame.addView(contentView)
+    }
 
-  protected fun lockDrawer() {
-    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-  }
+    protected fun isDrawerOpen(): Boolean {
+        return drawerLayout.isDrawerOpen(GravityCompat.START)
+    }
 
-  protected fun unlockDrawer() {
-    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-  }
+    protected fun closeDrawer() {
+        drawerLayout.closeDrawer(GravityCompat.START)
+    }
+
+    protected fun openDrawer() {
+        drawerLayout.openDrawer(GravityCompat.START)
+    }
+
+    protected fun lockDrawer() {
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+    }
+
+    protected fun unlockDrawer() {
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+    }
 }

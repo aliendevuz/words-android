@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/vBackground"
+        android:background="#80000000"
+        android:alpha="0"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <FrameLayout
+        android:id="@+id/flBackground"
+        android:outlineSpotShadowColor="@color/black"
+        android:elevation="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/vpWord"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:layout_gravity="center"
+            android:id="@+id/tvItemWord"
+            android:textSize="16sp"
+            android:text="target"
+            android:textColor="@color/color_welcome_text"
+            android:textStyle="bold"
+            android:alpha="0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </FrameLayout>
+
+</FrameLayout>

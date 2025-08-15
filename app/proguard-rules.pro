@@ -44,3 +44,7 @@
 # Retrofit (ixtiyoriy, lekin foydali)
 -keep class retrofit2.** { *; }
 -dontwarn retrofit2.**
+
+-dontwarn com.caverock.androidsvg.SVG
+-dontwarn com.caverock.androidsvg.SVGParseException
+-dontwarn pl.droidsonroids.gif.GifDrawable

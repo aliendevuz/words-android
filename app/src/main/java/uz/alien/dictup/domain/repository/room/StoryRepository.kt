@@ -16,5 +16,7 @@ interface StoryRepository {
 
     suspend fun getAllStories(): List<Story>
 
+    suspend fun getStoriesByUnit(collectionId: Int, partId: Int, unitId: Int): List<Story>
+
     suspend fun clearAllStories()
 }

@@ -24,6 +24,10 @@ import uz.alien.dictup.domain.usecase.GetScoreOfEssentialUseCase
 import uz.alien.dictup.domain.usecase.GetUnitsPercentUseCase
 import uz.alien.dictup.domain.usecase.CreateUserUseCase
 import uz.alien.dictup.domain.usecase.FetchAndActivateUseCase
+import uz.alien.dictup.domain.usecase.GetNativeWordsByUnitUseCase
+import uz.alien.dictup.domain.usecase.GetScoresByUnitUseCase
+import uz.alien.dictup.domain.usecase.GetStoriesByUnitUseCase
+import uz.alien.dictup.domain.usecase.GetWordsByUnitUseCase
 import uz.alien.dictup.domain.usecase.SyncDataUseCase
 
 @Module
@@ -89,4 +93,24 @@ object UseCaseModule {
     fun provideGetUnitsPercentUseCase(
         scoreRepository: ScoreRepository
     ) = GetUnitsPercentUseCase(scoreRepository)
+
+    @Provides
+    fun provideGetWordsByUnitUseCase(
+        wordRepository: WordRepository
+    ) = GetWordsByUnitUseCase(wordRepository)
+
+    @Provides
+    fun provideGetNativeWordsByUnitUseCase(
+        nativeWordRepository: NativeWordRepository
+    ) = GetNativeWordsByUnitUseCase(nativeWordRepository)
+
+    @Provides
+    fun provideGetScoresByUnitUseCase(
+        scoreRepository: ScoreRepository
+    ) = GetScoresByUnitUseCase(scoreRepository)
+
+    @Provides
+    fun provideGetStoriesByUnitUseCase(
+        storyRepository: StoryRepository
+    ) = GetStoriesByUnitUseCase(storyRepository)
 }

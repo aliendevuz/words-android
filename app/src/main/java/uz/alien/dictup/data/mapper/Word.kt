@@ -35,8 +35,8 @@ fun Word.toWordEntity(): WordEntity {
 fun WordDto.toWord() : Word {
     return Word(
         word = this.w,
-        transcription = this.tp,
-        type = this.t,
+        transcription = this.t,
+        type = this.tp,
         definition = this.d,
         sentence = this.s
     )

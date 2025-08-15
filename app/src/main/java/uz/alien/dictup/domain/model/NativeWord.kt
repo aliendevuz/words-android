@@ -1,5 +1,9 @@
 package uz.alien.dictup.domain.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class NativeWord(
     val id: Int? = null,
     val word: String,
@@ -9,4 +13,4 @@ data class NativeWord(
     val sentence: String,
     val wordId: Int? = null,
     val nativeLanguage: String
-)
+): Parcelable

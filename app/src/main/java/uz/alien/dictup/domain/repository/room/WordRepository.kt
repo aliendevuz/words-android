@@ -16,5 +16,7 @@ interface WordRepository {
 
     suspend fun getAllWords(): List<Word>
 
+    suspend fun getWordsByFullPath(collectionId: Int, partId: Int, unitId: Int): List<Word>
+
     suspend fun clearAllWords()
 }

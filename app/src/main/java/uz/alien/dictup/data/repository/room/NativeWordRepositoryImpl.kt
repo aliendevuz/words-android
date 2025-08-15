@@ -34,6 +34,15 @@ class NativeWordRepositoryImpl(
         return nativeWordDao.getAllNativeWords().map { it.toNativeWord() }
     }
 
+    override suspend fun getNativeWordsByFullPath(
+        collectionId: Int,
+        partId: Int,
+        unitId: Int
+    ): List<NativeWord> {
+        return nativeWordDao.getNativeWordsByFullPath(collectionId, partId, unitId)
+            .map { it.toNativeWord() }
+    }
+
     override suspend fun clearAllNativeWords() {
         nativeWordDao.clearAllNativeWords()
     }

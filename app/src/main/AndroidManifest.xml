@@ -72,6 +72,7 @@
         <activity android:name=".presentation.features.lesson.LessonActivity" />
         <activity android:name=".presentation.features.quiz.QuizActivity" />
         <activity android:name=".presentation.features.result.ResultActivity" />
+        <activity android:name=".presentation.features.story.StoryActivity" />
 
         <service android:name=".infrastructure.service.MyFirebaseInstanceIDService"
             android:exported="false">

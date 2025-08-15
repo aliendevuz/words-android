@@ -24,115 +24,129 @@ import uz.alien.dictup.shared.WordCollection
 @AndroidEntryPoint
 class PickActivity : BaseActivity() {
 
-  private lateinit var binding: PickActivityBinding
-  private val viewModel: PickViewModel by viewModels()
+    private lateinit var binding: PickActivityBinding
+    private val viewModel: PickViewModel by viewModels()
 
-  private lateinit var partAdapter: PartAdapter
-  private lateinit var partPagerAdapter: PartPagerAdapter
+    private lateinit var partAdapter: PartAdapter
+    private lateinit var partPagerAdapter: PartPagerAdapter
 
-  private val prefs by lazy {
-    getSharedPreferences("app_prefs", MODE_PRIVATE)
-  }
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-
-    setClearEdge()
-
-    binding = PickActivityBinding.inflate(layoutInflater)
-    setContentLayout {
-      binding.root
+    private val prefs by lazy {
+        getSharedPreferences("app_prefs", MODE_PRIVATE)
     }
 
-    if (getStatusPadding() != 0) {
-      binding.statusBarPadding.setPadding(0, getStatusPadding(), 0, 0)
-    }
+    private var isOpened = false
 
-    val collectionId = intent.getIntExtra("collection", WordCollection.ESSENTIAL.id)
-    val collection = WordCollection.fromId(collectionId)!!
-    val part = intent.getIntExtra("part", 0)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-    viewModel.setCollection(collection)
+        setClearEdge()
 
-    val partCount: Int
-    val unitCount: Int
-
-    when (collection) {
-      WordCollection.BEGINNER -> {
-        partCount = 4
-        unitCount = 20
-      }
-      WordCollection.ESSENTIAL -> {
-        partCount = 6
-        unitCount = 30
-      }
-    }
-
-    viewModel.prepareUnits(partCount, unitCount, part)
-
-    partAdapter = PartAdapter { partId ->
-      viewModel.setCurrentPart(partId)
-      binding.vpPart.currentItem = partId
-    }
-
-    binding.rvParts.layoutManager = AutoLayoutManager(this, partCount)
-    binding.rvParts.adapter = partAdapter
-
-
-    partPagerAdapter = PartPagerAdapter(this, viewModel.parts.value)
-    binding.vpPart.adapter = partPagerAdapter
-    binding.vpPart.setCurrentItem(part, false)
-
-    binding.vpPart.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-      override fun onPageSelected(position: Int) {
-        viewModel.setCurrentPart(position)
-      }
-    })
-
-    var isFirst = true
-
-    lifecycleScope.launch {
-      viewModel.parts.collectLatest { parts ->
-        partAdapter.submitList(parts)
-        if (isFirst) {
-          binding.vpPart.postDelayed(200L) {
-            binding.vpPart.offscreenPageLimit = parts.size
-          }
-          isFirst = false
+        binding = PickActivityBinding.inflate(layoutInflater)
+        setContentLayout {
+            binding.root
         }
-      }
-    }
 
-    lifecycleScope.launch {
-      viewModel.navigationEvent.collectLatest { event ->
-        when(event) {
-          is NavigationEvent -> {
-            val intent = Intent(this@PickActivity, LessonActivity::class.java)
-            intent.putExtra("collection", event.collectionId)
-            intent.putExtra("part", event.partId)
-            intent.putExtra("unit", event.unitId)
-            startActivityWithZoomAnimation(intent)
-          }
-          null -> {}
+        if (getStatusPadding() != 0) {
+            binding.statusBarPadding.setPadding(0, getStatusPadding(), 0, 0)
         }
-      }
+
+        val collectionId = intent.getIntExtra("collection", WordCollection.ESSENTIAL.id)
+        val collection = WordCollection.fromId(collectionId)!!
+        val part = intent.getIntExtra("part", 0)
+
+        viewModel.setCollection(collection)
+
+        val partCount: Int
+        val unitCount: Int
+
+        when (collection) {
+            WordCollection.BEGINNER -> {
+                partCount = 4
+                unitCount = 20
+            }
+            WordCollection.ESSENTIAL -> {
+                partCount = 6
+                unitCount = 30
+            }
+        }
+
+        viewModel.prepareUnits(partCount, unitCount, part)
+
+        partAdapter = PartAdapter { partId ->
+            viewModel.setCurrentPart(partId)
+            binding.vpPart.currentItem = partId
+        }
+
+        binding.rvParts.layoutManager = AutoLayoutManager(this, partCount)
+        binding.rvParts.adapter = partAdapter
+
+
+        partPagerAdapter = PartPagerAdapter(this, viewModel.parts.value)
+        binding.vpPart.adapter = partPagerAdapter
+        binding.vpPart.setCurrentItem(part, false)
+
+        binding.vpPart.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                viewModel.setCurrentPart(position)
+            }
+        })
+
+        var isFirst = true
+
+        lifecycleScope.launch {
+            viewModel.parts.collectLatest { parts ->
+                partAdapter.submitList(parts)
+                if (isFirst) {
+                    binding.vpPart.postDelayed(200L) {
+                        binding.vpPart.offscreenPageLimit = parts.size
+                    }
+                    isFirst = false
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.navigationEvent.collectLatest { event ->
+                when(event) {
+                    is NavigationEvent -> {
+                        if (!isOpened) {
+                            isOpened = true
+                            val intent = Intent(this@PickActivity, LessonActivity::class.java)
+                            intent.putExtra("collection", event.collectionId)
+                            intent.putExtra("part", event.partId)
+                            intent.putExtra("unit", event.unitId)
+                            intent.putParcelableArrayListExtra("words", event.words)
+                            intent.putParcelableArrayListExtra("native_words", event.nativeWords)
+                            intent.putParcelableArrayListExtra("scores", event.scores)
+                            intent.putParcelableArrayListExtra("stories", event.stories)
+                            startActivityWithZoomAnimation(intent)
+                        }
+                    }
+                    null -> {}
+                }
+            }
+        }
+
+        binding.bGeneral.setOnClickListener {
+            viewModel.openLesson()
+        }
+
+        binding.drawerButton.setOnClickListener {
+            openDrawer()
+        }
     }
 
-    binding.bGeneral.setOnClickListener {
-      viewModel.openLesson()
+    override fun onRestart() {
+        super.onRestart()
+        isOpened = false
     }
 
-    binding.drawerButton.setOnClickListener {
-      openDrawer()
+    private fun getStatusPadding(): Int {
+        return prefs.getInt("status_padding", 45)
     }
-  }
 
-  private fun getStatusPadding(): Int {
-    return prefs.getInt("status_padding", 45)
-  }
-
-  override fun finish() {
-    super.finish()
-    applyExitZoomTransition()
-  }
+    override fun finish() {
+        super.finish()
+        applyExitZoomTransition()
+    }
 }

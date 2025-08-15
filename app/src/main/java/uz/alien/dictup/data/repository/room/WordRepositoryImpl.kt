@@ -34,6 +34,10 @@ class WordRepositoryImpl(
         return wordDao.getAllWords().map { it.toWord() }
     }
 
+    override suspend fun getWordsByFullPath(collectionId: Int, partId: Int, unitId: Int): List<Word> {
+        return wordDao.getWordByFullPath(collectionId, partId, unitId).map { it.toWord() }
+    }
+
     override suspend fun clearAllWords() {
         wordDao.clearAllWords()
     }

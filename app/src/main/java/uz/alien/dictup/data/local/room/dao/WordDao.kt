@@ -31,6 +31,9 @@ interface WordDao {
     @Query("SELECT * FROM words")
     suspend fun getAllWords(): List<WordEntity>
 
+    @Query("SELECT * FROM words WHERE collectionId = :collectionId AND partId = :partId AND unitId = :unitId")
+    suspend fun getWordByFullPath(collectionId: Int, partId: Int, unitId: Int): List<WordEntity>
+
     @Query("DELETE FROM words")
     suspend fun clearAllWords()
 }

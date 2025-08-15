@@ -34,6 +34,14 @@ class StoryRepositoryImpl(
         return storyDao.getAllStories().map { it.toStory() }
     }
 
+    override suspend fun getStoriesByUnit(
+        collectionId: Int,
+        partId: Int,
+        unitId: Int
+    ): List<Story> {
+        return storyDao.getStoriesByFullPath(collectionId, partId, unitId)
+    }
+
     override suspend fun clearAllStories() {
         storyDao.clearAllStories()
     }

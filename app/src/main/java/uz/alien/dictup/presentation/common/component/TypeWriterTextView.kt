@@ -1,4 +1,4 @@
-package uz.alien.test.lesson
+package uz.alien.dictup.presentation.common.component
 
 import android.content.Context
 import android.os.Handler

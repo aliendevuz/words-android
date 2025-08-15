@@ -29,6 +29,8 @@ class SelectActivity : BaseActivity() {
     private lateinit var collectionAdapter: CollectionAdapter
     private lateinit var collectionPagerAdapter: CollectionPagerAdapter
 
+    private var isOpened = false
+
     private val prefs by lazy {
         getSharedPreferences("app_prefs", MODE_PRIVATE)
     }
@@ -87,12 +89,20 @@ class SelectActivity : BaseActivity() {
         }
 
         binding.bStart.setOnClickListener {
-            val selectedUnits = viewModel.getSelectedUnits()
-            val intent = Intent(this, QuizActivity::class.java)
-            intent.putExtra("quiz_count", viewModel.getQuizCount())
-            intent.putExtra("units", selectedUnits.toTypedArray())
-            startActivityWithAlphaAnimation(intent)
+            if (!isOpened) {
+                isOpened = true
+                val selectedUnits = viewModel.getSelectedUnits()
+                val intent = Intent(this, QuizActivity::class.java)
+                intent.putExtra("quiz_count", viewModel.getQuizCount())
+                intent.putExtra("units", selectedUnits.toTypedArray())
+                startActivityWithAlphaAnimation(intent)
+            }
         }
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        isOpened = false
     }
 
     private fun saveLastCollectionId(id: Int) {

@@ -34,6 +34,16 @@ interface NativeWordDao {
     @Query("SELECT * FROM native_words")
     suspend fun getAllNativeWords(): List<NativeWordEntity>
 
+    @Query("""
+        SELECT n.* 
+        FROM native_words AS n
+        INNER JOIN words AS w ON n.wordId = w.id
+        WHERE w.collectionId = :collectionId
+          AND w.partId = :partId
+          AND w.unitId = :unitId
+    """)
+    suspend fun getNativeWordsByFullPath(collectionId: Int, partId: Int, unitId: Int): List<NativeWordEntity>
+
     @Query("DELETE FROM native_words")
     suspend fun clearAllNativeWords()
 }

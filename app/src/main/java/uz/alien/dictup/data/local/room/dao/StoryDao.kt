@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import uz.alien.dictup.data.local.room.entity.StoryEntity
+import uz.alien.dictup.domain.model.Story
 
 @Dao
 interface StoryDao {
@@ -30,6 +31,9 @@ interface StoryDao {
 
     @Query("SELECT * FROM stories")
     suspend fun getAllStories(): List<StoryEntity>
+
+    @Query("SELECT * FROM stories WHERE collectionId = :collectionId AND partId = :partId AND unitId = :unitId")
+    suspend fun getStoriesByFullPath(collectionId: Int, partId: Int, unitId: Int): List<Story>
 
     @Query("DELETE FROM stories")
     suspend fun clearAllStories()

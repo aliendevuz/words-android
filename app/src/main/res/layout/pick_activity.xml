@@ -24,16 +24,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/drawerButton"
-                    android:src="@drawable/v_bars"
-                    android:contentDescription="Open drawer"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:padding="12dp"
-                    android:layout_margin="8dp"
+                    android:layout_margin="12dp"
+                    android:background="@android:color/transparent"
                     android:clickable="true"
-                    android:focusable="true" />
+                    android:contentDescription="Open drawer"
+                    android:focusable="true"
+                    android:src="@drawable/v_bars" />
 
                 <TextView
                     android:text="Choose Unit"

@@ -37,12 +37,6 @@ class LessonActivity : AppCompatActivity() {
             insets
         }
 
-        binding.typeWriterTextView.startTyping(
-            text = "Salom! Bu chatbot uslubidagi matn! Xullas bu uzundan uzun matnlarni ko'rsatish uchun mo'ljallangan bo'lib, userlarni matnni o'qib zerikib qolmasligiga yordam beradi...",
-            typingDelay = 40,
-            enableCursor = true
-        )
-
         val adapter = WordAdapter { position, view ->
             // Element joylashuvini olish
             val bounds = Rect()
