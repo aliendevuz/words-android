@@ -41,12 +41,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="1.6dp"
                 android:background="@drawable/select_button_background"
+                android:backgroundTint="@color/red_500"
                 android:elevation="4dp"
                 android:outlineSpotShadowColor="@color/black"
                 android:paddingVertical="2dp"
                 android:text="Clear All"
                 android:textAlignment="center"
-                android:textColor="@color/select_item_collection_text_selected_color"
+                android:textColor="@color/white"
                 app:layout_constraintEnd_toStartOf="@id/bInvert"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -57,12 +58,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="1.6dp"
                 android:background="@drawable/select_button_background"
+                android:backgroundTint="@color/orange_500"
                 android:elevation="4dp"
                 android:outlineSpotShadowColor="@color/black"
                 android:paddingVertical="2dp"
                 android:text="Invert"
                 android:textAlignment="center"
-                android:textColor="@color/select_item_collection_text_selected_color"
+                android:textColor="@color/white"
                 app:layout_constraintEnd_toStartOf="@id/bRandom"
                 app:layout_constraintStart_toEndOf="@id/bClearAll"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -73,12 +75,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="1.6dp"
                 android:background="@drawable/select_button_background"
+                android:backgroundTint="@color/yellow_700"
                 android:elevation="4dp"
                 android:outlineSpotShadowColor="@color/black"
                 android:paddingVertical="2dp"
                 android:text="Random"
                 android:textAlignment="center"
-                android:textColor="@color/select_item_collection_text_selected_color"
+                android:textColor="@color/white"
                 app:layout_constraintEnd_toStartOf="@id/bSelectAll"
                 app:layout_constraintStart_toEndOf="@id/bInvert"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -89,12 +92,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="1.6dp"
                 android:background="@drawable/select_button_background"
+                android:backgroundTint="@color/green_500"
                 android:elevation="4dp"
                 android:outlineSpotShadowColor="@color/black"
                 android:paddingVertical="2dp"
                 android:text="Select All"
                 android:textAlignment="center"
-                android:textColor="@color/select_item_collection_text_selected_color"
+                android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/bRandom"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -124,24 +128,29 @@
             android:elevation="2dp"
             android:orientation="horizontal"
             android:outlineSpotShadowColor="@color/black"
-            android:paddingVertical="7.4dp"
             app:layout_constraintBottom_toBottomOf="parent">
 
-            <SeekBar
+            <com.google.android.material.slider.Slider
                 android:id="@+id/sbQuizCount"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="1.34dp"
-                android:max="3"
-                android:progress="3"
-                android:progressTint="@color/select_item_unit_text_color"
-                android:thumbTint="@color/select_item_unit_text_color"
-                android:tickMark="@drawable/select_seek_bar_tick"
+                android:stepSize="5"
+                android:value="15"
+                android:valueFrom="5"
+                android:valueTo="20"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/tvQuizCount"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:thumbColor="@color/primary"
+                app:thumbRadius="12dp"
+                app:thumbStrokeColor="@color/secondary"
+                app:tickColorActive="@color/white"
+                app:tickColorInactive="@color/primary"
+                app:trackColorActive="@color/primary"
+                app:trackColorInactive="@color/track"
+                app:trackHeight="16dp"
+                app:trackStopIndicatorSize="4dp" />
 
             <TextView
                 android:id="@+id/tvQuizCount"
@@ -149,12 +158,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="12dp"
                 android:gravity="end"
-                android:minWidth="40dp"
-                android:text="20"
-                android:textColor="@color/select_item_unit_text_color"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="10"
+                android:textColor="@color/primary"
+                app:layout_constraintBottom_toBottomOf="@id/sbQuizCount"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@id/sbQuizCount" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

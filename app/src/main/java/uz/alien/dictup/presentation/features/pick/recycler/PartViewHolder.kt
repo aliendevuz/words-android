@@ -30,7 +30,7 @@ class PartViewHolder(
         binding.tvPart.setTextColor(
             ContextCompat.getColor(
                 itemView.context,
-                if (isCurrent) R.color.pick_item_part_text_current_color else R.color.pick_item_part_text_color
+                if (isCurrent) R.color.white else R.color.primary_text
             )
         )
 

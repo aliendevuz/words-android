@@ -1,49 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/select_item_unit_background"
-    android:elevation="3.2dp"
-    android:layout_margin="1.6dp"
-    android:outlineSpotShadowColor="@color/black">
+    app:cardElevation="3.2dp"
+    app:strokeColor="@color/inner_background"
+    app:strokeWidth="2dp"
+    app:cardCornerRadius="6dp"
+    android:backgroundTint="@color/inner_background"
+    android:stateListAnimator="@animator/select_item_unit_background"
+    android:layout_margin="1.6dp">
 
-    <TextView
-        android:id="@+id/tvUnit"
-        android:paddingHorizontal="8dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp"
-        android:text="unit 1"
-        android:textColor="@color/item_general_unit_text"
-        app:layout_constraintBottom_toTopOf="@id/progress"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tvPercent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="6dp"
-        android:text="0%"
-        android:paddingHorizontal="8dp"
-        android:textColor="@color/item_general_unit_text_percentage"
-        android:textSize="10sp"
-        app:layout_constraintBaseline_toBaselineOf="@id/tvUnit"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:id="@+id/progress"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:progress="0"
-        android:paddingHorizontal="8dp"
-        app:indicatorColor="@color/general_progress_indicator"
-        app:indicatorTrackGapSize="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:trackColor="@color/general_progress_indicator_track"
-        app:trackStopIndicatorSize="0dp" />
+        android:layout_height="wrap_content">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/tvUnit"
+            android:paddingHorizontal="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:text="unit 1"
+            android:textColor="@color/primary_text"
+            app:layout_constraintBottom_toTopOf="@id/progress"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvPercent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="6dp"
+            android:text="0%"
+            android:paddingHorizontal="8dp"
+            android:textColor="@color/primary_text"
+            android:textSize="10sp"
+            app:layout_constraintBaseline_toBaselineOf="@id/tvUnit"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:progress="0"
+            android:paddingHorizontal="8dp"
+            app:indicatorColor="@color/green_500"
+            app:indicatorTrackGapSize="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:trackColor="@color/track"
+            app:trackStopIndicatorSize="0dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

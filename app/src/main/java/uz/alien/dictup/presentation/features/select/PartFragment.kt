@@ -10,7 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import uz.alien.dictup.core.utils.Logger
+import uz.alien.dictup.utils.Logger
 import uz.alien.dictup.databinding.SelectFragmentPartBinding
 import uz.alien.dictup.presentation.common.component.AutoLayoutManager
 import uz.alien.dictup.presentation.features.select.component.SelectableRecyclerView

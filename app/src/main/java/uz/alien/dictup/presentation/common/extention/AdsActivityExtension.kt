@@ -7,7 +7,7 @@ import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
-import uz.alien.dictup.core.utils.Logger
+import uz.alien.dictup.utils.Logger
 import java.util.WeakHashMap
 
 private val interstitialMap = WeakHashMap<AppCompatActivity, InterstitialAd?>()

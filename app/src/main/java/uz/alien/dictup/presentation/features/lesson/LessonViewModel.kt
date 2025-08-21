@@ -7,14 +7,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import uz.alien.dictup.domain.model.NativeWord
 import uz.alien.dictup.domain.model.Score
 import uz.alien.dictup.domain.model.Word
+import uz.alien.dictup.domain.repository.DataStoreRepository
 import uz.alien.dictup.presentation.features.lesson.model.WordUIState
-import uz.alien.dictup.shared.WordCollection
+import uz.alien.dictup.domain.model.WordCollection
 import javax.inject.Inject
 
 @HiltViewModel
-class LessonViewModel @Inject constructor() : ViewModel() {
+class LessonViewModel @Inject constructor(
+    dataStoreRepository: DataStoreRepository
+) : ViewModel() {
 
     private val emptyWordList = emptyList<WordUIState>()
+    val dataStore = dataStoreRepository
 
     private val _words = MutableStateFlow(emptyWordList)
     val words = _words.asStateFlow()

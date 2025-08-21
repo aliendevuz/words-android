@@ -9,6 +9,8 @@ import androidx.viewpager2.widget.ViewPager2
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import uz.alien.dictup.BuildConfig
+import uz.alien.dictup.utils.Logger
 import uz.alien.dictup.databinding.SelectActivityBinding
 import uz.alien.dictup.presentation.common.component.AutoLayoutManager
 import uz.alien.dictup.presentation.common.extention.applyExitZoomTransition
@@ -82,7 +84,7 @@ class SelectActivity : BaseActivity() {
             viewModel.collectionsFlow.collectLatest { collections ->
                 collectionAdapter.submitList(collections)
                 if (isFirst) {
-                    binding.vpCollection.offscreenPageLimit = collections.size
+                    binding.vpCollection.offscreenPageLimit = if (BuildConfig.DEBUG) 1 else collections.size
                     isFirst = false
                 }
             }

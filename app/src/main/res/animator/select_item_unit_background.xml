@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_activated="true" android:state_selected="true">
+        <objectAnimator
+            android:propertyName="strokeColor"
+            android:duration="137"
+            android:valueFrom="@color/inner_background"
+            android:valueTo="@color/primary"
+            android:valueType="colorType"
+            />
+    </item>
+    <item android:state_activated="true" android:state_selected="false">
+        <objectAnimator
+            android:propertyName="strokeColor"
+            android:duration="137"
+            android:valueFrom="@color/primary"
+            android:valueTo="@color/inner_background"
+            android:valueType="colorType"
+            />
+    </item>
+</selector>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="@color/back_item_lesson_unit_ripple">
+    android:color="@color/background_ripple">
     <item>
         <shape>
-            <solid android:color="@color/back_item_lesson_unit" />
+            <solid android:color="@color/inner_background" />
             <corners android:radius="6dp" />
 <!--            <stroke android:color="@color/item_lesson_unit_text" android:width="0.1dp" />-->
         </shape>

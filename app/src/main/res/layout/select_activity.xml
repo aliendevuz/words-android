@@ -57,7 +57,7 @@
             android:outlineSpotShadowColor="@color/black"
             android:text="Testni boshlash"
             android:textAllCaps="true"
-            android:textColor="@color/general_button_text" />
+            android:textColor="@color/white" />
 
         <ImageButton
             android:layout_width="52dp"

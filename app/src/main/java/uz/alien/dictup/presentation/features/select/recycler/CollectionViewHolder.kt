@@ -23,8 +23,8 @@ class CollectionViewHolder(
 
         val backgroundRes = when {
             isSelected and isCurrent -> R.drawable.select_item_collection_background_current
-            isSelected -> R.drawable.select_item_collection_background_selected
             isCurrent -> R.drawable.select_item_collection_background_current
+            isSelected -> R.drawable.select_item_collection_background_selected
             else -> R.drawable.select_item_collection_background
         }
 
@@ -33,7 +33,7 @@ class CollectionViewHolder(
         binding.tvCollection.setTextColor(
             ContextCompat.getColor(
                 itemView.context,
-                if (isCurrent) R.color.select_item_unit_text_selected_color else R.color.select_item_unit_text_color
+                if (isCurrent) R.color.white else R.color.primary_text
             )
         )
 

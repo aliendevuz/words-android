@@ -34,4 +34,12 @@ interface DataStoreRepository {
     suspend fun syncCompleted()
 
     suspend fun isSyncCompleted(): Flow<Boolean>
+
+    suspend fun saveTTSPitch(pitch: Float)
+
+    suspend fun getTTSPitch(): Flow<Float>
+
+    suspend fun saveTTSSpeed(speed: Float)
+
+    suspend fun getTTSSpeed(): Flow<Float>
 }

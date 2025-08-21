@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import uz.alien.dictup.core.utils.Logger
+import uz.alien.dictup.utils.Logger
 import uz.alien.dictup.domain.usecase.GetUnitsPercentUseCase
 import uz.alien.dictup.presentation.features.select.model.CollectionUIState
 import uz.alien.dictup.presentation.features.select.model.PartUIState
@@ -48,7 +48,7 @@ class SelectViewModel @Inject constructor(
     val partsFlows: MutableList<MutableStateFlow<List<PartUIState>>> = mutableListOf()
     val unitFlows: MutableList<List<MutableStateFlow<List<UnitUIState>>>> = mutableListOf()
 
-    val quizCount = MutableStateFlow(3)
+    val quizCount = MutableStateFlow(20f)
     val selectedUnitsCount = MutableStateFlow(0)
 
     init {
@@ -86,12 +86,16 @@ class SelectViewModel @Inject constructor(
 
         viewModelScope.launch {
 
+            val curColl = currentCollection
             currentParts[currentCollection]?.let { currentPart ->
                 val progressList = getUnitsPercentUseCase(currentCollection, currentPart)
 
-                unitFlows[currentCollection][currentPart].update { units ->
-                    units.mapIndexed { index, unit ->
-                        unit.copy(progress = progressList.getOrNull(index) ?: unit.progress)
+                if (currentCollection == curColl) {
+
+                    unitFlows[currentCollection][currentPart].update { units ->
+                        units.mapIndexed { index, unit ->
+                            unit.copy(progress = 50 - (progressList.getOrNull(index) ?: unit.progress))
+                        }
                     }
                 }
             }
@@ -109,12 +113,12 @@ class SelectViewModel @Inject constructor(
         updateUnits()
     }
 
-    fun setQuizCount(count: Int) {
+    fun setQuizCount(count: Float) {
         quizCount.value = count
     }
 
-    fun getQuizCount(): Int {
-        return quizCount.value * 5 + 5
+    fun getQuizCount(): Float {
+        return quizCount.value
     }
 
     fun setCurrentPart(partId: Int) {

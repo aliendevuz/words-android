@@ -7,7 +7,7 @@
 
     <LinearLayout
         android:id="@+id/statusBarPadding"
-        android:background="@color/app_bar"
+        android:background="@color/background"
         android:outlineSpotShadowColor="@color/black"
         android:elevation="8dp"
         android:paddingTop="20dp"
@@ -39,7 +39,7 @@
                     android:text="Choose Unit"
                     android:textAllCaps="true"
                     android:textSize="18sp"
-                    android:textColor="@color/app_bar_text"
+                    android:textColor="@color/secondary_text"
                     android:textStyle="bold"
                     android:fontFamily="@font/golos"
                     android:layout_width="wrap_content"
@@ -115,7 +115,7 @@
             android:outlineSpotShadowColor="@color/black"
             android:text="Davom etish"
             android:textAllCaps="true"
-            android:textColor="@color/general_button_text" />
+            android:textColor="@color/white" />
 
         <ImageButton
             android:layout_width="52dp"

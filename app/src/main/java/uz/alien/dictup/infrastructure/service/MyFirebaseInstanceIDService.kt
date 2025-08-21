@@ -2,7 +2,7 @@ package uz.alien.dictup.infrastructure.service
 
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import uz.alien.dictup.core.utils.Logger
+import uz.alien.dictup.utils.Logger
 
 class MyFirebaseInstanceIDService : FirebaseMessagingService() {
 

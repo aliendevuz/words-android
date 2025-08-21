@@ -23,10 +23,10 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     val beginnerBooks = arrayListOf(
-        Book(0, R.color.beginner_1, R.drawable.beginner_1_n, true),
-        Book(1, R.color.beginner_2, R.drawable.beginner_2_n, true),
-        Book(2, R.color.beginner_3, R.drawable.beginner_3_n, true),
-        Book(3, R.color.beginner_4, R.drawable.beginner_4_n, true)
+        Book(0, R.color.beginner_1, R.drawable.beginner_1, true),
+        Book(1, R.color.beginner_2, R.drawable.beginner_2, true),
+        Book(2, R.color.beginner_3, R.drawable.beginner_3, true),
+        Book(3, R.color.beginner_4, R.drawable.beginner_4, true)
     )
 
     val essentialBooks = arrayListOf(
@@ -60,18 +60,17 @@ class HomeViewModel @Inject constructor(
         _essentialBooks.update { it.map { book -> book.copy(isLoaded = isSyncCompleted) } }
 
         val beginnerPercents = getScoreOfBeginnerUseCase()
+        val essentialPercents = getScoreOfEssentialUseCase()
 
         _beginnerBooks.update { books ->
             books.mapIndexed { index, book ->
-                book.copy(progress = beginnerPercents[index])
+                book.copy(progress = 50 - beginnerPercents[index])
             }
         }
 
-        val essentialPercents = getScoreOfEssentialUseCase()
-
         _essentialBooks.update { books ->
             books.mapIndexed { index, book ->
-                book.copy(progress = essentialPercents[index])
+                book.copy(progress = 50 - essentialPercents[index])
             }
         }
     }

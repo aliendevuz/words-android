@@ -3,9 +3,8 @@
     android:color="@android:color/transparent">
     <item>
         <shape>
-            <solid android:color="@color/back_item_lesson_unit" />
+            <solid android:color="@color/inner_background" />
             <corners android:radius="6dp" />
-<!--            <stroke android:color="@color/item_lesson_unit_text" android:width="0.1dp" />-->
         </shape>
     </item>
 </ripple>

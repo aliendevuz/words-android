@@ -1,41 +1,42 @@
 package uz.alien.dictup.presentation.features.story
 
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
-import android.speech.tts.TextToSpeech
-import android.speech.tts.UtteranceProgressListener
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
 import android.text.style.BackgroundColorSpan
-import com.bumptech.glide.RequestManager
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
+import android.text.style.ClickableSpan
+import android.text.style.StyleSpan
+import android.view.View
+import androidx.activity.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import dagger.hilt.android.AndroidEntryPoint
 import io.noties.markwon.Markwon
 import io.noties.markwon.image.ImagesPlugin
 import io.noties.markwon.image.glide.GlideImagesPlugin
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import uz.alien.dictup.BuildConfig
 import uz.alien.dictup.R
-import uz.alien.dictup.core.utils.Logger
 import uz.alien.dictup.databinding.StoryActivityBinding
+import uz.alien.dictup.presentation.common.extention.applyExitZoomTransition
 import uz.alien.dictup.presentation.common.extention.setClearEdge
 import uz.alien.dictup.presentation.common.extention.setSystemPadding
 import uz.alien.dictup.presentation.features.base.BaseActivity
-import java.util.Locale
 
-class StoryActivity : BaseActivity(), TextToSpeech.OnInitListener {
+@AndroidEntryPoint
+class StoryActivity : BaseActivity() {
 
     private lateinit var binding: StoryActivityBinding
-    lateinit var tts: TextToSpeech
-
-    private val prefs by lazy {
-        getSharedPreferences("app_prefs", MODE_PRIVATE)
-    }
-
-    private var sentences: List<String> = emptyList()
-    private var currentIndex = 0
-    private var isPaused = true
+    private val viewModel: StoryViewModel by viewModels()
 
     private lateinit var markwonSpannable: Spannable
+    private lateinit var markwon: Markwon
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,174 +45,223 @@ class StoryActivity : BaseActivity(), TextToSpeech.OnInitListener {
         setContentLayout {
             binding.root
         }
-
-        tts = TextToSpeech(this, this)
-
         setClearEdge()
         setSystemPadding(binding.statusBarPadding)
 
-        initViews()
-    }
-
-    private fun getPitch(): Float {
-        return prefs.getFloat("pitch", 1.0f)
-    }
-
-    private fun getSpeed(): Float {
-        return prefs.getFloat("speed", 1.0f)
-    }
-
-    override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS) {
-            val result = tts.setLanguage(Locale.US)
-            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                Logger.e("TTS", "Til qo‘llab-quvvatlanmaydi")
-            } else {
-                tts.setPitch(getPitch())
-                tts.setSpeechRate(getSpeed())
-
-                // Listener qo‘shamiz
-                tts.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
-                    override fun onStart(utteranceId: String?) {
-                        Logger.d("TTS", "O‘qish boshlandi: $utteranceId")
-                    }
-
-                    override fun onDone(utteranceId: String?) {
-                        if (utteranceId != "warmup") {
-                            runOnUiThread {
-                                if (!isPaused) {
-                                    currentIndex++
-                                    if (currentIndex < sentences.size) {
-                                        playCurrent()
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    override fun onError(utteranceId: String?) {
-                        Logger.e("TTS", "Xato: $utteranceId")
-                    }
-                })
-
-                // Warmup uchun bo‘sh gap
-                tts.speak(" ", TextToSpeech.QUEUE_FLUSH, null, "warmup")
-            }
-        } else {
-            Logger.e("TTS", "TTS ishga tushmadi")
-        }
-    }
-
-    private fun highlightCurrentSentence() {
-        val spannable = SpannableString(markwonSpannable) // 🔹 original formatting saqlanadi
-
-        val currentSentence = sentences[currentIndex]
-        val start = spannable.toString().indexOf(currentSentence)
-        if (start >= 0) {
-            spannable.setSpan(
-                BackgroundColorSpan(Color.YELLOW),
-                start,
-                start + currentSentence.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-        }
-
-        binding.tvContent.text = spannable
-    }
-
-    private fun speakAloud(content: String) {
-        val params = Bundle()
-        val utteranceId = System.currentTimeMillis().toString()
-        tts.speak(content, TextToSpeech.QUEUE_FLUSH, params, utteranceId)
-    }
-
-    private fun playCurrent() {
-        if (currentIndex in sentences.indices) {
-            highlightCurrentSentence()
-            val text = sentences[currentIndex]
-            speakAloud(text)
-        }
-    }
-
-    private fun pause() {
-        tts.stop()
-        isPaused = true
-    }
-
-    private fun resume() {
-        if (isPaused) {
-            playCurrent()
-            isPaused = false
-        }
-    }
-
-    private fun next() {
-        if (currentIndex < sentences.size - 1) {
-            currentIndex++
-        }
-    }
-
-    private fun prev() {
-        if (currentIndex > 0) {
-            currentIndex--
-        }
-    }
-
-    private fun initViews() {
-
-        val title = intent.getStringExtra("title") ?: "No title"
-        val content = intent.getStringExtra("content") ?: "No content"
-
-        sentences = splitAndCleanContent(content)
-
-        val markwon = Markwon
+        markwon = Markwon
             .builder(this)
             .usePlugin(ImagesPlugin.create())
             .usePlugin(GlideImagesPlugin.create(this))
             .build()
 
-        val node = markwon.parse("# $title\n\n$content")
+        initViews()
+    }
+
+    private fun highlightCurrentSentence(currentIndex: Int) {
+        val spannable = SpannableString(markwonSpannable)
+
+        if (currentIndex != -1) {
+            val currentSentence = viewModel.sentences.value[currentIndex]
+            val start = spannable.toString().indexOf(currentSentence)
+            if (start >= 0) {
+                spannable.setSpan(
+                    BackgroundColorSpan(getColor(R.color.text_selected)),
+                    start,
+                    start + currentSentence.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+
+                binding.tvContent.post {
+                    val layout = binding.tvContent.layout ?: return@post
+                    val line = layout.getLineForOffset(start)
+
+                    val yTop = layout.getLineTop(line)
+                    val yBottom = layout.getLineBottom(line)
+
+                    val scrollY = binding.storyScrollView.scrollY
+                    val scrollHeight = binding.storyScrollView.height
+
+                    val scrollBottomMargin = (92 * binding.storyScrollView.resources.displayMetrics.density).toInt()
+
+                    if (yTop < scrollY) {
+                        binding.storyScrollView.smoothScrollTo(0, yTop, (BuildConfig.DURATION * 2).toInt())
+                    }
+
+                    else if (yBottom > scrollY + scrollHeight - scrollBottomMargin) {
+                        binding.storyScrollView.smoothScrollTo(0, yBottom - scrollHeight + scrollBottomMargin, (BuildConfig.DURATION * 2).toInt())
+                    }
+                }
+            }
+        } else {
+            binding.storyScrollView.post {
+                binding.storyScrollView.smoothScrollTo(0, 0, (BuildConfig.DURATION * 5).toInt())
+            }
+        }
+
+        binding.tvContent.text = spannable
+    }
+
+    private fun initViews() {
+
+        binding.drawerButton.setOnClickListener {
+            openDrawer()
+        }
+
+        val title = intent.getStringExtra("title") ?: "No title"
+        var content = viewModel.addTabsAfterParagraphs(
+            intent.getStringExtra("content") ?: "No content"
+        )
+        val words = intent.getStringArrayListExtra("words")
+
+        binding.tvContent.movementMethod = LinkMovementMethod.getInstance()
+        binding.tvContent.highlightColor = Color.TRANSPARENT
+
+        content = viewModel.setContent(content)
+
+        val headerText = "###         ${title}\n\n        "
+        val node = markwon.parse("$headerText${content}")
         markwonSpannable = markwon.render(node) as Spannable
+
+        val contentText = markwonSpannable.toString()
+        val headerLength = headerText.length
+
+        viewModel.sentences.value.forEachIndexed { index, sentence ->
+
+            val sentenceStart = contentText.indexOf(sentence, headerLength)
+            if (sentenceStart >= 0) {
+
+                var cursor = 0
+                // regex orqali so‘zlarni topamiz
+                val regex = Regex(words?.joinToString("|") { "\\b${Regex.escape(it)}\\b" } ?: "")
+                val matches = regex.findAll(sentence)
+
+                matches.forEach { match ->
+                    val matchStart = match.range.first
+                    val matchEnd = match.range.last + 1
+
+                    // matchdan oldingi bo‘sh segmentga sentence span
+                    if (cursor < matchStart) {
+                        val absStart = sentenceStart + cursor
+                        val absEnd = sentenceStart + matchStart
+                        markwonSpannable.setSpan(
+                            object : ClickableSpan() {
+                                override fun onClick(widget: View) {
+                                    viewModel.currentIndex.value = index
+                                    if (!viewModel.isPaused.value) {
+                                        viewModel.cont()
+                                    }
+                                }
+                                override fun updateDrawState(ds: TextPaint) {
+                                    super.updateDrawState(ds)
+                                    ds.isUnderlineText = false
+                                    ds.color = getColor(R.color.primary_text)
+                                }
+                            },
+                            absStart,
+                            absEnd,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+                    }
+
+                    val absMatchStart = sentenceStart + matchStart
+                    val absMatchEnd = sentenceStart + matchEnd
+                    markwonSpannable.setSpan(
+                        object : ClickableSpan() {
+                            override fun onClick(widget: View) {
+                                if (viewModel.isPaused.value) {
+                                    viewModel.speakAloud(match.value)
+                                }
+                            }
+                            override fun updateDrawState(ds: TextPaint) {
+                                super.updateDrawState(ds)
+                                ds.isUnderlineText = false
+                                ds.color = getColor(R.color.text_highlight)
+                                ds.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+                            }
+                        },
+                        absMatchStart,
+                        absMatchEnd,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                    markwonSpannable.setSpan(
+                        StyleSpan(Typeface.BOLD),
+                        absMatchStart,
+                        absMatchEnd,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+
+                    cursor = matchEnd
+                }
+
+                // oxirgi matchdan keyin qolgan segmentni sentence span
+                if (cursor < sentence.length) {
+                    val absStart = sentenceStart + cursor
+                    val absEnd = sentenceStart + sentence.length
+                    markwonSpannable.setSpan(
+                        object : ClickableSpan() {
+                            override fun onClick(widget: View) {
+                                viewModel.currentIndex.value = index
+                                if (!viewModel.isPaused.value) {
+                                    viewModel.cont()
+                                }
+                            }
+                            override fun updateDrawState(ds: TextPaint) {
+                                super.updateDrawState(ds)
+                                ds.isUnderlineText = false
+                                ds.color = getColor(R.color.primary_text)
+                            }
+                        },
+                        absStart,
+                        absEnd,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
+            }
+        }
+
         markwon.setParsedMarkdown(binding.tvContent, markwonSpannable)
 
-        val markdown = markwon.render(node)
-
-        markwon.setParsedMarkdown(binding.tvContent, markdown)
-
         binding.ibPlay.setOnClickListener {
-            if (isPaused) {
-                resume()
-                binding.ibPlay.setImageResource(R.drawable.v_pause)
-            } else {
-                pause()
-                binding.ibPlay.setImageResource(R.drawable.v_play)
-            }
+            viewModel.toggle()
         }
 
         binding.ibPrev.setOnClickListener {
-            prev()
+            viewModel.prev()
         }
 
         binding.ibNext.setOnClickListener {
-            next()
+            viewModel.next()
+        }
+
+        lifecycleScope.launch {
+            viewModel.currentIndex.collectLatest {
+                highlightCurrentSentence(it)
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.speakRequest.collectLatest { text ->
+                    viewModel.speakAloud(text) {
+                        viewModel.next()
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.isPaused.collectLatest {
+                if (it) {
+                    binding.ibPlay.setImageResource(R.drawable.v_play)
+                } else {
+                    binding.ibPlay.setImageResource(R.drawable.v_pause)
+                }
+            }
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        tts.stop()
-        tts.shutdown()
-    }
-
-    fun splitAndCleanContent(content: String): List<String> {
-        return content
-            .lines()  // 🔹 matnni \n bo'yicha bo'lish
-            .flatMap { line ->
-                line.split('.') // 🔹 keyin har bir qatorni nuqta bo'yicha bo'lish
-            }
-            .map { it.trim() } // 🔹 old-orqa bo'sh joylarni olish
-            .filter { it.isNotEmpty() } // 🔹 bo'sh satrlarni olib tashlash
-            .filter { it.any { ch -> ch.isLetterOrDigit() } } // 🔹 faqat belgilar bo‘lgan satrlar
-            .map { it.replace(Regex("\\s+"), " ") } // 🔹 ortiqcha bo'sh joylarni bitta bo'sh joyga tushirish
+    override fun finish() {
+        super.finish()
+        applyExitZoomTransition()
     }
 }

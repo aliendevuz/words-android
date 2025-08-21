@@ -10,7 +10,7 @@
         android:id="@+id/statusBarPadding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/books_background"
+        android:background="@color/background"
         android:elevation="4dp"
         android:outlineSpotShadowColor="@color/black"
         android:paddingTop="20dp">
@@ -41,7 +41,7 @@
                     android:fontFamily="@font/golos"
                     android:text="Vocabulary Books"
                     android:textAllCaps="true"
-                    android:textColor="@color/app_bar_text"
+                    android:textColor="@color/secondary_text"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -68,7 +68,7 @@
             android:layout_marginTop="12dp"
             android:fontFamily="@font/golos"
             android:text="Beginner book"
-            android:textColor="@color/app_bar_text"
+            android:textColor="@color/secondary_text"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -100,7 +100,7 @@
             android:layout_marginTop="12dp"
             android:fontFamily="@font/golos"
             android:text="Essential book"
-            android:textColor="@color/app_bar_text"
+            android:textColor="@color/secondary_text"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -124,9 +124,6 @@
             android:layout_marginStart="12dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="64dp"
-            android:background="@color/blue"
-            android:elevation="4dp"
-            android:outlineSpotShadowColor="@color/green"
             android:visibility="invisible" />
 
         <TextView
@@ -143,7 +140,7 @@
             android:gravity="center"
             android:outlineSpotShadowColor="@color/black"
             android:text="Umumiy Topshiriqlar"
-            android:textColor="@color/general_button_text"
+            android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -153,9 +150,6 @@
             android:layout_marginTop="20dp"
             android:layout_marginEnd="12dp"
             android:layout_marginBottom="64dp"
-            android:background="@color/purple"
-            android:elevation="4dp"
-            android:outlineSpotShadowColor="@color/green2"
             android:visibility="invisible" />
 
     </LinearLayout>

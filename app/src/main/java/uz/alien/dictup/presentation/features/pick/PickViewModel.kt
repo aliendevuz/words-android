@@ -18,7 +18,7 @@ import uz.alien.dictup.domain.usecase.GetWordsByUnitUseCase
 import uz.alien.dictup.presentation.features.pick.model.NavigationEvent
 import uz.alien.dictup.presentation.features.pick.model.PartUIState
 import uz.alien.dictup.presentation.features.pick.model.UnitUIState
-import uz.alien.dictup.shared.WordCollection
+import uz.alien.dictup.domain.model.WordCollection
 import javax.inject.Inject
 
 @HiltViewModel
@@ -79,7 +79,7 @@ class PickViewModel @Inject constructor(
 
             unitFlows[currentPart.value].update { units ->
                 units.mapIndexed { index, unit ->
-                    unit.copy(progress = progressList.getOrNull(index) ?: unit.progress)
+                    unit.copy(progress = 50 - (progressList.getOrNull(index) ?: unit.progress))
                 }
             }
         }

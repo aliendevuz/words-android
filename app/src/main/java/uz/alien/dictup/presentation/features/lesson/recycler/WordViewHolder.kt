@@ -17,12 +17,6 @@ class WordViewHolder(
             onItemClick(word.id, itemTextView)
         }
 
-//        if (word.score >= 5) {
-//            itemTextView.setBackgroundColor(itemTextView.context.resources.getColor(R.color.general_progress_indicator))
-//        } else {
-//            itemTextView.setBackgroundColor(itemTextView.context.resources.getColor(R.color.back_item_lesson_unit))
-//        }
-
         itemTextView.text = word.word
     }
 }

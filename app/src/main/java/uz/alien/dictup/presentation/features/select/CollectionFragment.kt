@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SeekBar
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -15,6 +14,7 @@ import androidx.viewpager2.widget.ViewPager2
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import uz.alien.dictup.BuildConfig
 import uz.alien.dictup.databinding.SelectFragmentCollectionBinding
 import uz.alien.dictup.presentation.common.component.AutoLayoutManager
 import uz.alien.dictup.presentation.features.select.model.CollectionUIState
@@ -94,15 +94,9 @@ class CollectionFragment : Fragment() {
         val lastPartId = lastPartId()
         binding.vpPart.setCurrentItem(lastPartId, false)
 
-        binding.sbQuizCount.setOnSeekBarChangeListener(
-            object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                    viewModel.setQuizCount(progress)
-                }
-                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-            }
-        )
+        binding.sbQuizCount.addOnChangeListener { slider, value, fromUser ->
+            viewModel.setQuizCount(value)
+        }
 
         var isFirst = true
 
@@ -111,7 +105,7 @@ class CollectionFragment : Fragment() {
                 partAdapter.submitList(parts)
                 if (isFirst) {
                     delay(50L)
-                    binding.vpPart.offscreenPageLimit = collection.partCount
+                    binding.vpPart.offscreenPageLimit = if (BuildConfig.DEBUG) 1 else collection.partCount
                     isFirst = false
                 }
             }
@@ -120,15 +114,18 @@ class CollectionFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.selectedUnitsCount.collectLatest { count ->
                 if (count != 0 && count <= 5) {
-                    binding.sbQuizCount.max = count * 4 - 1
+                    if (binding.sbQuizCount.value > count * 20) {
+                        binding.sbQuizCount.value = (count * 20).toFloat()
+                    }
+                    binding.sbQuizCount.valueTo = (count * 20).toFloat()
                 }
             }
         }
 
         lifecycleScope.launch {
             viewModel.quizCount.collectLatest { count ->
-                binding.sbQuizCount.progress = count
-                binding.tvQuizCount.text = "${count * 5 + 5}"
+                binding.sbQuizCount.value = count
+                binding.tvQuizCount.text = "${count.toInt()}"
             }
         }
     }

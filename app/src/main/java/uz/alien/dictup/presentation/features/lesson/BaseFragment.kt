@@ -212,7 +212,7 @@ class BaseFragment : Fragment() {
         animator.addListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator) {
                 onStart()
-                binding.flBackground.background = requireContext().getDrawable(R.drawable.back_item_word)
+                binding.flBackground.background = requireContext().getDrawable(R.drawable.lesson_item_unit_background)
                 (binding.vpWord.getChildAt(0) as? RecyclerView)?.alpha = 0f
                 binding.vBackground.alpha = 0f
                 binding.tvItemWord.alpha = 1f

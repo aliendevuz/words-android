@@ -5,8 +5,8 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dagger.hilt.android.EntryPointAccessors
 import okio.IOException
-import uz.alien.dictup.core.utils.Logger
-import uz.alien.dictup.di.InternetSyncEntryPoint
+import uz.alien.dictup.utils.Logger
+import uz.alien.dictup.infrastructure.shared.InternetSyncEntryPoint
 
 class SyncWorker(
     appContext: Context,

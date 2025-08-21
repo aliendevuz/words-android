@@ -1,4 +1,4 @@
-package uz.alien.dictup.shared
+package uz.alien.dictup.domain.model
 
 enum class WordCollection(val id: Int, val key: String) {
     BEGINNER(0, "beginner"),

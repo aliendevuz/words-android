@@ -14,8 +14,8 @@ import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import uz.alien.dictup.core.utils.Logger
-import uz.alien.dictup.di.InternetSyncEntryPoint
+import uz.alien.dictup.utils.Logger
+import uz.alien.dictup.infrastructure.shared.InternetSyncEntryPoint
 import uz.alien.dictup.infrastructure.worker.SyncWorker
 
 class ConnectionReceiver : BroadcastReceiver() {

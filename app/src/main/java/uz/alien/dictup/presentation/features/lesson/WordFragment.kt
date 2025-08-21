@@ -62,6 +62,8 @@ class WordFragment : Fragment() {
             }
         }
 
+        binding.tvPageNumber.text = "${word.id + 1}"
+
         binding.ibSpeechWord.setOnClickListener {
             speakOut(word.word)
         }

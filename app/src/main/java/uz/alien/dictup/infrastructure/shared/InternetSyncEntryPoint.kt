@@ -1,4 +1,4 @@
-package uz.alien.dictup.di
+package uz.alien.dictup.infrastructure.shared
 
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn

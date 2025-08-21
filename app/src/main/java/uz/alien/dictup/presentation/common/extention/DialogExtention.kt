@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import uz.alien.dictup.databinding.BaseDialogBinding
 import androidx.core.graphics.drawable.toDrawable
 import uz.alien.dictup.R
-import uz.alien.dictup.core.utils.Logger
+import uz.alien.dictup.utils.Logger
 import java.util.WeakHashMap
 
 private val dialogBindingMap = WeakHashMap<AppCompatActivity, BaseDialogBinding?>()
@@ -117,4 +117,11 @@ fun AppCompatActivity.showError(message: String) {
     dialogBinding?.tbOk?.visibility = View.VISIBLE
     dialogBinding?.iProgress?.visibility = View.GONE
     dialog?.show()
+}
+
+fun AppCompatActivity.destroyDialog() {
+
+    dialog?.dismiss()
+    dialog = null
+    dialogBinding = null
 }

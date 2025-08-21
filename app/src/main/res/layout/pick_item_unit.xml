@@ -16,7 +16,7 @@
         android:paddingTop="4dp"
         android:paddingBottom="2dp"
         android:text="unit 1"
-        android:textColor="@color/item_general_unit_text"
+        android:textColor="@color/primary_text"
         app:layout_constraintBottom_toTopOf="@id/progress"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -26,8 +26,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="6dp"
-        android:text="70%"
-        android:textColor="@color/item_general_unit_text_percentage"
+        android:text="0%"
+        android:textColor="@color/primary_text"
         android:textSize="10sp"
         app:layout_constraintBaseline_toBaselineOf="@id/tvUnit"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -38,10 +38,10 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
         android:progress="0"
-        app:indicatorColor="@color/general_progress_indicator"
+        app:indicatorColor="@color/primary"
         app:indicatorTrackGapSize="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:trackColor="@color/general_progress_indicator_track"
+        app:trackColor="@color/track"
         app:trackStopIndicatorSize="0dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

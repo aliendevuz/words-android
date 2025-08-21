@@ -1,23 +1,24 @@
 package uz.alien.dictup.data.repository
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import dagger.hilt.android.qualifiers.ApplicationContext
-import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import uz.alien.dictup.data.local.store.dataStore
 import uz.alien.dictup.domain.repository.DataStoreRepository
 
-class DataStoreRepositoryImpl @Inject constructor(
-    @param:ApplicationContext private val context: Context
+class DataStoreRepositoryImpl (
+    private val context: Context
 ) : DataStoreRepository {
+
+    val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "data_store")
 
     companion object {
         val USERNAME_KEY = stringPreferencesKey("username")
@@ -25,6 +26,8 @@ class DataStoreRepositoryImpl @Inject constructor(
         val CURRENT_USER_ID = intPreferencesKey("current_user_id")
         val LAST_SYNC_TIME = stringPreferencesKey("last_sync_time")
         val IS_SYNC_COMPLETED = booleanPreferencesKey("is_sync_completed")
+        val TTS_PITCH = floatPreferencesKey("tts_pitch")
+        val TTS_SPEED = floatPreferencesKey("tts_speed")
     }
 
     override suspend fun saveUserName(name: String) {
@@ -137,5 +140,29 @@ class DataStoreRepositoryImpl @Inject constructor(
 
     override suspend fun clearAll() {
         context.dataStore.edit { it.clear() }
+    }
+
+    override suspend fun saveTTSPitch(pitch: Float) {
+        context.dataStore.edit { prefs ->
+            prefs[TTS_PITCH] = pitch
+        }
+    }
+
+    override suspend fun getTTSPitch(): Flow<Float> {
+        return context.dataStore.data.map { prefs ->
+            prefs[TTS_PITCH] ?: 1f
+        }.distinctUntilChanged()
+    }
+
+    override suspend fun saveTTSSpeed(speed: Float) {
+        context.dataStore.edit { prefs ->
+            prefs[TTS_SPEED] = speed
+        }
+    }
+
+    override suspend fun getTTSSpeed(): Flow<Float> {
+        return context.dataStore.data.map { prefs ->
+            prefs[TTS_SPEED] ?: 1f
+        }.distinctUntilChanged()
     }
 }

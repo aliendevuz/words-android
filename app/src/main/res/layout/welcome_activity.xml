@@ -38,9 +38,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Lova Inc."
-        android:textColor="@color/welcome_text"
-        android:textSize="28sp"
+        android:textAlignment="center"
+        android:text="&quot;Umidli yoshlar&quot;\nteam"
+        android:textColor="@color/brand"
+        android:textSize="24sp"
         android:fontFamily="@font/shuttle_x"
         android:layout_marginTop="40dp"
         android:textStyle="bold" />
@@ -50,9 +51,9 @@
         android:id="@+id/tv_welcome_product"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="66dp"
+        android:layout_marginTop="84dp"
         android:fontFamily="@font/shuttle_x"
         android:text="mahsuloti"
-        android:textColor="@color/welcome_text" />
+        android:textColor="@color/brand" />
 
 </FrameLayout>

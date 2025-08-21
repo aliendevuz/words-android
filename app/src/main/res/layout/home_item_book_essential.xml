@@ -49,7 +49,7 @@
         android:progress="0"
         app:indicatorColor="@color/beginner_1"
         app:indicatorTrackGapSize="0dp"
-        app:trackColor="@color/lesson_progress_indicator_track"
+        app:trackColor="@color/track"
         app:trackCornerRadius="4dp"
         app:trackStopIndicatorSize="0dp" />
 

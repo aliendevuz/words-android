@@ -4,9 +4,14 @@ import android.animation.Animator
 import android.animation.ValueAnimator
 import android.content.Intent
 import android.graphics.Rect
+import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
+import android.text.Spannable
+import android.text.TextPaint
+import android.text.style.ClickableSpan
+import android.text.style.StyleSpan
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
@@ -15,14 +20,15 @@ import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestManager
 import dagger.hilt.android.AndroidEntryPoint
+import io.noties.markwon.Markwon
+import io.noties.markwon.image.ImagesPlugin
+import io.noties.markwon.image.glide.GlideImagesPlugin
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import uz.alien.dictup.BuildConfig
 import uz.alien.dictup.R
-import uz.alien.dictup.core.utils.Logger
+import uz.alien.dictup.utils.Logger
 import uz.alien.dictup.databinding.LessonActivityBinding
 import uz.alien.dictup.databinding.LessonFragmentBaseBinding
 import uz.alien.dictup.domain.model.NativeWord
@@ -50,20 +56,16 @@ class LessonActivity : BaseActivity(), TextToSpeech.OnInitListener {
     val itemBoundsMap = mutableMapOf<Int, Rect>()
     lateinit var tts: TextToSpeech
 
-    private val prefs by lazy {
-        getSharedPreferences("app_prefs", MODE_PRIVATE)
-    }
-
     private var isPagerOpened = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = LessonActivityBinding.inflate(layoutInflater)
-        setClearEdge()
         setContentLayout {
             binding.root
         }
+        setClearEdge()
         setSystemPadding(binding.statusBarPadding)
 
         tts = TextToSpeech(this, this)
@@ -73,22 +75,12 @@ class LessonActivity : BaseActivity(), TextToSpeech.OnInitListener {
         initViews()
     }
 
-    private fun getPitch(): Float {
-        return prefs.getFloat("pitch", 1.0f)
-    }
-
-    private fun getSpeed(): Float {
-        return prefs.getFloat("speed", 1.0f)
-    }
-
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
             val result = tts.setLanguage(Locale.US)
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Logger.e("TTS", "Til qo‘llab-quvvatlanmaydi")
             } else {
-                tts.setPitch(getPitch())
-                tts.setSpeechRate(getSpeed())
                 tts.speak(" ", TextToSpeech.QUEUE_FLUSH, null, "warmup")
             }
         } else {
@@ -131,20 +123,13 @@ class LessonActivity : BaseActivity(), TextToSpeech.OnInitListener {
             intent.getParcelableArrayListExtra("stories")
         }
 
-        stories?.let {
-            if (it.isNotEmpty()) {
-                if (!it[0].content.startsWith("null_of_")) {
-                    binding.tvHeader.text = it[0].title
-                    binding.tvStory.text = it[0].content
-                } else {
-                    binding.tvStory.text = "Story is not exist"
-                }
-            }
-        }
         binding.tvAppBar.text = "Unit ${unit + 1}"
 
         if (words != null && nativeWords != null && scores != null) {
-            viewModel.getWords(words, nativeWords, scores)
+
+            if (viewModel.words.value.isEmpty()) {
+                viewModel.getWords(words, nativeWords, scores)
+            }
         }
 
         val adapter = WordAdapter { position, view ->
@@ -176,11 +161,82 @@ class LessonActivity : BaseActivity(), TextToSpeech.OnInitListener {
             }
         }
 
-        binding.bOpenStory.setOnClickListener {
-            val intent = Intent(this, StoryActivity::class.java)
-            intent.putExtra("title", stories?.get(0)?.title ?: "No title")
-            intent.putExtra("content", stories?.get(0)?.content ?: "No content")
-            startActivityWithZoomAnimation(intent)
+        binding.tvAppBar.setOnLongClickListener {
+            stories?.get(0)?.let {
+                if (!it.title.startsWith("null_of_")) {
+                    val intent = Intent(this, StoryActivity::class.java)
+                    intent.putStringArrayListExtra(
+                        "words",
+                        ArrayList(
+                            words!!.map { word ->
+                                word.word
+                            }
+                        )
+                    )
+                    intent.putExtra("title", it.title)
+                    intent.putExtra("content", it.content)
+                    startActivityWithZoomAnimation(intent)
+                }
+            }
+            true
+        }
+
+        stories?.get(0)?.let {
+            if (!it.title.startsWith("null_of_")) {
+
+                val markwon = Markwon
+                    .builder(this)
+                    .usePlugin(ImagesPlugin.create())
+                    .usePlugin(GlideImagesPlugin.create(this))
+                    .build()
+
+                val content = addTabsAfterParagraphs(it.content)
+
+                val headerText = "###         ${it.title}\n\n"
+                val node = markwon.parse("$headerText${content}")
+                val markwonSpannable = markwon.render(node) as Spannable
+
+                val headerLength = headerText.length
+
+                words?.forEach { word ->
+                    val regex = Regex("\\b${Regex.escape(word.word)}\\b", RegexOption.IGNORE_CASE)
+                    val matches = regex.findAll(markwonSpannable, startIndex = headerLength)
+
+                    matches.forEach { match ->
+                        val clickableSpan = object : ClickableSpan() {
+                            override fun onClick(widget: View) {
+                                speakAloud(word.word)
+                            }
+
+                            override fun updateDrawState(ds: TextPaint) {
+                                super.updateDrawState(ds)
+                                ds.isUnderlineText = false
+                                ds.color = getColor(R.color.text_highlight)
+                                ds.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+                            }
+                        }
+
+                        markwonSpannable.setSpan(
+                            clickableSpan,
+                            match.range.first,
+                            match.range.last + 1,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+
+                        markwonSpannable.setSpan(
+                            StyleSpan(Typeface.BOLD),
+                            match.range.first,
+                            match.range.last + 1,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+                    }
+                }
+
+                markwon.setParsedMarkdown(binding.tvStory, markwonSpannable)
+
+            } else null
+        } ?: run {
+            binding.llStoryBackground.visibility = View.GONE
         }
 
         lifecycleScope.launch {
@@ -188,6 +244,28 @@ class LessonActivity : BaseActivity(), TextToSpeech.OnInitListener {
                 adapter.submitList(it)
             }
         }
+
+        lifecycleScope.launch {
+            viewModel.dataStore.getTTSPitch().collectLatest {
+                tts.setPitch(it)
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.dataStore.getTTSSpeed().collectLatest {
+                tts.setSpeechRate(it)
+            }
+        }
+    }
+
+    private fun speakAloud(content: String) {
+        tts.speak(content, TextToSpeech.QUEUE_FLUSH, null, null)
+    }
+
+    private fun addTabsAfterParagraphs(content: String): String {
+        return content
+            .replace(Regex("(\n\n)(?! )"), "\n\n        ") // \n\n dan keyin tab qo‘shadi, agar allaqachon qo‘yilmagan bo‘lsa
+            .let { if (!it.startsWith("        ")) "        $it" else it } // birinchi paragrafga ham tab qo‘yish
     }
 
     fun dismissFragmentWithAnimation(fragment: BaseFragment, targetBounds: Rect?) {

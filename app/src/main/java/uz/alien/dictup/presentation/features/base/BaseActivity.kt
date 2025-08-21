@@ -19,6 +19,8 @@ import uz.alien.dictup.presentation.common.extention.interstitialAd
 import uz.alien.dictup.presentation.common.extention.loadInterstitialAd
 import uz.alien.dictup.presentation.common.extention.setSystemExclusion
 import androidx.core.content.edit
+import uz.alien.dictup.presentation.common.extention.startActivityWithSlideAnimation
+import uz.alien.dictup.presentation.features.setting.SettingActivity
 
 abstract class BaseActivity : AppCompatActivity() {
 
@@ -26,9 +28,7 @@ abstract class BaseActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationBinding: BaseNavigationBinding
 
-    private val prefs by lazy {
-        getSharedPreferences("app_prefs", MODE_PRIVATE)
-    }
+    var isDrawerFullyOpen = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,9 +40,32 @@ abstract class BaseActivity : AppCompatActivity() {
         drawerLayout = binding.root
         binding.navigationView.addView(navigationBinding.root)
 
+        drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
+            override fun onDrawerOpened(drawerView: View) {
+                isDrawerFullyOpen = true
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+                isDrawerFullyOpen = false
+            }
+        })
+
+
         initViews()
 
         loadInterstitialAd()
+
+        setSystemExclusion(binding.root)
+
+        setContentView(binding.root)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        handleBackPress()
+    }
+
+    private fun handleBackPress() {
 
         onBackPressedDispatcher.addCallback(this@BaseActivity) {
             if (isDrawerOpen()) {
@@ -54,10 +77,6 @@ abstract class BaseActivity : AppCompatActivity() {
                 }
             }
         }
-
-        setSystemExclusion(binding.root)
-
-        setContentView(binding.root)
     }
 
     private fun initViews() {
@@ -74,50 +93,9 @@ abstract class BaseActivity : AppCompatActivity() {
             interstitialAd?.show(this)
         }
 
-        navigationBinding.seekPitch.progress = (getPitch() * 100).toInt()
-        navigationBinding.seekSpeed.progress = (getSpeed() * 100).toInt()
-
-        navigationBinding.tvPitchValue.text = getPitch().toString()
-        navigationBinding.tvSpeedValue.text = getSpeed().toString()
-
-        navigationBinding.seekPitch.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val pitch = progress / 100f
-                navigationBinding.tvPitchValue.text = pitch.toString()
-                savePitch(pitch)
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
-
-        navigationBinding.seekSpeed.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val speed = progress / 100f
-                navigationBinding.tvSpeedValue.text = speed.toString()
-                saveSpeed(speed)
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
-    }
-
-    private fun getPitch(): Float {
-        return prefs.getFloat("pitch", 1.0f)
-    }
-
-    private fun getSpeed(): Float {
-        return prefs.getFloat("speed", 1.0f)
-    }
-
-    private fun savePitch(pitch: Float) {
-        prefs.edit {
-            putFloat("pitch", pitch)
-        }
-    }
-
-    private fun saveSpeed(speed: Float) {
-        prefs.edit {
-            putFloat("speed", speed)
+        navigationBinding.bOpenSetting.setOnClickListener {
+            val intent = Intent(this, SettingActivity::class.java)
+            startActivityWithSlideAnimation(intent)
         }
     }
 
@@ -128,6 +106,10 @@ abstract class BaseActivity : AppCompatActivity() {
 
     protected fun isDrawerOpen(): Boolean {
         return drawerLayout.isDrawerOpen(GravityCompat.START)
+    }
+
+    protected fun isDrawerVisible(): Boolean {
+        return drawerLayout.isDrawerVisible(GravityCompat.START)
     }
 
     protected fun closeDrawer() {

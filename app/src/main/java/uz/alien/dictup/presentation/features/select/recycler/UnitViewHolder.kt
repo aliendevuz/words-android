@@ -35,9 +35,7 @@ class UnitViewHolder(
 
         binding.tvPercent.text = "${unit.progress}%"
 
-        itemView.setBackgroundResource(
-            if (unit.isSelected) R.drawable.select_item_unit_background_selected
-            else R.drawable.select_item_unit_background
-        )
+        itemView.isSelected = unit.isSelected
+        itemView.isActivated = true
     }
 }

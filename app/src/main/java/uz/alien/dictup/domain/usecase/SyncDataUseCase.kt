@@ -2,7 +2,7 @@ package uz.alien.dictup.domain.usecase
 
 import android.content.Context
 import kotlinx.coroutines.flow.firstOrNull
-import uz.alien.dictup.core.utils.Logger
+import uz.alien.dictup.utils.Logger
 import uz.alien.dictup.data.local.legacy.LegacyDatabase
 import uz.alien.dictup.domain.model.NativeStory
 import uz.alien.dictup.domain.model.NativeWord
@@ -19,7 +19,7 @@ import uz.alien.dictup.domain.repository.room.NativeWordRepository
 import uz.alien.dictup.domain.repository.room.ScoreRepository
 import uz.alien.dictup.domain.repository.room.StoryRepository
 import uz.alien.dictup.domain.repository.room.WordRepository
-import uz.alien.dictup.shared.WordCollection
+import uz.alien.dictup.domain.model.WordCollection
 import kotlin.collections.iterator
 
 class SyncDataUseCase(

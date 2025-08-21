@@ -4,13 +4,12 @@ import android.graphics.Color
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import uz.alien.dictup.R
 
-fun AppCompatActivity.setHomeEdge() {
+fun AppCompatActivity.setHomeEdge(statusBarColor: Int) {
     if (isNight()) {
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(
-                scrim = getColor(R.color.books_background)
+                scrim = statusBarColor
             ),
             navigationBarStyle = SystemBarStyle.dark(
                 scrim = Color.TRANSPARENT
@@ -19,8 +18,8 @@ fun AppCompatActivity.setHomeEdge() {
     } else {
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.light(
-                darkScrim = getColor(R.color.books_background),
-                scrim = getColor(R.color.books_background)
+                darkScrim = statusBarColor,
+                scrim = statusBarColor
             ),
             navigationBarStyle = SystemBarStyle.light(
                 darkScrim = Color.TRANSPARENT,

@@ -7,7 +7,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="140dp"
-        android:background="@color/welcome_text"
+        android:background="@color/primary"
         android:src="@drawable/v_image" />
 
     <TextView
@@ -35,50 +35,13 @@
         android:layout_marginEnd="24dp"
         android:text="Show Ad" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:text="Pitch" />
-
-    <SeekBar
-        android:id="@+id/seekPitch"
+    <Button
+        android:id="@+id/bOpenSetting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginVertical="12dp"
-        android:min="50"
-        android:max="150" />
-
-    <TextView
-        android:id="@+id/tvPitchValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:text="Speed" />
-
-    <SeekBar
-        android:id="@+id/seekSpeed"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginVertical="12dp"
-        android:min="30"
-        android:max="120" />
-
-    <TextView
-        android:id="@+id/tvSpeedValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:text="Open Setting" />
 
 </LinearLayout>

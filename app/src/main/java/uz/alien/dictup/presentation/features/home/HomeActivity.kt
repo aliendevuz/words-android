@@ -14,9 +14,11 @@ import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import uz.alien.dictup.core.utils.Logger
+import uz.alien.dictup.utils.Logger
+import uz.alien.dictup.utils.Logger.isCalled
 import uz.alien.dictup.databinding.HomeActivityBinding
 import uz.alien.dictup.presentation.common.component.AutoLayoutManager
+import uz.alien.dictup.presentation.common.extention.destroyDialog
 import uz.alien.dictup.presentation.common.extention.dialog
 import uz.alien.dictup.presentation.common.extention.getSystemStatusPadding
 import uz.alien.dictup.presentation.common.extention.overrideTransitionWithAlpha
@@ -32,7 +34,7 @@ import uz.alien.dictup.presentation.features.home.recycler.EssentialBookAdapter
 import uz.alien.dictup.presentation.features.pick.PickActivity
 import uz.alien.dictup.presentation.features.select.SelectActivity
 import uz.alien.dictup.presentation.features.welcome.WelcomeActivity
-import uz.alien.dictup.shared.WordCollection
+import uz.alien.dictup.domain.model.WordCollection
 
 @AndroidEntryPoint
 class HomeActivity : BaseActivity() {
@@ -63,8 +65,6 @@ class HomeActivity : BaseActivity() {
 
         handleIntent(intent)
 
-        handleBackPressForSearching()
-
         getSystemStatusPadding(binding.root) { statusPadding ->
             setStatusPadding(statusPadding)
             binding.statusBarPadding.setPadding(0, getStatusPadding(), 0, 0)
@@ -94,6 +94,11 @@ class HomeActivity : BaseActivity() {
         initViews()
 
         collectBooks()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        handleBackPressForSearching()
     }
 
     override fun onRestart() {
@@ -142,21 +147,28 @@ class HomeActivity : BaseActivity() {
 
     private fun setReady() {
         prefs.edit {
-            putBoolean("is_ready", true).apply()
+            putBoolean("is_ready", true).commit()
         }
     }
 
     private fun handleBackPressForSearching() {
 
         onBackPressedDispatcher.addCallback(this) {
-            if (isDrawerOpen()) {
-                closeDrawer()
-            } else if (isSearchBarVisible) {
-                hideSearchBar()
-            } else {
-                if (isEnabled) {
-                    remove()
-                    onBackPressedDispatcher.onBackPressed()
+            when {
+                isDrawerFullyOpen -> {
+                    closeDrawer()
+                }
+                isDrawerVisible() -> {
+                    closeDrawer()
+                }
+                isSearchBarVisible -> {
+                    hideSearchBar()
+                }
+                else -> {
+                    if (isEnabled) {
+                        remove()
+                        onBackPressedDispatcher.onBackPressed()
+                    }
                 }
             }
         }
@@ -269,6 +281,7 @@ class HomeActivity : BaseActivity() {
 
         lifecycleScope.launch {
             viewModel.essentialBooksState.collectLatest { books ->
+                isCalled()
                 essentialBookAdapter.submitList(books)
             }
         }
@@ -280,7 +293,7 @@ class HomeActivity : BaseActivity() {
             viewModel.dataStoreRepository.isSyncCompleted().collectLatest { isCompleted ->
                 if (isCompleted) {
                     viewModel.updateBook()
-                    dialog?.dismiss()
+                    destroyDialog()
                     setReady()
                     return@collectLatest
                 } else {

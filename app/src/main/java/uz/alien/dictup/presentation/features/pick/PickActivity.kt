@@ -9,6 +9,8 @@ import androidx.viewpager2.widget.ViewPager2
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import uz.alien.dictup.BuildConfig
+import uz.alien.dictup.utils.Logger
 import uz.alien.dictup.databinding.PickActivityBinding
 import uz.alien.dictup.presentation.common.component.AutoLayoutManager
 import uz.alien.dictup.presentation.common.extention.setClearEdge
@@ -19,7 +21,7 @@ import uz.alien.dictup.presentation.features.lesson.LessonActivity
 import uz.alien.dictup.presentation.features.pick.model.NavigationEvent
 import uz.alien.dictup.presentation.features.pick.pager.PartPagerAdapter
 import uz.alien.dictup.presentation.features.pick.recycler.PartAdapter
-import uz.alien.dictup.shared.WordCollection
+import uz.alien.dictup.domain.model.WordCollection
 
 @AndroidEntryPoint
 class PickActivity : BaseActivity() {
@@ -98,7 +100,7 @@ class PickActivity : BaseActivity() {
                 partAdapter.submitList(parts)
                 if (isFirst) {
                     binding.vpPart.postDelayed(200L) {
-                        binding.vpPart.offscreenPageLimit = parts.size
+                        binding.vpPart.offscreenPageLimit = if (BuildConfig.DEBUG) 1 else parts.size
                     }
                     isFirst = false
                 }

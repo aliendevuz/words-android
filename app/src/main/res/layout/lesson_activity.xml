@@ -9,7 +9,7 @@
         android:id="@+id/statusBarPadding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/app_bar"
+        android:background="@color/background"
         android:elevation="8dp"
         android:outlineSpotShadowColor="@color/black"
         android:paddingTop="20dp"
@@ -42,7 +42,7 @@
                     android:fontFamily="@font/golos"
                     android:text="Unit 1"
                     android:textAllCaps="true"
-                    android:textColor="@color/app_bar_text"
+                    android:textColor="@color/secondary_text"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -72,11 +72,10 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
+                android:id="@+id/llStoryBackground"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="12dp"
                 android:layout_marginTop="12dp"
-                android:layout_marginBottom="216dp"
                 android:background="@drawable/back_book_beginner"
                 android:elevation="4dp"
                 android:orientation="vertical"
@@ -86,19 +85,14 @@
                 app:layout_constraintTop_toBottomOf="@id/rvWord">
 
                 <TextView
-                    android:id="@+id/tvHeader"
-                    android:textSize="18sp"
-                    android:layout_marginHorizontal="12dp"
-                    android:singleLine="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Header" />
-
-                <TextView
                     android:id="@+id/tvStory"
+                    android:textColor="@color/primary_text"
                     android:layout_marginTop="12dp"
+                    android:layout_marginBottom="64dp"
+                    android:textSize="16sp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="500dp"
                     android:text="Here is a story" />
 
             </LinearLayout>
@@ -106,15 +100,5 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>
-
-    <Button
-        android:id="@+id/bOpenStory"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:text="Open Story"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="64dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

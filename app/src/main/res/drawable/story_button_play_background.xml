@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="@color/book_background">
+    android:color="@color/background_ripple">
     <item>
         <shape android:shape="oval">
-            <solid android:color="@color/pick_item_part_text_color" />
+            <solid android:color="@color/primary" />
         </shape>
     </item>
 </ripple>

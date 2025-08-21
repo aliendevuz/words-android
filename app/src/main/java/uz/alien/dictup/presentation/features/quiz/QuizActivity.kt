@@ -3,7 +3,7 @@ package uz.alien.dictup.presentation.features.quiz
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import uz.alien.dictup.core.utils.Logger
+import uz.alien.dictup.utils.Logger
 import uz.alien.dictup.presentation.features.result.ResultActivity
 import uz.alien.dictup.databinding.QuizActivityBinding
 import uz.alien.dictup.presentation.common.extention.setClearEdge

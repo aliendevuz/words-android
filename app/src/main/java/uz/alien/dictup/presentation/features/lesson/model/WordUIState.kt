@@ -2,7 +2,7 @@ package uz.alien.dictup.presentation.features.lesson.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
-import uz.alien.dictup.shared.WordCollection
+import uz.alien.dictup.domain.model.WordCollection
 
 @Parcelize
 data class WordUIState(

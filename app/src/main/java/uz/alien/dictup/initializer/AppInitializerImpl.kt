@@ -7,7 +7,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import uz.alien.dictup.di.AppEntryPoint
+import uz.alien.dictup.initializer.AppEntryPoint
 
 class AppInitializerImpl : Initializer<Unit> {
 
