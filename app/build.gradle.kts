@@ -17,8 +17,8 @@ android {
         applicationId = "uz.alien.dictup"
         minSdk = 24
         targetSdk = 36
-        versionCode = 20
-        versionName = "5.0.2"
+        versionCode = 23
+        versionName = "5.1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -36,7 +36,7 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             buildConfigField("String", "BASE_URL", "\"https://assets.4000.uz/\"")
-            buildConfigField("Boolean", "DISABLE_LOGGING_ON_PROD", "true")
+            buildConfigField("Boolean", "DISABLE_LOGGING_ON_PROD", "false")
             buildConfigField("Boolean", "LOGGING_IS_AVAILABLE", "true")
             buildConfigField("Long", "DURATION", "274L")
             proguardFiles(

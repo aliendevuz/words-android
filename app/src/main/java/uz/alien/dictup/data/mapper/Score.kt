@@ -6,19 +6,23 @@ import uz.alien.dictup.domain.model.Score
 fun ScoreEntity.toScore(): Score {
     return Score(
         id = id,
-        userId = this.userId,
-        wordId = this.wordId,
+        nativeWordId = this.nativeWordId,
         correctCount = this.correctCount,
-        incorrectCount = this.incorrectCount
+        incorrectCount = this.incorrectCount,
+        collectionId = this.collectionId,
+        partId = this.partId,
+        unitId = this.unitId
     )
 }
 
 fun Score.toScoreEntity(): ScoreEntity {
     return ScoreEntity(
         id = id,
-        userId = this.userId,
-        wordId = this.wordId,
+        collectionId = this.collectionId!!,
+        partId = this.partId!!,
+        unitId = this.unitId!!,
         correctCount = this.correctCount,
-        incorrectCount = this.incorrectCount
+        incorrectCount = this.incorrectCount,
+        nativeWordId = this.nativeWordId!!
     )
 }

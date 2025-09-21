@@ -6,8 +6,10 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Score(
     val id: Int,
-    val userId: Int,
-    val wordId: Int,
     val correctCount: Int = 0,
-    val incorrectCount: Int = 0
+    val incorrectCount: Int = 0,
+    val collectionId: Int? = null,
+    val partId: Int? = null,
+    val unitId: Int? = null,
+    val nativeWordId: Int? = null
 ): Parcelable

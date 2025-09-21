@@ -5,54 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/statusBarPadding"
-        android:background="@color/background"
-        android:outlineSpotShadowColor="@color/black"
-        android:elevation="8dp"
-        android:paddingTop="20dp"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
-
-            <LinearLayout
-                android:gravity="center_vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageButton
-                    android:id="@+id/drawerButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_margin="12dp"
-                    android:background="@android:color/transparent"
-                    android:clickable="true"
-                    android:contentDescription="Open drawer"
-                    android:focusable="true"
-                    android:src="@drawable/v_bars" />
-
-                <TextView
-                    android:text="Choose Unit"
-                    android:textAllCaps="true"
-                    android:textSize="18sp"
-                    android:textColor="@color/secondary_text"
-                    android:textStyle="bold"
-                    android:fontFamily="@font/golos"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-    </LinearLayout>
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        app:layout_constraintTop_toBottomOf="@id/statusBarPadding"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/llButtonsContainer"
         android:layout_marginTop="12dp"
         android:background="@drawable/back_lesson_units"

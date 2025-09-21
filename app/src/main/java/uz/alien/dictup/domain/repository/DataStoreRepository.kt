@@ -4,42 +4,27 @@ import kotlinx.coroutines.flow.Flow
 
 interface DataStoreRepository {
 
-    suspend fun saveUserName(name: String)
+    suspend fun saveBoolean(key: String, value: Boolean)
 
-    fun getUserName(): Flow<String>
+    suspend fun getBoolean(key: String): Flow<Boolean>
 
-    suspend fun clearAll()
-    suspend fun isLegacyDbMigrated(): Flow<Boolean>
-    suspend fun setLegacyDbMigrated()
+    suspend fun saveInt(key: String, value: Int)
 
-    suspend fun saveWordVersion(targetLang: String, collection: String, version: Double)
-    suspend fun getWordVersion(targetLang: String, collection: String): Flow<Double>
+    suspend fun getInt(key: String): Flow<Int>
 
-    suspend fun saveStoryVersion(targetLang: String, collection: String, version: Double)
-    suspend fun getStoryVersion(targetLang: String, collection: String): Flow<Double>
+    suspend fun saveLong(key: String, value: Long)
 
-    suspend fun saveNativeWordVersion(targetLang: String, collection: String, nativeLang: String, version: Double)
-    suspend fun getNativeWordVersion(targetLang: String, collection: String, nativeLang: String): Flow<Double>
+    suspend fun getLong(key: String): Flow<Long>
 
-    suspend fun saveNativeStoryVersion(targetLang: String, collection: String, nativeLang: String, version: Double)
-    suspend fun getNativeStoryVersion(targetLang: String, collection: String, nativeLang: String): Flow<Double>
+    suspend fun saveFloat(key: String, value: Float)
 
-    suspend fun saveCurrentUserId(userId: Int)
-    suspend fun getCurrentUserId(): Flow<Int?>
+    suspend fun getFloat(key: String): Flow<Float>
 
-    suspend fun saveLastSyncTime(time: Long)
+    suspend fun saveDouble(key: String, value: Double)
 
-    suspend fun getLastSyncTime(): Flow<Long?>
+    suspend fun getDouble(key: String): Flow<Double>
 
-    suspend fun syncCompleted()
+    suspend fun saveString(key: String, value: String)
 
-    suspend fun isSyncCompleted(): Flow<Boolean>
-
-    suspend fun saveTTSPitch(pitch: Float)
-
-    suspend fun getTTSPitch(): Flow<Float>
-
-    suspend fun saveTTSSpeed(speed: Float)
-
-    suspend fun getTTSSpeed(): Flow<Float>
+    suspend fun getString(key: String): Flow<String>
 }

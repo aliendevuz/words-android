@@ -9,26 +9,20 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import uz.alien.dictup.data.local.room.AppDatabase
-import uz.alien.dictup.data.local.room.dao.AttemptDao
 import uz.alien.dictup.data.local.room.dao.NativeStoryDao
 import uz.alien.dictup.data.local.room.dao.NativeWordDao
 import uz.alien.dictup.data.local.room.dao.ScoreDao
 import uz.alien.dictup.data.local.room.dao.StoryDao
-import uz.alien.dictup.data.local.room.dao.UserDao
 import uz.alien.dictup.data.local.room.dao.WordDao
-import uz.alien.dictup.data.repository.room.AttemptRepositoryImpl
 import uz.alien.dictup.data.repository.room.NativeStoryRepositoryImpl
 import uz.alien.dictup.data.repository.room.NativeWordRepositoryImpl
 import uz.alien.dictup.data.repository.room.ScoreRepositoryImpl
 import uz.alien.dictup.data.repository.room.StoryRepositoryImpl
-import uz.alien.dictup.data.repository.room.UserRepositoryImpl
 import uz.alien.dictup.data.repository.room.WordRepositoryImpl
-import uz.alien.dictup.domain.repository.room.AttemptRepository
 import uz.alien.dictup.domain.repository.room.NativeStoryRepository
 import uz.alien.dictup.domain.repository.room.NativeWordRepository
 import uz.alien.dictup.domain.repository.room.ScoreRepository
 import uz.alien.dictup.domain.repository.room.StoryRepository
-import uz.alien.dictup.domain.repository.room.UserRepository
 import uz.alien.dictup.domain.repository.room.WordRepository
 
 @Module
@@ -47,11 +41,6 @@ object DatabaseModule {
         )
             .fallbackToDestructiveMigration(false)
             .build()
-    }
-
-    @Provides
-    fun provideUserDao(appDatabase: AppDatabase): UserDao {
-        return appDatabase.userDao()
     }
 
     @Provides
@@ -80,16 +69,6 @@ object DatabaseModule {
     }
 
     @Provides
-    fun provideAttemptDao(appDatabase: AppDatabase): AttemptDao {
-        return appDatabase.attemptDao()
-    }
-
-    @Provides
-    fun provideUserRepository(userDao: UserDao): UserRepository {
-        return UserRepositoryImpl(userDao)
-    }
-
-    @Provides
     fun provideWordRepository(wordDao: WordDao): WordRepository {
         return WordRepositoryImpl(wordDao)
     }
@@ -112,10 +91,5 @@ object DatabaseModule {
     @Provides
     fun provideScoreRepository(scoreDao: ScoreDao): ScoreRepository {
         return ScoreRepositoryImpl(scoreDao)
-    }
-
-    @Provides
-    fun provideAttemptRepository(attemptDao: AttemptDao): AttemptRepository {
-        return AttemptRepositoryImpl(attemptDao)
     }
 }

@@ -16,5 +16,7 @@ interface NativeStoryRepository {
 
     suspend fun getAllNativeStories(): List<NativeStory>
 
+    suspend fun getNativeStoriesByCollectionId(collectionId: Int): List<NativeStory>
+
     suspend fun clearAllNativeStories()
 }

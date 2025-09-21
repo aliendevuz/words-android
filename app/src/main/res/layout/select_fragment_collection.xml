@@ -154,11 +154,11 @@
 
             <TextView
                 android:id="@+id/tvQuizCount"
-                android:layout_width="wrap_content"
+                android:layout_width="24dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="12dp"
                 android:gravity="end"
-                android:text="10"
+                android:text="100"
                 android:textColor="@color/primary"
                 app:layout_constraintBottom_toBottomOf="@id/sbQuizCount"
                 app:layout_constraintEnd_toEndOf="parent"

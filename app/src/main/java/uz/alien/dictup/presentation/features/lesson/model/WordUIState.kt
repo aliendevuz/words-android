@@ -19,5 +19,6 @@ data class WordUIState(
     val nativeSentence: String,
     val score: Int,
     val imageSource: String = "",
-    val collection: String = ""
+    val collection: String = "",
+    val wordId: Int? = null
 ): Parcelable

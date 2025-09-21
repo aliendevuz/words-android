@@ -9,18 +9,22 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import uz.alien.dictup.utils.Logger
+import uz.alien.dictup.domain.model.SelectedUnit
+import uz.alien.dictup.domain.repository.SharedPrefsRepository
 import uz.alien.dictup.domain.usecase.GetUnitsPercentUseCase
 import uz.alien.dictup.presentation.features.select.model.CollectionUIState
 import uz.alien.dictup.presentation.features.select.model.PartUIState
-import uz.alien.dictup.presentation.features.select.model.SelectedUnit
 import uz.alien.dictup.presentation.features.select.model.UnitUIState
+import uz.alien.dictup.utils.Logger
+import uz.alien.dictup.value.strings.SharedPrefs.LAST_COLLECTION_ID
+import uz.alien.dictup.value.strings.SharedPrefs.LAST_PART_ID
 import javax.inject.Inject
 import kotlin.random.Random.Default.nextBoolean
 
 @HiltViewModel
 class SelectViewModel @Inject constructor(
-    private val getUnitsPercentUseCase: GetUnitsPercentUseCase
+    private val getUnitsPercentUseCase: GetUnitsPercentUseCase,
+    private val prefsRepository: SharedPrefsRepository
 ) : ViewModel() {
 
     private val collections = listOf(
@@ -94,7 +98,7 @@ class SelectViewModel @Inject constructor(
 
                     unitFlows[currentCollection][currentPart].update { units ->
                         units.mapIndexed { index, unit ->
-                            unit.copy(progress = 50 - (progressList.getOrNull(index) ?: unit.progress))
+                            unit.copy(progress = progressList.getOrNull(index) ?: unit.progress)
                         }
                     }
                 }
@@ -271,5 +275,21 @@ class SelectViewModel @Inject constructor(
                 } else it
             }
         }
+    }
+
+    fun saveLastCollectionId(int: Int) {
+        prefsRepository.saveInt(LAST_COLLECTION_ID, int)
+    }
+
+    fun getLastCollectionId(): Int {
+        return prefsRepository.getInt(LAST_COLLECTION_ID, 0)
+    }
+
+    fun saveLastPartId(id: Int) {
+        prefsRepository.saveInt("${LAST_PART_ID}_$currentCollection", id)
+    }
+
+    fun getLastPartId(): Int {
+        return prefsRepository.getInt("${LAST_PART_ID}_$currentCollection", 0)
     }
 }

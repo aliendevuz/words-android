@@ -10,16 +10,27 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.alien.dictup.R
-import uz.alien.dictup.domain.usecase.GetDataStoreRepositoryUseCase
+import uz.alien.dictup.domain.repository.DataStoreRepository
+import uz.alien.dictup.domain.repository.SharedPrefsRepository
 import uz.alien.dictup.domain.usecase.GetScoreOfBeginnerUseCase
 import uz.alien.dictup.domain.usecase.GetScoreOfEssentialUseCase
+import uz.alien.dictup.domain.usecase.sync.UpdateUseCase
 import uz.alien.dictup.presentation.features.home.model.Book
+import uz.alien.dictup.utils.Logger
+import uz.alien.dictup.value.strings.DataStore.IS_SYNC_COMPLETED
+import uz.alien.dictup.value.strings.DataStore.WORDS_VERSION
+import uz.alien.dictup.value.strings.SharedPrefs.IS_FIRST_TIME
+import uz.alien.dictup.value.strings.SharedPrefs.IS_READY
+import uz.alien.dictup.value.strings.SharedPrefs.LAST_COLLECTION
+import uz.alien.dictup.value.strings.SharedPrefs.LAST_PART
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    getDataStoreRepositoryUseCase: GetDataStoreRepositoryUseCase,
+    private val dataStoreRepository: DataStoreRepository,
+    private val prefsRepository: SharedPrefsRepository,
     private val getScoreOfBeginnerUseCase: GetScoreOfBeginnerUseCase,
-    private val getScoreOfEssentialUseCase: GetScoreOfEssentialUseCase
+    private val getScoreOfEssentialUseCase: GetScoreOfEssentialUseCase,
+    private val updateUseCase: UpdateUseCase
 ) : ViewModel() {
 
     val beginnerBooks = arrayListOf(
@@ -44,34 +55,59 @@ class HomeViewModel @Inject constructor(
     private val _essentialBooks = MutableStateFlow<List<Book>>(essentialBooks)
     val essentialBooksState: SharedFlow<List<Book>> = _essentialBooks
 
-    val dataStoreRepository = getDataStoreRepositoryUseCase()
+    suspend fun isSyncCompleted() = dataStoreRepository.getBoolean(IS_SYNC_COMPLETED)
 
-    init {
-        viewModelScope.launch {
-            updateBook()
-        }
-    }
+    suspend fun getWordVersion(
+        targetLang: String,
+        collection: String
+    ) = dataStoreRepository.getDouble("${WORDS_VERSION}${targetLang}_$collection")
 
     suspend fun updateBook() {
 
-        val isSyncCompleted = dataStoreRepository.isSyncCompleted().firstOrNull() ?: false
+        val isSyncCompleted = dataStoreRepository.getBoolean(IS_SYNC_COMPLETED).firstOrNull() ?: false
 
         _beginnerBooks.update { it.map { book -> book.copy(isLoaded = isSyncCompleted) } }
         _essentialBooks.update { it.map { book -> book.copy(isLoaded = isSyncCompleted) } }
 
         val beginnerPercents = getScoreOfBeginnerUseCase()
+        beginnerPercents.forEach {
+            Logger.d(HomeViewModel::class.java.simpleName, "beginnerPercents: $it")
+        }
         val essentialPercents = getScoreOfEssentialUseCase()
 
         _beginnerBooks.update { books ->
             books.mapIndexed { index, book ->
-                book.copy(progress = 50 - beginnerPercents[index])
+                book.copy(progress = beginnerPercents[index])
             }
         }
 
         _essentialBooks.update { books ->
             books.mapIndexed { index, book ->
-                book.copy(progress = 50 - essentialPercents[index])
+                book.copy(progress = essentialPercents[index])
             }
+        }
+    }
+
+    fun isFirstTime() = prefsRepository.getBoolean(IS_FIRST_TIME, true)
+    fun setFirstTimeFalse() = prefsRepository.saveBoolean(IS_FIRST_TIME, false)
+
+    fun isReady() = prefsRepository.getBoolean(IS_READY, false)
+
+    fun saveLastCollection(id: Int) {
+        prefsRepository.saveInt(LAST_COLLECTION, id)
+    }
+
+    fun getLastPart(): Int {
+        return prefsRepository.getInt(LAST_PART, 0)
+    }
+
+    fun getLastCollection(): Int {
+        return prefsRepository.getInt(LAST_COLLECTION, 0)
+    }
+
+    fun syncAsset() {
+        viewModelScope.launch {
+            updateUseCase()
         }
     }
 }

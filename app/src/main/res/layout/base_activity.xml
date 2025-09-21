@@ -1,12 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <FrameLayout
-        android:id="@+id/contentFrame"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/statusBarPadding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/background"
+            android:elevation="4dp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:outlineSpotShadowColor="@color/black"
+            android:paddingTop="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical">
+
+                    <ImageButton
+                        android:id="@+id/drawerButton"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_margin="12dp"
+                        android:background="@android:color/transparent"
+                        android:clickable="true"
+                        android:contentDescription="Open drawer"
+                        android:focusable="true"
+                        android:src="@drawable/v_bars" />
+
+                    <TextView
+                        android:id="@+id/tvAppBarCaption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/golos"
+                        android:text="Vocabulary Books"
+                        android:textAllCaps="true"
+                        android:textColor="@color/secondary_text"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/contentFrame"
+            app:layout_constraintTop_toBottomOf="@id/statusBarPadding"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view"

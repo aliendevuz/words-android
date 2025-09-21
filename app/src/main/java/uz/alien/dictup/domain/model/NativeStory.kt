@@ -4,6 +4,8 @@ data class NativeStory(
     val id: Int? = null,
     val title: String,
     val content: String,
-    val storyId: Int? = null,
+    val collectionId: Int? = null,
+    val partId: Int? = null,
+    val unitId: Int? = null,
     val nativeLanguage: String
 )

@@ -1,7 +1,11 @@
 package uz.alien.dictup.presentation.features.story
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
@@ -11,7 +15,11 @@ import android.text.style.BackgroundColorSpan
 import android.text.style.ClickableSpan
 import android.text.style.StyleSpan
 import android.view.View
+import android.view.ViewGroup
+import android.widget.PopupWindow
+import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -23,11 +31,13 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import uz.alien.dictup.BuildConfig
 import uz.alien.dictup.R
+import uz.alien.dictup.databinding.LessonTooltipTranslationBinding
 import uz.alien.dictup.databinding.StoryActivityBinding
 import uz.alien.dictup.presentation.common.extention.applyExitZoomTransition
 import uz.alien.dictup.presentation.common.extention.setClearEdge
-import uz.alien.dictup.presentation.common.extention.setSystemPadding
 import uz.alien.dictup.presentation.features.base.BaseActivity
+import uz.alien.dictup.presentation.features.lesson.model.WordUIState
+import kotlin.jvm.java
 
 @AndroidEntryPoint
 class StoryActivity : BaseActivity() {
@@ -46,7 +56,8 @@ class StoryActivity : BaseActivity() {
             binding.root
         }
         setClearEdge()
-        setSystemPadding(binding.statusBarPadding)
+
+        setCaption("Reading mode")
 
         markwon = Markwon
             .builder(this)
@@ -103,15 +114,20 @@ class StoryActivity : BaseActivity() {
 
     private fun initViews() {
 
-        binding.drawerButton.setOnClickListener {
-            openDrawer()
-        }
-
         val title = intent.getStringExtra("title") ?: "No title"
         var content = viewModel.addTabsAfterParagraphs(
             intent.getStringExtra("content") ?: "No content"
         )
         val words = intent.getStringArrayListExtra("words")
+        val wordUiStates = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableArrayListExtra("word_ui_states", WordUIState::class.java)
+        } else {
+            intent.getParcelableArrayListExtra("word_ui_states")
+        }
+
+        if (wordUiStates != null) {
+            viewModel.setWordUIStates(wordUiStates)
+        }
 
         binding.tvContent.movementMethod = LinkMovementMethod.getInstance()
         binding.tvContent.highlightColor = Color.TRANSPARENT
@@ -168,10 +184,59 @@ class StoryActivity : BaseActivity() {
                     markwonSpannable.setSpan(
                         object : ClickableSpan() {
                             override fun onClick(widget: View) {
-                                if (viewModel.isPaused.value) {
-                                    viewModel.speakAloud(match.value)
+                                val tv = widget as TextView
+                                val layout = tv.layout
+
+                                // Span bosilgan joyni aniqlash
+                                val start = absMatchStart
+                                val end = absMatchEnd
+                                val line = layout.getLineForOffset(start)
+
+                                val startX = layout.getPrimaryHorizontal(start)
+                                val endX = layout.getPrimaryHorizontal(end)
+                                val wordCenterX = (startX + endX) / 2
+
+                                val baselineY = layout.getLineBaseline(line)
+                                val ascentY = layout.getLineAscent(line)
+                                val wordTopY = baselineY + ascentY
+
+                                // Tooltip view
+                                val popupView = LessonTooltipTranslationBinding.inflate(layoutInflater)
+                                viewModel.words.value.forEach { w ->
+                                    if (w.word == contentText.substring(absMatchStart, absMatchEnd)) {
+                                        popupView.root.text = w.nativeWord
+                                        return@forEach
+                                    }
                                 }
+
+                                val popupWindow = PopupWindow(
+                                    popupView.root,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                                    false
+                                ).apply {
+                                    isOutsideTouchable = true
+                                    elevation = 12f
+                                }
+
+                                popupView.root.measure(
+                                    View.MeasureSpec.UNSPECIFIED,
+                                    View.MeasureSpec.UNSPECIFIED
+                                )
+                                val popupWidth = popupView.root.measuredWidth
+                                val popupHeight = popupView.root.measuredHeight
+
+                                // So‘z markazidan hisoblab, popupni markazda chiqarish
+                                val offsetX = (wordCenterX - popupWidth / 2).toInt()
+                                val offsetY = (wordTopY - popupHeight - 4.dpToPx(tv.context))
+
+                                popupWindow.showAsDropDown(tv, offsetX, offsetY)
                             }
+
+                            // Extension: dp -> px
+                            fun Int.dpToPx(context: Context): Int =
+                                (this * context.resources.displayMetrics.density).toInt()
+
                             override fun updateDrawState(ds: TextPaint) {
                                 super.updateDrawState(ds)
                                 ds.isUnderlineText = false
@@ -231,6 +296,12 @@ class StoryActivity : BaseActivity() {
 
         binding.ibNext.setOnClickListener {
             viewModel.next()
+        }
+
+        binding.tvOwner.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = "https://t.me/+_s0z7jgCwv1lYzAy".toUri()
+            startActivity(intent)
         }
 
         lifecycleScope.launch {

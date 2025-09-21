@@ -22,5 +22,7 @@ interface NativeWordRepository {
         unitId: Int
     ): List<NativeWord>
 
+    suspend fun getNativeWordsByCollectionId(collectionId: Int): List<NativeWord>
+
     suspend fun clearAllNativeWords()
 }

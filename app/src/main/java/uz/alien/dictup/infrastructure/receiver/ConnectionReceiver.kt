@@ -20,43 +20,43 @@ import uz.alien.dictup.infrastructure.worker.SyncWorker
 
 class ConnectionReceiver : BroadcastReceiver() {
 
-  private val workerName = "internet_sync_work"
+    private val workerName = "internet_sync_work"
 
-  fun scheduleSyncWork(context: Context) {
+    fun scheduleSyncWork(context: Context) {
 
-    val workRequest = OneTimeWorkRequestBuilder<SyncWorker>()
-      .setConstraints(
-        Constraints.Builder()
-          .setRequiredNetworkType(NetworkType.CONNECTED)
-          .build()
-      )
-      .build()
+        val workRequest = OneTimeWorkRequestBuilder<SyncWorker>()
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build()
+            )
+            .build()
 
-    WorkManager.getInstance(context).enqueueUniqueWork(
-      workerName,
-      ExistingWorkPolicy.KEEP,
-      workRequest
-    )
-  }
-
-  override fun onReceive(context: Context, intent: Intent?) {
-
-    CoroutineScope(Dispatchers.IO).launch {
-      if (isConnected(context)) {
-        scheduleSyncWork(context)
-      } else {
-        WorkManager.getInstance(context).cancelUniqueWork(workerName)
-      }
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            workerName,
+            ExistingWorkPolicy.KEEP,
+            workRequest
+        )
     }
-  }
 
-  companion object {
+    override fun onReceive(context: Context, intent: Intent?) {
 
-    fun isConnected(context: Context): Boolean {
-      val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-      val nw = cm.activeNetwork ?: return false
-      val caps = cm.getNetworkCapabilities(nw) ?: return false
-      return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        CoroutineScope(Dispatchers.IO).launch {
+            if (isConnected(context)) {
+                scheduleSyncWork(context)
+            } else {
+                WorkManager.getInstance(context).cancelUniqueWork(workerName)
+            }
+        }
     }
-  }
+
+    companion object {
+
+        fun isConnected(context: Context): Boolean {
+            val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val nw = cm.activeNetwork ?: return false
+            val caps = cm.getNetworkCapabilities(nw) ?: return false
+            return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        }
+    }
 }

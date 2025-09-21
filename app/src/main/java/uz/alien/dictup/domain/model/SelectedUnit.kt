@@ -1,4 +1,4 @@
-package uz.alien.dictup.presentation.features.select.model
+package uz.alien.dictup.domain.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

@@ -119,6 +119,10 @@ fun AppCompatActivity.showError(message: String) {
     dialog?.show()
 }
 
+fun AppCompatActivity.hideDialog() {
+    dialog?.dismiss()
+}
+
 fun AppCompatActivity.destroyDialog() {
 
     dialog?.dismiss()

@@ -104,14 +104,14 @@ object Logger {
         }
     }
 
-    fun d(tag: String, msg: String) = log("DEBUG", tag, msg)
-    fun d(msg: String) = log("DEBUG", TAG, msg)
-    fun i(tag: String, msg: String) = log("INFO", tag, msg)
-    fun i(msg: String) = log("INFO", TAG, msg)
-    fun w(tag: String, msg: String) = log("WARN", tag, msg)
-    fun w(msg: String) = log("WARN", TAG, msg)
-    fun e(tag: String, msg: String) = log("ERROR", tag, msg)
-    fun e(msg: String) = log("ERROR", TAG, msg)
+    fun d(tag: String, msg: String?) = log("DEBUG", tag, msg.toString())
+    fun d(msg: String?) = log("DEBUG", TAG, msg.toString())
+    fun i(tag: String, msg: String?) = log("INFO", tag, msg.toString())
+    fun i(msg: String?) = log("INFO", TAG, msg.toString())
+    fun w(tag: String, msg: String?) = log("WARN", tag, msg.toString())
+    fun w(msg: String?) = log("WARN", TAG, msg.toString())
+    fun e(tag: String, msg: String?) = log("ERROR", tag, msg.toString())
+    fun e(msg: String?) = log("ERROR", TAG, msg.toString())
 
     private fun log(level: String, tag: String, msg: String) {
         try {

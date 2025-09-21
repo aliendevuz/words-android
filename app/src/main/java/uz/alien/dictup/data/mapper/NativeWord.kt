@@ -12,7 +12,9 @@ fun NativeWordEntity.toNativeWord(): NativeWord {
         type = this.type,
         definition = this.definition,
         sentence = this.sentence,
-        wordId = this.wordId,
+        collectionId = this.collectionId,
+        partId = this.partId,
+        unitId = this.unitId,
         nativeLanguage = this.nativeLanguage
     )
 }
@@ -25,7 +27,9 @@ fun NativeWord.toNativeWordEntity(): NativeWordEntity {
         type = this.type,
         definition = this.definition,
         sentence = this.sentence,
-        wordId = this.wordId ?: throw IllegalStateException("wordId is required"),
+        collectionId = this.collectionId!!,
+        partId = this.partId!!,
+        unitId = this.unitId!!,
         nativeLanguage = this.nativeLanguage
     )
 }

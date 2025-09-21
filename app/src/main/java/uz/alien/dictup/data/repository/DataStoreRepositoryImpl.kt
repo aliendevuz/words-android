@@ -4,9 +4,11 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
@@ -14,155 +16,79 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import uz.alien.dictup.domain.repository.DataStoreRepository
 
-class DataStoreRepositoryImpl (
-    private val context: Context
-) : DataStoreRepository {
+class DataStoreRepositoryImpl (private val context: Context) : DataStoreRepository {
 
     val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "data_store")
 
-    companion object {
-        val USERNAME_KEY = stringPreferencesKey("username")
-        val IS_LEGACY_DB_MIGRATED = booleanPreferencesKey("is_legacy_db_migrated")
-        val CURRENT_USER_ID = intPreferencesKey("current_user_id")
-        val LAST_SYNC_TIME = stringPreferencesKey("last_sync_time")
-        val IS_SYNC_COMPLETED = booleanPreferencesKey("is_sync_completed")
-        val TTS_PITCH = floatPreferencesKey("tts_pitch")
-        val TTS_SPEED = floatPreferencesKey("tts_speed")
-    }
-
-    override suspend fun saveUserName(name: String) {
+    override suspend fun saveBoolean(key: String, value: Boolean) {
         context.dataStore.edit { prefs ->
-            prefs[USERNAME_KEY] = name
+            prefs[booleanPreferencesKey(key)] = value
         }
     }
 
-    override fun getUserName(): Flow<String> {
+    override suspend fun getBoolean(key: String): Flow<Boolean> {
         return context.dataStore.data.map { prefs ->
-            prefs[USERNAME_KEY] ?: ""
-        }
-    }
-
-    override suspend fun isLegacyDbMigrated(): Flow<Boolean> {
-        return context.dataStore.data.map { prefs ->
-            prefs[IS_LEGACY_DB_MIGRATED] ?: false
-        }
-    }
-
-    override suspend fun setLegacyDbMigrated() {
-        context.dataStore.edit { prefs ->
-            prefs[IS_LEGACY_DB_MIGRATED] = true
-        }
-    }
-
-    override suspend fun saveWordVersion(targetLang: String, collection: String, version: Double) {
-        context.dataStore.edit { prefs ->
-            prefs[stringPreferencesKey("word.version.$targetLang.$collection")] = version.toString()
-        }
-    }
-
-    override suspend fun getWordVersion(targetLang: String, collection: String): Flow<Double> {
-        return context.dataStore.data.map { prefs ->
-            prefs[stringPreferencesKey("word.version.$targetLang.$collection")]?.toDoubleOrNull() ?: 0.0
+            prefs[booleanPreferencesKey(key)] ?: false
         }.distinctUntilChanged()
     }
 
-    override suspend fun saveStoryVersion(targetLang: String, collection: String, version: Double) {
+    override suspend fun saveInt(key: String, value: Int) {
         context.dataStore.edit { prefs ->
-            prefs[stringPreferencesKey("story.version.$targetLang.$collection")] = version.toString()
+            prefs[intPreferencesKey(key)] = value
         }
     }
 
-    override suspend fun getStoryVersion(targetLang: String, collection: String): Flow<Double> {
+    override suspend fun getInt(key: String): Flow<Int> {
         return context.dataStore.data.map { prefs ->
-            prefs[stringPreferencesKey("story.version.$targetLang.$collection")]?.toDoubleOrNull() ?: 0.0
-        }
-    }
-
-    override suspend fun saveNativeWordVersion(targetLang: String, collection: String, nativeLang: String, version: Double) {
-        context.dataStore.edit { prefs ->
-            prefs[stringPreferencesKey("native.word.version.$targetLang.$collection.$nativeLang")] = version.toString()
-        }
-    }
-
-    override suspend fun getNativeWordVersion(targetLang: String, collection: String, nativeLang: String): Flow<Double> {
-        return context.dataStore.data.map { prefs ->
-            prefs[stringPreferencesKey("native.word.version.$targetLang.$collection.$nativeLang")]?.toDoubleOrNull() ?: 0.0
-        }
-    }
-
-    override suspend fun saveNativeStoryVersion(targetLang: String, collection: String, nativeLang: String, version: Double) {
-        context.dataStore.edit { prefs ->
-            prefs[stringPreferencesKey("native.story.version.$targetLang.$collection.$nativeLang")] = version.toString()
-        }
-    }
-
-    override suspend fun getNativeStoryVersion(targetLang: String, collection: String, nativeLang: String): Flow<Double> {
-        return context.dataStore.data.map { prefs ->
-            prefs[stringPreferencesKey("native.story.version.$targetLang.$collection.$nativeLang")]?.toDoubleOrNull() ?: 0.0
-        }
-    }
-
-    override suspend fun saveCurrentUserId(userId: Int) {
-        context.dataStore.edit { prefs ->
-            prefs[CURRENT_USER_ID] = userId
-        }
-    }
-
-    override suspend fun getCurrentUserId(): Flow<Int?> {
-        return context.dataStore.data.map { prefs ->
-            prefs[CURRENT_USER_ID]
-        }
-    }
-
-    override suspend fun saveLastSyncTime(time: Long) {
-        context.dataStore.edit { prefs ->
-            prefs[LAST_SYNC_TIME] = time.toString()
-        }
-    }
-
-    override suspend fun getLastSyncTime(): Flow<Long?> {
-        return context.dataStore.data.map { prefs ->
-            prefs[LAST_SYNC_TIME]?.toLongOrNull()
-        }
-    }
-
-    override suspend fun syncCompleted() {
-        context.dataStore.edit { prefs ->
-            prefs[IS_SYNC_COMPLETED] = true
-        }
-    }
-
-    override suspend fun isSyncCompleted(): Flow<Boolean> {
-        return context.dataStore.data.map { prefs ->
-            prefs[IS_SYNC_COMPLETED] ?: false
+            prefs[intPreferencesKey(key)] ?: 0
         }.distinctUntilChanged()
     }
 
-    override suspend fun clearAll() {
-        context.dataStore.edit { it.clear() }
-    }
-
-    override suspend fun saveTTSPitch(pitch: Float) {
+    override suspend fun saveLong(key: String, value: Long) {
         context.dataStore.edit { prefs ->
-            prefs[TTS_PITCH] = pitch
+            prefs[longPreferencesKey(key)] = value
         }
     }
 
-    override suspend fun getTTSPitch(): Flow<Float> {
+    override suspend fun getLong(key: String): Flow<Long> {
         return context.dataStore.data.map { prefs ->
-            prefs[TTS_PITCH] ?: 1f
+            prefs[longPreferencesKey(key)] ?: 0L
         }.distinctUntilChanged()
     }
 
-    override suspend fun saveTTSSpeed(speed: Float) {
+    override suspend fun saveFloat(key: String, value: Float) {
         context.dataStore.edit { prefs ->
-            prefs[TTS_SPEED] = speed
+            prefs[floatPreferencesKey(key)] = value
         }
     }
 
-    override suspend fun getTTSSpeed(): Flow<Float> {
+    override suspend fun getFloat(key: String): Flow<Float> {
         return context.dataStore.data.map { prefs ->
-            prefs[TTS_SPEED] ?: 1f
+            prefs[floatPreferencesKey(key)] ?: 0f
+        }.distinctUntilChanged()
+    }
+
+    override suspend fun saveDouble(key: String, value: Double) {
+        context.dataStore.edit { prefs ->
+            prefs[doublePreferencesKey(key)] = value
+        }
+    }
+
+    override suspend fun getDouble(key: String): Flow<Double> {
+        return context.dataStore.data.map { prefs ->
+            prefs[doublePreferencesKey(key)] ?: 0.0
+        }.distinctUntilChanged()
+    }
+
+    override suspend fun saveString(key: String, value: String) {
+        context.dataStore.edit { prefs ->
+            prefs[stringPreferencesKey(key)] = value
+        }
+    }
+
+    override suspend fun getString(key: String): Flow<String> {
+        return context.dataStore.data.map { prefs ->
+            prefs[stringPreferencesKey(key)] ?: ""
         }.distinctUntilChanged()
     }
 }

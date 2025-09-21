@@ -8,15 +8,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import uz.alien.dictup.R
 import uz.alien.dictup.databinding.LessonFragmentWordBinding
 import uz.alien.dictup.presentation.features.lesson.model.WordUIState
+import kotlin.getValue
 
 class WordFragment : Fragment() {
 
     private var _binding: LessonFragmentWordBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: LessonViewModel by activityViewModels()
 
     private lateinit var word: WordUIState
 
@@ -35,6 +38,20 @@ class WordFragment : Fragment() {
         }
 
         binding.tvWord.text = word.word
+
+        if (word.score < 0) {
+            binding.tvWord.setTextColor(binding.tvWord.context.getColor(R.color.red_500))
+            binding.tvNativeWord.setTextColor(binding.tvWord.context.getColor(R.color.red_500))
+            binding.tvPageNumber.setTextColor(binding.tvWord.context.getColor(R.color.red_500))
+        } else if (word.score >= 5) {
+            binding.tvWord.setTextColor(binding.tvWord.context.getColor(R.color.green_700))
+            binding.tvNativeWord.setTextColor(binding.tvWord.context.getColor(R.color.green_700))
+            binding.tvPageNumber.setTextColor(binding.tvWord.context.getColor(R.color.green_700))
+        } else {
+            binding.tvWord.setTextColor(binding.tvWord.context.getColor(R.color.secondary_text))
+            binding.tvNativeWord.setTextColor(binding.tvWord.context.getColor(R.color.secondary_text))
+            binding.tvPageNumber.setTextColor(binding.tvWord.context.getColor(R.color.secondary_text))
+        }
 
         binding.tvTranscription.text = prepareTranscription(word.transcription)
 
@@ -58,41 +75,43 @@ class WordFragment : Fragment() {
 
         binding.image.setOnClickListener {
             if (!word.sentence.startsWith("null_of_")) {
-                speakOut(prepareSentence(word.sentence))
+                viewModel.speakAloud(prepareSentence(word.sentence))
             }
         }
 
         binding.tvPageNumber.text = "${word.id + 1}"
 
         binding.ibSpeechWord.setOnClickListener {
-            speakOut(word.word)
+            viewModel.speakAloud(word.word)
         }
 
         binding.tvWord.setOnClickListener {
-            speakOut(word.word)
+            viewModel.speakAloud(word.word)
+            viewModel.levelUp(word.wordId ?: return@setOnClickListener)
+            viewModel.updateLessonProgress()
         }
 
         binding.tvTranscription.setOnClickListener {
-            speakOut(word.word)
+            viewModel.speakAloud(word.word)
         }
 
         binding.tvType.setOnClickListener {
-            speakOut(word.word)
+            viewModel.speakAloud(word.word)
         }
 
         binding.tvNativeWord.setOnClickListener {
-            speakOut(word.word)
+            viewModel.speakAloud(word.word)
         }
 
         binding.ibSpeechDefinition.setOnClickListener {
             if (!word.definition.startsWith("null_of_")) {
-                speakOut(word.definition)
+                viewModel.speakAloud(word.definition)
             }
         }
 
         binding.ibSpeechSentence.setOnClickListener {
             if (!word.sentence.startsWith("null_of_")) {
-                speakOut(prepareSentence(word.sentence))
+                viewModel.speakAloud(prepareSentence(word.sentence))
             }
         }
 
@@ -166,11 +185,6 @@ class WordFragment : Fragment() {
             return data2
         }
         return null
-    }
-
-    private fun speakOut(text: String) {
-        val tts = (requireActivity() as LessonActivity).tts
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
     }
 
     override fun onDestroyView() {

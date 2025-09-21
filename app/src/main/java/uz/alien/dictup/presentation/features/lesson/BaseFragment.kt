@@ -218,6 +218,13 @@ class BaseFragment : Fragment() {
                 binding.tvItemWord.alpha = 1f
                 binding.flBackground.elevation = 0f
                 binding.tvItemWord.text = viewModel.words.value[getCurrentPage()].word
+                if (viewModel.words.value[getCurrentPage()].score < 0) {
+                    binding.tvItemWord.setTextColor(binding.tvItemWord.context.getColor(R.color.red_500))
+                } else if (viewModel.words.value[getCurrentPage()].score >= 5) {
+                    binding.tvItemWord.setTextColor(binding.tvItemWord.context.getColor(R.color.green_700))
+                } else {
+                    binding.tvItemWord.setTextColor(binding.tvItemWord.context.getColor(R.color.secondary_text))
+                }
             }
             override fun onAnimationEnd(animation: Animator) {
                 onEnd()
@@ -225,6 +232,7 @@ class BaseFragment : Fragment() {
                 binding.flBackground.elevation = 4 * resources.displayMetrics.density
                 binding.vBackground.alpha = 1f
                 binding.tvItemWord.alpha = 0f
+                binding.vpWord.offscreenPageLimit = 2
             }
             override fun onAnimationCancel(animation: Animator) {}
             override fun onAnimationRepeat(animation: Animator) {}

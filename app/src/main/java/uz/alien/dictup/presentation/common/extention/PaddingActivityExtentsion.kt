@@ -1,5 +1,6 @@
 package uz.alien.dictup.presentation.common.extention
 
+import androidx.core.graphics.Insets
 import android.graphics.Rect
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -14,10 +15,11 @@ fun AppCompatActivity.setSystemPadding(view: View) {
     }
 }
 
-fun AppCompatActivity.getSystemStatusPadding(view: View, onGet: (Int) -> Unit) {
+fun AppCompatActivity.getSystemStatusPadding(view: View, onGet: (Insets) -> Unit) {
     ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
-        val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-        onGet(systemBars.top)
+        WindowInsetsCompat.Type.systemOverlays()
+        val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemOverlays())
+        onGet(systemBars)
         insets
     }
 }

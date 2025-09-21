@@ -21,6 +21,7 @@
 
         <activity
             android:name=".presentation.features.home.HomeActivity"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.App.SplashScreen"
             android:exported="true">
 
@@ -74,6 +75,9 @@
         <activity android:name=".presentation.features.result.ResultActivity" />
         <activity android:name=".presentation.features.story.StoryActivity" />
         <activity android:name=".presentation.features.setting.SettingActivity" />
+        <activity android:name=".presentation.features.about.AboutActivity" />
+        <activity android:name=".presentation.features.more.MoreActivity" />
+        <activity android:name=".presentation.features.statistics.StatisticsActivity" />
 
         <service android:name=".infrastructure.service.MyFirebaseInstanceIDService"
             android:exported="false">

@@ -11,6 +11,8 @@ data class NativeWord(
     val type: String,
     val definition: String,
     val sentence: String,
-    val wordId: Int? = null,
+    val collectionId: Int? = null,
+    val partId: Int? = null,
+    val unitId: Int? = null,
     val nativeLanguage: String
 ): Parcelable

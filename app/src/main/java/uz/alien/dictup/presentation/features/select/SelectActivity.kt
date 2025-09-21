@@ -17,6 +17,7 @@ import uz.alien.dictup.presentation.common.extention.applyExitZoomTransition
 import uz.alien.dictup.presentation.common.extention.setClearEdge
 import uz.alien.dictup.presentation.common.extention.setSystemPadding
 import uz.alien.dictup.presentation.common.extention.startActivityWithAlphaAnimation
+import uz.alien.dictup.presentation.common.model.AnimationType
 import uz.alien.dictup.presentation.features.base.BaseActivity
 import uz.alien.dictup.presentation.features.quiz.QuizActivity
 import uz.alien.dictup.presentation.features.select.pager.CollectionPagerAdapter
@@ -31,12 +32,6 @@ class SelectActivity : BaseActivity() {
     private lateinit var collectionAdapter: CollectionAdapter
     private lateinit var collectionPagerAdapter: CollectionPagerAdapter
 
-    private var isOpened = false
-
-    private val prefs by lazy {
-        getSharedPreferences("app_prefs", MODE_PRIVATE)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -44,6 +39,8 @@ class SelectActivity : BaseActivity() {
         setContentLayout {
             binding.root
         }
+
+        hideAppBar()
 
         setClearEdge()
         setSystemPadding(binding.root)
@@ -56,7 +53,7 @@ class SelectActivity : BaseActivity() {
         collectionAdapter = CollectionAdapter { selectedIndex ->
             viewModel.setCurrentCollection(selectedIndex)
             binding.vpCollection.currentItem = selectedIndex
-            saveLastCollectionId(selectedIndex)
+            viewModel.saveLastCollectionId(selectedIndex)
         }
 
         val collections = viewModel.collectionsFlow.value
@@ -71,11 +68,11 @@ class SelectActivity : BaseActivity() {
         binding.vpCollection.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 viewModel.setCurrentCollection(position)
-                saveLastCollectionId(position)
+                viewModel.saveLastCollectionId(position)
             }
         })
 
-        val lastCollectionId = lastCollectionId()
+        val lastCollectionId = viewModel.getLastCollectionId()
         binding.vpCollection.setCurrentItem(lastCollectionId, false)
 
         var isFirst = true
@@ -91,30 +88,12 @@ class SelectActivity : BaseActivity() {
         }
 
         binding.bStart.setOnClickListener {
-            if (!isOpened) {
-                isOpened = true
-                val selectedUnits = viewModel.getSelectedUnits()
-                val intent = Intent(this, QuizActivity::class.java)
-                intent.putExtra("quiz_count", viewModel.getQuizCount())
-                intent.putExtra("units", selectedUnits.toTypedArray())
-                startActivityWithAlphaAnimation(intent)
-            }
+            val selectedUnits = ArrayList(viewModel.getSelectedUnits())
+            val intent = Intent(this, QuizActivity::class.java)
+            intent.putExtra("quiz_count", viewModel.getQuizCount())
+            intent.putParcelableArrayListExtra("selected_units", selectedUnits)
+            baseViewModel.startActivityWithAnimation(intent, AnimationType.FADE)
         }
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-        isOpened = false
-    }
-
-    private fun saveLastCollectionId(id: Int) {
-        prefs.edit {
-            putInt("last_collection_id", id)
-        }
-    }
-
-    private fun lastCollectionId(): Int  {
-        return prefs.getInt("last_collection_id", 0)
     }
 
     override fun finish() {

@@ -28,11 +28,11 @@ interface NativeStoryDao {
     @Query("SELECT * FROM native_stories WHERE id = :id")
     suspend fun getNativeStoryById(id: Int): NativeStoryEntity?
 
-    @Query("SELECT * FROM native_stories WHERE storyId = :storyId")
-    suspend fun getNativeStoriesByStoryId(storyId: Int): List<NativeStoryEntity>
-
     @Query("SELECT * FROM native_stories")
     suspend fun getAllNativeStories(): List<NativeStoryEntity>
+
+    @Query("SELECT * FROM native_stories WHERE collectionId = :collectionId")
+    suspend fun getNativeStoriesByCollectionId(collectionId: Int): List<NativeStoryEntity>
 
     @Query("DELETE FROM native_stories")
     suspend fun clearAllNativeStories()

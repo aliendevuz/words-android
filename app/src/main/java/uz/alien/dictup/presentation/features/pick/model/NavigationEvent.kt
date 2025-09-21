@@ -12,5 +12,6 @@ data class NavigationEvent(
     val words: ArrayList<Word>,
     val nativeWords: ArrayList<NativeWord>,
     val scores: ArrayList<Score>,
-    val stories: ArrayList<Story>
+    val stories: ArrayList<Story>,
+    val storyNumber: Int = 0
 )

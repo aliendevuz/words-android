@@ -6,18 +6,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import uz.alien.dictup.data.local.room.entity.WordEntity
 
-@Entity(
-    tableName = "native_words",
-    foreignKeys = [
-        ForeignKey(
-            entity = WordEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["wordId"],
-            onDelete = ForeignKey.Companion.CASCADE
-        )
-    ],
-    indices = [Index("wordId")]
-)
+@Entity(tableName = "native_words")
 data class NativeWordEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
@@ -26,6 +15,8 @@ data class NativeWordEntity(
     val type: String = "",
     val definition: String = "",
     val sentence: String = "",
-    val wordId: Int,
+    val collectionId: Int,
+    val partId: Int,
+    val unitId: Int,
     val nativeLanguage: String
 )

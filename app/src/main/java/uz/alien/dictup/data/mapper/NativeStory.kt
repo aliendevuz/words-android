@@ -9,7 +9,9 @@ fun NativeStoryEntity.toNativeStory(): NativeStory {
         id = this.id,
         title = this.title,
         content = this.content,
-        storyId = this.storyId,
+        collectionId = this.collectionId,
+        partId = this.partId,
+        unitId = this.unitId,
         nativeLanguage = this.nativeLanguage
     )
 }
@@ -19,7 +21,9 @@ fun NativeStory.toNativeStoryEntity(): NativeStoryEntity {
         id = this.id ?: throw IllegalStateException("NativeStory.id is required to convert to NativeStoryEntity"),
         title = this.title,
         content = this.content,
-        storyId = this.storyId ?: throw IllegalStateException("storyId is required"),
+        collectionId = this.collectionId!!,
+        partId = this.partId!!,
+        unitId = this.unitId!!,
         nativeLanguage = this.nativeLanguage
     )
 }

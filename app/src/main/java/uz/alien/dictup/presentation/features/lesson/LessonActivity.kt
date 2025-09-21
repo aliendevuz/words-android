@@ -2,7 +2,9 @@ package uz.alien.dictup.presentation.features.lesson
 
 import android.animation.Animator
 import android.animation.ValueAnimator
+import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.Typeface
 import android.os.Build
@@ -10,12 +12,17 @@ import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.text.Spannable
 import android.text.TextPaint
+import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.StyleSpan
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
+import android.widget.PopupWindow
+import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -28,9 +35,9 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import uz.alien.dictup.BuildConfig
 import uz.alien.dictup.R
-import uz.alien.dictup.utils.Logger
 import uz.alien.dictup.databinding.LessonActivityBinding
 import uz.alien.dictup.databinding.LessonFragmentBaseBinding
+import uz.alien.dictup.databinding.LessonTooltipTranslationBinding
 import uz.alien.dictup.domain.model.NativeWord
 import uz.alien.dictup.domain.model.Score
 import uz.alien.dictup.domain.model.Story
@@ -38,15 +45,16 @@ import uz.alien.dictup.domain.model.Word
 import uz.alien.dictup.presentation.common.component.AutoLayoutManager
 import uz.alien.dictup.presentation.common.extention.applyExitZoomTransition
 import uz.alien.dictup.presentation.common.extention.setClearEdge
-import uz.alien.dictup.presentation.common.extention.setSystemPadding
 import uz.alien.dictup.presentation.common.extention.startActivityWithZoomAnimation
+import uz.alien.dictup.presentation.common.model.AnimationType
 import uz.alien.dictup.presentation.features.base.BaseActivity
 import uz.alien.dictup.presentation.features.lesson.recycler.WordAdapter
 import uz.alien.dictup.presentation.features.story.StoryActivity
+import uz.alien.dictup.utils.Logger
 import java.util.Locale
 
 @AndroidEntryPoint
-class LessonActivity : BaseActivity(), TextToSpeech.OnInitListener {
+class LessonActivity : BaseActivity() {
 
     private lateinit var binding: LessonActivityBinding
     private val viewModel: LessonViewModel by viewModels()
@@ -54,8 +62,6 @@ class LessonActivity : BaseActivity(), TextToSpeech.OnInitListener {
     private var fragmentBounds: Rect? = null
     private var fragmentView: View? = null
     val itemBoundsMap = mutableMapOf<Int, Rect>()
-    lateinit var tts: TextToSpeech
-
     private var isPagerOpened = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,37 +72,14 @@ class LessonActivity : BaseActivity(), TextToSpeech.OnInitListener {
             binding.root
         }
         setClearEdge()
-        setSystemPadding(binding.statusBarPadding)
-
-        tts = TextToSpeech(this, this)
-
-        handleBackPress()
 
         initViews()
     }
 
-    override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS) {
-            val result = tts.setLanguage(Locale.US)
-            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                Logger.e("TTS", "Til qo‘llab-quvvatlanmaydi")
-            } else {
-                tts.speak(" ", TextToSpeech.QUEUE_FLUSH, null, "warmup")
-            }
-        } else {
-            Logger.e("TTS", "TTS ishga tushmadi")
-        }
-    }
-
     private fun initViews() {
 
-        binding.drawerButton.setOnClickListener {
-            openDrawer()
-        }
-
-        val collection = intent.getIntExtra("collection", 0)
-        val part = intent.getIntExtra("part", 0)
         val unit = intent.getIntExtra("unit", 0)
+        val storyNumber = intent.getIntExtra("sn", 0)
 
 
         val words = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -123,7 +106,7 @@ class LessonActivity : BaseActivity(), TextToSpeech.OnInitListener {
             intent.getParcelableArrayListExtra("stories")
         }
 
-        binding.tvAppBar.text = "Unit ${unit + 1}"
+        setCaption("Unit ${unit + 1}")
 
         if (words != null && nativeWords != null && scores != null) {
 
@@ -132,7 +115,7 @@ class LessonActivity : BaseActivity(), TextToSpeech.OnInitListener {
             }
         }
 
-        val adapter = WordAdapter { position, view ->
+        val adapter = WordAdapter { position, view, wordId ->
             if (!isPagerOpened) {
                 isPagerOpened = true
                 val bounds = Rect()
@@ -142,7 +125,7 @@ class LessonActivity : BaseActivity(), TextToSpeech.OnInitListener {
                 val fragment = BaseFragment.newInstance(position, bounds)
                 fragmentBounds = bounds
                 supportFragmentManager.beginTransaction()
-                    .add(R.id.contentFrame, fragment)
+                    .add(R.id.drawerLayout, fragment)
                     .commit()
             }
         }
@@ -161,8 +144,8 @@ class LessonActivity : BaseActivity(), TextToSpeech.OnInitListener {
             }
         }
 
-        binding.tvAppBar.setOnLongClickListener {
-            stories?.get(0)?.let {
+        setCaptionOnLongClickListener {
+            stories?.get(storyNumber)?.let {
                 if (!it.title.startsWith("null_of_")) {
                     val intent = Intent(this, StoryActivity::class.java)
                     intent.putStringArrayListExtra(
@@ -175,13 +158,14 @@ class LessonActivity : BaseActivity(), TextToSpeech.OnInitListener {
                     )
                     intent.putExtra("title", it.title)
                     intent.putExtra("content", it.content)
-                    startActivityWithZoomAnimation(intent)
+                    intent.putExtra("word_ui_states", ArrayList(viewModel.words.value))
+                    baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
                 }
             }
             true
         }
 
-        stories?.get(0)?.let {
+        stories?.get(storyNumber)?.let {
             if (!it.title.startsWith("null_of_")) {
 
                 val markwon = Markwon
@@ -190,9 +174,14 @@ class LessonActivity : BaseActivity(), TextToSpeech.OnInitListener {
                     .usePlugin(GlideImagesPlugin.create(this))
                     .build()
 
-                val content = addTabsAfterParagraphs(it.content)
+                var content = viewModel.addTabsAfterParagraphs(it.content)
 
-                val headerText = "###         ${it.title}\n\n"
+                binding.tvStory.movementMethod = LinkMovementMethod.getInstance()
+                binding.tvStory.highlightColor = Color.TRANSPARENT
+
+                content = viewModel.setContent(content)
+
+                val headerText = "###         ${it.title}\n\n        "
                 val node = markwon.parse("$headerText${content}")
                 val markwonSpannable = markwon.render(node) as Spannable
 
@@ -205,8 +194,58 @@ class LessonActivity : BaseActivity(), TextToSpeech.OnInitListener {
                     matches.forEach { match ->
                         val clickableSpan = object : ClickableSpan() {
                             override fun onClick(widget: View) {
-                                speakAloud(word.word)
+                                val tv = widget as TextView
+                                val layout = tv.layout
+
+                                // Span bosilgan joyni aniqlash
+                                val start = match.range.first
+                                val end = match.range.last + 1
+                                val line = layout.getLineForOffset(start)
+
+                                val startX = layout.getPrimaryHorizontal(start)
+                                val endX = layout.getPrimaryHorizontal(end)
+                                val wordCenterX = (startX + endX) / 2
+
+                                val baselineY = layout.getLineBaseline(line)
+                                val ascentY = layout.getLineAscent(line)
+                                val wordTopY = baselineY + ascentY
+
+                                // Tooltip view
+                                val popupView = LessonTooltipTranslationBinding.inflate(layoutInflater)
+                                viewModel.words.value.forEach { w ->
+                                    if (w.word == word.word) {
+                                        popupView.root.text = w.nativeWord
+                                        return@forEach
+                                    }
+                                }
+
+                                val popupWindow = PopupWindow(
+                                    popupView.root,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                                    false
+                                ).apply {
+                                    isOutsideTouchable = true
+                                    elevation = 12f
+                                }
+
+                                popupView.root.measure(
+                                    View.MeasureSpec.UNSPECIFIED,
+                                    View.MeasureSpec.UNSPECIFIED
+                                )
+                                val popupWidth = popupView.root.measuredWidth
+                                val popupHeight = popupView.root.measuredHeight
+
+                                // So‘z markazidan hisoblab, popupni markazda chiqarish
+                                val offsetX = (wordCenterX - popupWidth / 2).toInt()
+                                val offsetY = (wordTopY - popupHeight - 4.dpToPx(tv.context))
+
+                                popupWindow.showAsDropDown(tv, offsetX, offsetY)
                             }
+
+                            // Extension: dp -> px
+                            fun Int.dpToPx(context: Context): Int =
+                                (this * context.resources.displayMetrics.density).toInt()
 
                             override fun updateDrawState(ds: TextPaint) {
                                 super.updateDrawState(ds)
@@ -244,22 +283,6 @@ class LessonActivity : BaseActivity(), TextToSpeech.OnInitListener {
                 adapter.submitList(it)
             }
         }
-
-        lifecycleScope.launch {
-            viewModel.dataStore.getTTSPitch().collectLatest {
-                tts.setPitch(it)
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.dataStore.getTTSSpeed().collectLatest {
-                tts.setSpeechRate(it)
-            }
-        }
-    }
-
-    private fun speakAloud(content: String) {
-        tts.speak(content, TextToSpeech.QUEUE_FLUSH, null, null)
     }
 
     private fun addTabsAfterParagraphs(content: String): String {
@@ -269,6 +292,8 @@ class LessonActivity : BaseActivity(), TextToSpeech.OnInitListener {
     }
 
     fun dismissFragmentWithAnimation(fragment: BaseFragment, targetBounds: Rect?) {
+
+//        viewModel.updateLessonProgress()
 
         isPagerOpened = false
 
@@ -315,6 +340,13 @@ class LessonActivity : BaseActivity(), TextToSpeech.OnInitListener {
                 pagerBaseBinding.vBackground.alpha = 1f
                 pagerBaseBinding.flBackground.elevation = 4f * resources.displayMetrics.density
                 pagerBaseBinding.tvItemWord.text = viewModel.words.value[fragment.getCurrentPage()].word
+                if (viewModel.words.value[fragment.getCurrentPage()].score < 0) {
+                    pagerBaseBinding.tvItemWord.setTextColor(pagerBaseBinding.tvItemWord.context.getColor(R.color.red_500))
+                } else if (viewModel.words.value[fragment.getCurrentPage()].score >= 5) {
+                    pagerBaseBinding.tvItemWord.setTextColor(pagerBaseBinding.tvItemWord.context.getColor(R.color.green_700))
+                } else {
+                    pagerBaseBinding.tvItemWord.setTextColor(pagerBaseBinding.tvItemWord.context.getColor(R.color.secondary_text))
+                }
             }
             override fun onAnimationEnd(animation: Animator) {
                 (pagerBaseBinding.vpWord.getChildAt(0) as? RecyclerView)?.alpha = 0f
@@ -335,30 +367,16 @@ class LessonActivity : BaseActivity(), TextToSpeech.OnInitListener {
         animator.start()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        tts.stop()
-        tts.shutdown()
-    }
-
-    private fun handleBackPress() {
-        onBackPressedDispatcher.addCallback(this) {
-            if (isDrawerOpen()) {
-                closeDrawer()
-            } else {
-                if (isPagerOpened) {
-                    isPagerOpened = false
-                    val fragment = supportFragmentManager.findFragmentById(R.id.contentFrame) as? BaseFragment
-                    val currentPage = fragment?.getCurrentPage() ?: return@addCallback
-                    val targetBounds = itemBoundsMap[currentPage]
-                    dismissFragmentWithAnimation(fragment, targetBounds)
-                } else {
-                    if (isEnabled) {
-                        remove()
-                        onBackPressedDispatcher.onBackPressed()
-                    }
-                }
-            }
+    override fun onCustomBackPressed(): Boolean {
+        return if (isPagerOpened) {
+            isPagerOpened = false
+            val fragment = supportFragmentManager.findFragmentById(R.id.drawerLayout) as? BaseFragment
+            val currentPage = fragment?.getCurrentPage() ?: return false
+            val targetBounds = itemBoundsMap[currentPage]
+            dismissFragmentWithAnimation(fragment, targetBounds)
+            true
+        } else {
+            false
         }
     }
 

@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import uz.alien.dictup.utils.Logger
 import uz.alien.dictup.domain.repository.DataStoreRepository
+import uz.alien.dictup.value.strings.DataStore.TTS_PITCH
+import uz.alien.dictup.value.strings.DataStore.TTS_SPEED
 import java.util.Locale
 import javax.inject.Inject
 
@@ -32,13 +34,13 @@ class TTSManager @Inject constructor(
         tts = TextToSpeech(context, this)
 
         managerScope.launch {
-            dataStoreRepository.getTTSPitch().collectLatest {
+            dataStoreRepository.getFloat(TTS_PITCH).collectLatest {
                 tts?.setPitch(it)
             }
         }
 
         managerScope.launch {
-            dataStoreRepository.getTTSSpeed().collectLatest {
+            dataStoreRepository.getFloat(TTS_SPEED).collectLatest {
                 tts?.setSpeechRate(it)
             }
         }

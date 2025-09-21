@@ -8,15 +8,22 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import uz.alien.dictup.utils.Logger
-import uz.alien.dictup.utils.Logger.isCalled
+import uz.alien.dictup.domain.model.NativeWord
+import uz.alien.dictup.domain.model.Score
+import uz.alien.dictup.domain.model.Word
+import uz.alien.dictup.domain.model.WordCollection
 import uz.alien.dictup.infrastructure.manager.TTSManager
+import uz.alien.dictup.presentation.features.lesson.model.WordUIState
 import javax.inject.Inject
 
 @HiltViewModel
 class StoryViewModel @Inject constructor(
     private val ttsManager: TTSManager
 ) : ViewModel() {
+
+    private val emptyWordList = emptyList<WordUIState>()
+    private val _words = MutableStateFlow(emptyWordList)
+    val words = _words.asStateFlow()
 
     private val _sentences = MutableStateFlow<List<String>>(emptyList())
     val sentences = _sentences.asStateFlow()
@@ -26,6 +33,10 @@ class StoryViewModel @Inject constructor(
 
     private val _speakRequest = MutableSharedFlow<String>()
     val speakRequest = _speakRequest.asSharedFlow()
+
+    fun setWordUIStates(words: ArrayList<WordUIState>) {
+        _words.value = words
+    }
 
     private fun pause() {
         ttsManager.stop()
@@ -96,7 +107,7 @@ class StoryViewModel @Inject constructor(
     }
 
     fun speakAloud(text: String, onDone: (() -> Unit)? = null) {
-        ttsManager.speak(text.replace(".", ""), onDone)
+        ttsManager.speak(text.replace(".", " "), onDone)
     }
 
     fun splitAndCleanContent(content: String): List<String> {

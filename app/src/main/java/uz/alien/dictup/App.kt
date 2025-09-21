@@ -9,20 +9,22 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import uz.alien.dictup.data.repository.AssetsManagerRepositoryImpl
 import uz.alien.dictup.infrastructure.receiver.ConnectionReceiver
 
 @HiltAndroidApp
 class App : Application() {
 
-  private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-  override fun onCreate() {
-    super.onCreate()
-    val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-    val receiver = ConnectionReceiver()
-    applicationContext.registerReceiver(receiver, filter)
-    appScope.launch {
-      MobileAds.initialize(this@App)
+    override fun onCreate() {
+        super.onCreate()
+
+        val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        val receiver = ConnectionReceiver()
+        applicationContext.registerReceiver(receiver, filter)
+        appScope.launch {
+            MobileAds.initialize(this@App)
+        }
     }
-  }
 }

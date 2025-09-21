@@ -11,6 +11,9 @@ import uz.alien.dictup.databinding.SettingActivityBinding
 import uz.alien.dictup.presentation.common.extention.applyExitSwipeAnimation
 import uz.alien.dictup.presentation.common.extention.clearPadding
 import uz.alien.dictup.presentation.common.extention.setClearEdge
+import uz.alien.dictup.presentation.common.extention.setSystemPadding
+import uz.alien.dictup.value.strings.DataStore.TTS_PITCH
+import uz.alien.dictup.value.strings.DataStore.TTS_SPEED
 
 @AndroidEntryPoint
 class SettingActivity : AppCompatActivity() {
@@ -29,6 +32,7 @@ class SettingActivity : AppCompatActivity() {
 
         setClearEdge()
         clearPadding(binding.root)
+        setSystemPadding(binding.root)
 
         initViews()
     }
@@ -59,7 +63,7 @@ class SettingActivity : AppCompatActivity() {
 
         // Old value ni DataStore dan yuklash
         lifecycleScope.launch {
-            viewModel.dataStore.getTTSPitch().collect {
+            viewModel.dataStore.getFloat(TTS_PITCH).collect {
                 if (!isPitchCollected) {
                     isPitchCollected = true
                     binding.seekPitch.progress = ((it * 100) - 40).toInt()
@@ -69,7 +73,7 @@ class SettingActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            viewModel.dataStore.getTTSSpeed().collect {
+            viewModel.dataStore.getFloat(TTS_SPEED).collect {
                 if (!isSpeedCollected) {
                     isSpeedCollected = true
                     binding.seekSpeed.progress = ((it * 100) - 40).toInt()

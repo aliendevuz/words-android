@@ -9,7 +9,7 @@ import uz.alien.dictup.R
 import uz.alien.dictup.presentation.features.lesson.model.WordUIState
 
 class WordAdapter(
-    private val onItemClick: (Int, View) -> Unit
+    private val onItemClick: (Int, View, Int) -> Unit
 ) : ListAdapter<WordUIState, WordViewHolder>(WordDiffUtilCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WordViewHolder {

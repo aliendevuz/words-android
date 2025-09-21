@@ -18,7 +18,7 @@ class SyncWorker(
 
     override suspend fun doWork(): Result {
         return try {
-            entryPoint.syncDataUseCaseAndSetupScore().runAllSteps()
+//            entryPoint.syncDataUseCaseAndSetupScore().runAllSteps()
             Result.success()
         } catch (e: IOException) {
             Logger.e("SyncWorker", "IOError: ${e.message}")

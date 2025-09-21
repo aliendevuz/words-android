@@ -42,6 +42,10 @@ class StoryRepositoryImpl(
         return storyDao.getStoriesByFullPath(collectionId, partId, unitId)
     }
 
+    override suspend fun getStoriesByCollectionId(collectionId: Int): List<Story> {
+        return storyDao.getStoriesByCollection(collectionId)
+    }
+
     override suspend fun clearAllStories() {
         storyDao.clearAllStories()
     }

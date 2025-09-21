@@ -19,6 +19,9 @@ class ResultActivity : BaseActivity() {
     setContentLayout {
       binding.root
     }
+
+    hideAppBar()
+
     setSystemPadding(binding.root)
   }
 

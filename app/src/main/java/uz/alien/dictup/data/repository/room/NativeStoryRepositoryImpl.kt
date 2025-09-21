@@ -34,6 +34,10 @@ class NativeStoryRepositoryImpl(
         return nativeStoryDao.getAllNativeStories().map { it.toNativeStory() }
     }
 
+    override suspend fun getNativeStoriesByCollectionId(collectionId: Int): List<NativeStory> {
+        return nativeStoryDao.getNativeStoriesByCollectionId(collectionId).map { it.toNativeStory() }
+    }
+
     override suspend fun clearAllNativeStories() {
         nativeStoryDao.clearAllNativeStories()
     }

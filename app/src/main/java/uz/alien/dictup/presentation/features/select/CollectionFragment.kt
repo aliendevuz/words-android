@@ -32,10 +32,6 @@ class CollectionFragment : Fragment() {
     private lateinit var partPagerAdapter: PartPagerAdapter
     private lateinit var collection: CollectionUIState
 
-    private val prefs by lazy {
-        requireContext().getSharedPreferences("app_prefs", MODE_PRIVATE)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -72,7 +68,8 @@ class CollectionFragment : Fragment() {
 
         partAdapter = PartAdapter { selectedIndex ->
             viewModel.setCurrentPart(selectedIndex)
-            saveLastPartId(selectedIndex)
+
+            viewModel.saveLastPartId(selectedIndex)
             binding.vpPart.currentItem = selectedIndex
         }
 
@@ -87,11 +84,11 @@ class CollectionFragment : Fragment() {
         binding.vpPart.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 viewModel.setCurrentPart(collection.id, position)
-                saveLastPartId(position)
+                viewModel.saveLastPartId(position)
             }
         })
 
-        val lastPartId = lastPartId()
+        val lastPartId = viewModel.getLastPartId()
         binding.vpPart.setCurrentItem(lastPartId, false)
 
         binding.sbQuizCount.addOnChangeListener { slider, value, fromUser ->
@@ -128,16 +125,6 @@ class CollectionFragment : Fragment() {
                 binding.tvQuizCount.text = "${count.toInt()}"
             }
         }
-    }
-
-    private fun saveLastPartId(id: Int) {
-        prefs.edit {
-            putInt("last_part_id_${collection.id}", id)
-        }
-    }
-
-    private fun lastPartId(): Int  {
-        return prefs.getInt("last_part_id_${collection.id}", 0)
     }
 
     override fun onDestroyView() {

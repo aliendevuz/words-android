@@ -1,6 +1,10 @@
 package uz.alien.dictup.domain.usecase
 
 import uz.alien.dictup.domain.repository.room.ScoreRepository
+import uz.alien.dictup.utils.Logger
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 class GetScoreOfBeginnerUseCase(
     private val scoreRepository: ScoreRepository
@@ -9,12 +13,18 @@ class GetScoreOfBeginnerUseCase(
     suspend operator fun invoke(): List<Int> {
         return (0..3).map { part ->
             val scores = scoreRepository.getScoresByCollectionAndPart(0, part)
+            var progress = 0f
             if (scores.isEmpty()) {
-                0
+                Logger.d(GetScoreOfBeginnerUseCase::class.java.simpleName, "No scores found")
             } else {
-                val progress = scores.count { it.correctCount - it.incorrectCount > 5 }
-                ((progress / scores.size.toFloat()) * 100).toInt()
+                scores.forEach {
+                    if(it.correctCount - it.incorrectCount > 0) {
+                        progress += min(it.correctCount - it.incorrectCount, 5)
+                    }
+                }
+                progress = progress / scores.size / 5 * 100
             }
+            progress.roundToInt()
         }
     }
 }

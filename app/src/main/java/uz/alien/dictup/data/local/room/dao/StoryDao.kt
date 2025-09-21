@@ -35,6 +35,9 @@ interface StoryDao {
     @Query("SELECT * FROM stories WHERE collectionId = :collectionId AND partId = :partId AND unitId = :unitId")
     suspend fun getStoriesByFullPath(collectionId: Int, partId: Int, unitId: Int): List<Story>
 
+    @Query("SELECT * FROM stories WHERE collectionId = :collectionId")
+    suspend fun getStoriesByCollection(collectionId: Int): List<Story>
+
     @Query("DELETE FROM stories")
     suspend fun clearAllStories()
 }
