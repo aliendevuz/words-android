@@ -6,27 +6,21 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.alien.dictup.R
-import uz.alien.dictup.domain.repository.DataStoreRepository
 import uz.alien.dictup.domain.repository.SharedPrefsRepository
 import uz.alien.dictup.domain.usecase.GetScoreOfBeginnerUseCase
 import uz.alien.dictup.domain.usecase.GetScoreOfEssentialUseCase
 import uz.alien.dictup.domain.usecase.sync.UpdateUseCase
 import uz.alien.dictup.presentation.features.home.model.Book
 import uz.alien.dictup.utils.Logger
-import uz.alien.dictup.value.strings.DataStore.IS_SYNC_COMPLETED
-import uz.alien.dictup.value.strings.DataStore.WORDS_VERSION
 import uz.alien.dictup.value.strings.SharedPrefs.IS_FIRST_TIME
-import uz.alien.dictup.value.strings.SharedPrefs.IS_READY
 import uz.alien.dictup.value.strings.SharedPrefs.LAST_COLLECTION
 import uz.alien.dictup.value.strings.SharedPrefs.LAST_PART
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val dataStoreRepository: DataStoreRepository,
     private val prefsRepository: SharedPrefsRepository,
     private val getScoreOfBeginnerUseCase: GetScoreOfBeginnerUseCase,
     private val getScoreOfEssentialUseCase: GetScoreOfEssentialUseCase,
@@ -55,19 +49,10 @@ class HomeViewModel @Inject constructor(
     private val _essentialBooks = MutableStateFlow<List<Book>>(essentialBooks)
     val essentialBooksState: SharedFlow<List<Book>> = _essentialBooks
 
-    suspend fun isSyncCompleted() = dataStoreRepository.getBoolean(IS_SYNC_COMPLETED)
-
-    suspend fun getWordVersion(
-        targetLang: String,
-        collection: String
-    ) = dataStoreRepository.getDouble("${WORDS_VERSION}${targetLang}_$collection")
-
     suspend fun updateBook() {
 
-        val isSyncCompleted = dataStoreRepository.getBoolean(IS_SYNC_COMPLETED).firstOrNull() ?: false
-
-        _beginnerBooks.update { it.map { book -> book.copy(isLoaded = isSyncCompleted) } }
-        _essentialBooks.update { it.map { book -> book.copy(isLoaded = isSyncCompleted) } }
+        _beginnerBooks.update { it.map { book -> book.copy(isLoaded = true) } }
+        _essentialBooks.update { it.map { book -> book.copy(isLoaded = true) } }
 
         val beginnerPercents = getScoreOfBeginnerUseCase()
         beginnerPercents.forEach {
@@ -91,8 +76,6 @@ class HomeViewModel @Inject constructor(
     fun isFirstTime() = prefsRepository.getBoolean(IS_FIRST_TIME, true)
     fun setFirstTimeFalse() = prefsRepository.saveBoolean(IS_FIRST_TIME, false)
 
-    fun isReady() = prefsRepository.getBoolean(IS_READY, false)
-
     fun saveLastCollection(id: Int) {
         prefsRepository.saveInt(LAST_COLLECTION, id)
     }
@@ -105,7 +88,7 @@ class HomeViewModel @Inject constructor(
         return prefsRepository.getInt(LAST_COLLECTION, 0)
     }
 
-    fun syncAsset() {
+    fun updateData() {
         viewModelScope.launch {
             updateUseCase()
         }

@@ -9,13 +9,11 @@ import android.graphics.Rect
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
-import android.speech.tts.TextToSpeech
 import android.text.Spannable
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.StyleSpan
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
@@ -23,7 +21,6 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import android.widget.PopupWindow
 import android.widget.TextView
-import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
@@ -45,13 +42,11 @@ import uz.alien.dictup.domain.model.Word
 import uz.alien.dictup.presentation.common.component.AutoLayoutManager
 import uz.alien.dictup.presentation.common.extention.applyExitZoomTransition
 import uz.alien.dictup.presentation.common.extention.setClearEdge
-import uz.alien.dictup.presentation.common.extention.startActivityWithZoomAnimation
 import uz.alien.dictup.presentation.common.model.AnimationType
 import uz.alien.dictup.presentation.features.base.BaseActivity
 import uz.alien.dictup.presentation.features.lesson.recycler.WordAdapter
 import uz.alien.dictup.presentation.features.story.StoryActivity
 import uz.alien.dictup.utils.Logger
-import java.util.Locale
 
 @AndroidEntryPoint
 class LessonActivity : BaseActivity() {
@@ -87,6 +82,10 @@ class LessonActivity : BaseActivity() {
         } else {
             intent.getParcelableArrayListExtra("words")
         }
+
+        words?.forEach {
+            Logger.d("word", it.word)
+        } ?: Logger.d("word", "No words send!")
 
         val nativeWords = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableArrayListExtra("native_words", NativeWord::class.java)
@@ -293,7 +292,7 @@ class LessonActivity : BaseActivity() {
 
     fun dismissFragmentWithAnimation(fragment: BaseFragment, targetBounds: Rect?) {
 
-//        viewModel.updateLessonProgress()
+        viewModel.updateLessonProgress()
 
         isPagerOpened = false
 

@@ -16,6 +16,7 @@
 
 # Keep model classes
 -keep class uz.alien.dictup.data.local.room.entity.** { *; }
+-keep class uz.alien.dictup.domain.model.** { *; }
 
 # keep kotlin data classes
 -keepclassmembers class * {
@@ -48,3 +49,5 @@
 -dontwarn com.caverock.androidsvg.SVG
 -dontwarn com.caverock.androidsvg.SVGParseException
 -dontwarn pl.droidsonroids.gif.GifDrawable
+
+-keep class uz.alien.dictup.data.local.legacy.Word { *; }

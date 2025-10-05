@@ -5,7 +5,7 @@ object DataStore {
     const val USERNAME = "username"
 
     const val IS_LEGACY_DB_MIGRATED = "is_legacy_db_migrated"
-    const val WORDS_VERSION = "word_version_"
+    const val WORD_VERSION = "word_version_"
     const val STORY_VERSION = "story_version_"
 
     const val NATIVE_WORD_VERSION = "native_word_version_"
@@ -19,8 +19,6 @@ object DataStore {
     const val LOCAL_NATIVE_STORY_VERSION = "local_native_story_version_"
 
     const val LAST_SYNC_TIME = "last_sync_time"
-
-    const val IS_SYNC_COMPLETED = "is_sync_completed"
 
     const val TTS_PITCH = "tts_pitch"
 

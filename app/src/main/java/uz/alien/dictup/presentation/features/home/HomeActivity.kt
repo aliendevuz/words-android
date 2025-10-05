@@ -1,53 +1,38 @@
 package uz.alien.dictup.presentation.features.home
 
 import android.content.ActivityNotFoundException
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.net.toUri
+import androidx.core.view.postDelayed
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import uz.alien.dictup.BuildConfig
 import uz.alien.dictup.databinding.HomeActivityBinding
 import uz.alien.dictup.domain.model.WordCollection
 import uz.alien.dictup.presentation.common.component.AutoLayoutManager
-import uz.alien.dictup.presentation.common.extention.hideDialog
 import uz.alien.dictup.presentation.common.extention.overrideTransitionWithAlpha
-import uz.alien.dictup.presentation.common.extention.prepareDialogForFirstTime
-import uz.alien.dictup.presentation.common.extention.readTextFromUri
 import uz.alien.dictup.presentation.common.extention.setClearEdge
-import uz.alien.dictup.presentation.common.extention.showNoInternet
-import uz.alien.dictup.presentation.common.extention.showStarting
 import uz.alien.dictup.presentation.common.model.AnimationType
 import uz.alien.dictup.presentation.features.about.AboutActivity
 import uz.alien.dictup.presentation.features.base.BaseActivity
 import uz.alien.dictup.presentation.features.home.recycler.BeginnerBookAdapter
 import uz.alien.dictup.presentation.features.home.recycler.EssentialBookAdapter
-import uz.alien.dictup.presentation.features.lesson.LessonActivity
+import uz.alien.dictup.presentation.features.more.MoreActivity
 import uz.alien.dictup.presentation.features.pick.PickActivity
 import uz.alien.dictup.presentation.features.select.SelectActivity
-import uz.alien.dictup.presentation.features.welcome.WelcomeActivity
-import uz.alien.dictup.utils.Logger
-import uz.alien.dictup.value.strings.App.COLLECTION_BEGINNER
-import uz.alien.dictup.value.strings.App.TARGET_LANG
-import androidx.core.net.toUri
-import androidx.core.view.postDelayed
-import kotlinx.coroutines.flow.first
-import uz.alien.dictup.BuildConfig
-import uz.alien.dictup.presentation.features.more.MoreActivity
 import uz.alien.dictup.presentation.features.setting.SettingActivity
 import uz.alien.dictup.presentation.features.statistics.StatisticsActivity
+import uz.alien.dictup.presentation.features.welcome.WelcomeActivity
+import uz.alien.dictup.utils.Logger
 
 @AndroidEntryPoint
 class HomeActivity : BaseActivity() {
@@ -70,8 +55,6 @@ class HomeActivity : BaseActivity() {
 
         handleIntent(intent)
 
-        prepareDialogForFirstTime()
-
         // TODO: app update API ni ham ulab qo'yishim kerak
 
         if (viewModel.isFirstTime()) {
@@ -83,12 +66,6 @@ class HomeActivity : BaseActivity() {
             welcomeLauncher.launch(intent)
 
             overrideTransitionWithAlpha()
-
-        } else {
-
-            if (!viewModel.isReady()) {
-                collectSyncStatus()
-            }
         }
 
         initViews()
@@ -103,7 +80,7 @@ class HomeActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.syncAsset()
+        viewModel.updateData()
         lifecycleScope.launch {
             viewModel.updateBook()
         }
@@ -305,14 +282,7 @@ class HomeActivity : BaseActivity() {
 
     private val welcomeLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == RESULT_OK && !viewModel.isReady()) {
-
-            if (!viewModel.isReady()) {
-                collectSyncStatus()
-            }
-        }
-    }
+    ) {}
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -337,33 +307,20 @@ class HomeActivity : BaseActivity() {
 
         beginnerBookAdapter = BeginnerBookAdapter { part ->
 
-            if (viewModel.isReady()) {
-
-                val intent = Intent(this, PickActivity::class.java)
-                intent.putExtra("collection", WordCollection.BEGINNER.id)
-                intent.putExtra("part", part.id)
-                viewModel.saveLastCollection(WordCollection.BEGINNER.id)
-                baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
-            } else {
-                if (!isConnected(this)) {
-                    showNoInternet()
-                }
-            }
+            val intent = Intent(this, PickActivity::class.java)
+            intent.putExtra("collection", WordCollection.BEGINNER.id)
+            intent.putExtra("part", part.id)
+            viewModel.saveLastCollection(WordCollection.BEGINNER.id)
+            baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
         }
 
         essentialBookAdapter = EssentialBookAdapter { part ->
 
-            if (viewModel.isReady()) {
-                val intent = Intent(this, PickActivity::class.java)
-                intent.putExtra("collection", WordCollection.ESSENTIAL.id)
-                intent.putExtra("part", part.id)
-                viewModel.saveLastCollection(WordCollection.ESSENTIAL.id)
-                baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
-            } else {
-                if (!isConnected(this)) {
-                    showNoInternet()
-                }
-            }
+            val intent = Intent(this, PickActivity::class.java)
+            intent.putExtra("collection", WordCollection.ESSENTIAL.id)
+            intent.putExtra("part", part.id)
+            viewModel.saveLastCollection(WordCollection.ESSENTIAL.id)
+            baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
         }
 
         binding.rvBeginner.layoutManager = AutoLayoutManager(this, 4)
@@ -376,15 +333,8 @@ class HomeActivity : BaseActivity() {
 
         binding.bOpenSelector.setOnClickListener {
 
-            if (viewModel.isReady()) {
-
-                val intent = Intent(this, SelectActivity::class.java)
-                baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
-            } else {
-                if (!isConnected(this)) {
-                    showNoInternet()
-                }
-            }
+            val intent = Intent(this, SelectActivity::class.java)
+            baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
         }
     }
 
@@ -401,65 +351,5 @@ class HomeActivity : BaseActivity() {
                 essentialBookAdapter.submitList(books)
             }
         }
-    }
-
-    private fun collectSyncStatus() {
-
-        lifecycleScope.launch {
-            viewModel.isSyncCompleted().collectLatest { isCompleted ->
-                if (isCompleted) {
-                    viewModel.updateBook()
-                    hideDialog()
-                    return@collectLatest
-                } else {
-                    if (isConnected(this@HomeActivity)) {
-                        showStarting(
-                            "So'zlar yuklab olinmoqda..."
-                        )
-                    } else {
-                        showNoInternet()
-                    }
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.getWordVersion(TARGET_LANG, COLLECTION_BEGINNER).collect { version ->
-                if (version != 0.0 && !viewModel.isReady()) {
-                    showStarting(
-                        "Yuklab olish jarayoni davom etmoqda..."
-                    )
-                }
-            }
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        registerReceiver(connectionReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
-    }
-
-    override fun onStop() {
-        super.onStop()
-        unregisterReceiver(connectionReceiver)
-    }
-
-    private val connectionReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (!viewModel.isReady()) {
-                if (isConnected(this@HomeActivity)) {
-                    showStarting("Yuklab olish jarayoni davom etmoqda...")
-                } else {
-                    showNoInternet()
-                }
-            }
-        }
-    }
-
-    fun isConnected(context: Context): Boolean {
-        val cm = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
-        val nw = cm.activeNetwork ?: return false
-        val caps = cm.getNetworkCapabilities(nw) ?: return false
-        return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 }

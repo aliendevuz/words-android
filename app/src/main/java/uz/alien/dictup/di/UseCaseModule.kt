@@ -10,11 +10,6 @@ import uz.alien.dictup.domain.repository.AssetsManagerRepository
 import uz.alien.dictup.domain.repository.CacheManagerRepository
 import uz.alien.dictup.domain.repository.DataStoreRepository
 import uz.alien.dictup.domain.repository.HttpManager
-import uz.alien.dictup.domain.repository.SharedPrefsRepository
-import uz.alien.dictup.domain.repository.retrofit.RemoteNativeStoryRepository
-import uz.alien.dictup.domain.repository.retrofit.RemoteNativeWordRepository
-import uz.alien.dictup.domain.repository.retrofit.RemoteStoryRepository
-import uz.alien.dictup.domain.repository.retrofit.RemoteWordRepository
 import uz.alien.dictup.domain.repository.room.NativeStoryRepository
 import uz.alien.dictup.domain.repository.room.NativeWordRepository
 import uz.alien.dictup.domain.repository.room.ScoreRepository
@@ -24,7 +19,7 @@ import uz.alien.dictup.domain.usecase.GetScoreOfBeginnerUseCase
 import uz.alien.dictup.domain.usecase.GetScoreOfEssentialUseCase
 import uz.alien.dictup.domain.usecase.GetUnitsPercentUseCase
 import uz.alien.dictup.domain.usecase.PrepareQuizzesUseCase
-import uz.alien.dictup.domain.usecase.SyncDataUseCase
+import uz.alien.dictup.domain.usecase.sync.SyncDataUseCase
 import uz.alien.dictup.domain.usecase.sync.UpdateUseCase
 
 @Module
@@ -44,33 +39,12 @@ object UseCaseModule {
     @Provides
     fun provideSyncDataUseCase(
         @ApplicationContext context: Context,
-        remoteWordRepository: RemoteWordRepository,
-        remoteStoryRepository: RemoteStoryRepository,
-        remoteNativeWordRepository: RemoteNativeWordRepository,
-        remoteNativeStoryRepository: RemoteNativeStoryRepository,
         dataStoreRepository: DataStoreRepository,
-        wordRepository: WordRepository,
-        storyRepository: StoryRepository,
-        nativeWordRepository: NativeWordRepository,
-        nativeStoryRepository: NativeStoryRepository,
-        scoreRepository: ScoreRepository,
-        prefsRepository: SharedPrefsRepository,
         httpManager: HttpManager,
         cacheManagerRepository: CacheManagerRepository
     ): SyncDataUseCase {
         return SyncDataUseCase(
-            context = context,
-            remoteWordRepository = remoteWordRepository,
-            remoteStoryRepository = remoteStoryRepository,
-            remoteNativeWordRepository = remoteNativeWordRepository,
-            remoteNativeStoryRepository = remoteNativeStoryRepository,
             dataStoreRepository = dataStoreRepository,
-            wordRepository = wordRepository,
-            storyRepository = storyRepository,
-            nativeWordRepository = nativeWordRepository,
-            nativeStoryRepository = nativeStoryRepository,
-            scoreRepository = scoreRepository,
-            prefsRepository = prefsRepository,
             httpManager = httpManager,
             cacheManagerRepository = cacheManagerRepository
         )
@@ -90,12 +64,22 @@ object UseCaseModule {
 
     @Provides
     fun provideAssetSyncUseCase(
+        @ApplicationContext context: Context,
         wordRepository: WordRepository,
+        nativeWordRepository: NativeWordRepository,
+        storyRepository: StoryRepository,
+        nativeStoryRepository: NativeStoryRepository,
+        scoreRepository: ScoreRepository,
         dataStoreRepository: DataStoreRepository,
         assetsManagerRepository: AssetsManagerRepository,
         cacheManagerRepository: CacheManagerRepository
     ) = UpdateUseCase(
+        context = context,
         wordRepository = wordRepository,
+        nativeWordRepository = nativeWordRepository,
+        storyRepository = storyRepository,
+        nativeStoryRepository = nativeStoryRepository,
+        scoreRepository = scoreRepository,
         dataStoreRepository = dataStoreRepository,
         assetsManagerRepository = assetsManagerRepository,
         cacheManagerRepository = cacheManagerRepository

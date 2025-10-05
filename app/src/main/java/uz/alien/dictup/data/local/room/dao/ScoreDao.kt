@@ -58,4 +58,15 @@ interface ScoreDao {
         partId: Int,
         unitId: Int
     ): List<ScoreEntity>
+
+    @Transaction
+    suspend fun getScoresForUnits(
+        triples: List<Triple<Int, Int, Int>>
+    ): List<ScoreEntity> {
+        val results = mutableListOf<ScoreEntity>()
+        for ((c, p, u) in triples) {
+            results += getScoresByFullPath(c, p, u)
+        }
+        return results
+    }
 }

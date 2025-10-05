@@ -10,7 +10,7 @@ import kotlin.reflect.KClass
 
 object Logger {
 
-    private const val TAG = "LOGGER"
+    private const val TAG = "LOGGER_"
 
     // Per-thread holat
     private val lastHolderTL = ThreadLocal<KClass<*>?>()
@@ -94,7 +94,7 @@ object Logger {
     // ---- Logging wrappers (JVM/Unit test friendly) ----
 
     fun logToLogcat(level: String, tag: String, msg: String) {
-        if (BuildConfig.LOGGING_IS_AVAILABLE && (BuildConfig.DEBUG || BuildConfig.DISABLE_LOGGING_ON_PROD)) {
+        if (BuildConfig.LOGGING_IS_AVAILABLE && !BuildConfig.DISABLE_LOGGING_ON_PROD) {
             when (level.lowercase()) {
                 "debug" -> Log.d(tag, msg)
                 "info" -> Log.i(tag, msg)
@@ -104,13 +104,13 @@ object Logger {
         }
     }
 
-    fun d(tag: String, msg: String?) = log("DEBUG", tag, msg.toString())
+    fun d(tag: String, msg: String?) = log("DEBUG", "$TAG$tag", msg.toString())
     fun d(msg: String?) = log("DEBUG", TAG, msg.toString())
-    fun i(tag: String, msg: String?) = log("INFO", tag, msg.toString())
+    fun i(tag: String, msg: String?) = log("INFO", "$TAG$tag", msg.toString())
     fun i(msg: String?) = log("INFO", TAG, msg.toString())
-    fun w(tag: String, msg: String?) = log("WARN", tag, msg.toString())
+    fun w(tag: String, msg: String?) = log("WARN", "$TAG$tag", msg.toString())
     fun w(msg: String?) = log("WARN", TAG, msg.toString())
-    fun e(tag: String, msg: String?) = log("ERROR", tag, msg.toString())
+    fun e(tag: String, msg: String?) = log("ERROR", "$TAG$tag", msg.toString())
     fun e(msg: String?) = log("ERROR", TAG, msg.toString())
 
     private fun log(level: String, tag: String, msg: String) {

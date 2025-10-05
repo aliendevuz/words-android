@@ -29,5 +29,7 @@ interface ScoreRepository {
         unitId: Int
     ): List<Score>
 
+    suspend fun getScoresForUnits(triples: List<Triple<Int, Int, Int>>): List<Score>
+
     suspend fun clearAllScores()
 }

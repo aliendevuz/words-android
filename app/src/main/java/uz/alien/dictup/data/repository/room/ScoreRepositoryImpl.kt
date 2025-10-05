@@ -53,6 +53,10 @@ class ScoreRepositoryImpl(
         return scoreDao.getScoresByFullPath(collectionId, partId, unitId).map { it.toScore() }
     }
 
+    override suspend fun getScoresForUnits(triples: List<Triple<Int, Int, Int>>): List<Score> {
+        return scoreDao.getScoresForUnits(triples).map { it.toScore() }
+    }
+
     override suspend fun clearAllScores() {
         scoreDao.clearAllScores()
     }

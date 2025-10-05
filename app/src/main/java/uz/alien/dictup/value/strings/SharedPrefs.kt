@@ -12,7 +12,6 @@ object SharedPrefs {
 
     // Home
     const val IS_FIRST_TIME = "IS_FIRST_TIME"
-    const val IS_READY = "IS_READY"
     const val LAST_COLLECTION = "LAST_COLLECTION"
     const val LAST_PART = "LAST_PART"
 
