@@ -59,6 +59,10 @@ class LessonActivity : BaseActivity() {
     val itemBoundsMap = mutableMapOf<Int, Rect>()
     private var isPagerOpened = false
 
+    var collection = 0
+    var part = 0
+    var unit = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -69,6 +73,11 @@ class LessonActivity : BaseActivity() {
         setClearEdge()
 
         initViews()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.updateLessonProgress()
     }
 
     private fun initViews() {
@@ -82,6 +91,10 @@ class LessonActivity : BaseActivity() {
         } else {
             intent.getParcelableArrayListExtra("words")
         }
+
+        collection = intent.getIntExtra("collection", 0)
+        part = intent.getIntExtra("part", 0)
+        this.unit = unit
 
         words?.forEach {
             Logger.d("word", it.word)
@@ -290,7 +303,7 @@ class LessonActivity : BaseActivity() {
             .let { if (!it.startsWith("        ")) "        $it" else it } // birinchi paragrafga ham tab qo‘yish
     }
 
-    fun dismissFragmentWithAnimation(fragment: BaseFragment, targetBounds: Rect?) {
+    fun dismissFragmentWithAnimation(fragment: BaseFragment, targetBounds: Rect?, onDone: () -> Unit = {}) {
 
         viewModel.updateLessonProgress()
 
@@ -358,6 +371,7 @@ class LessonActivity : BaseActivity() {
                     .commit()
                 fragmentView = null
                 fragmentBounds = null
+                onDone()
             }
             override fun onAnimationCancel(animation: Animator) {}
             override fun onAnimationRepeat(animation: Animator) {}

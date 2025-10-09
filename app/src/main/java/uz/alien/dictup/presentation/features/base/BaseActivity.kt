@@ -82,6 +82,12 @@ abstract class BaseActivity : AppCompatActivity() {
             paddings.right,
             0
         )
+        navigationBinding.ivHeader.setPadding(
+            paddings.left,
+            paddings.top,
+            paddings.right,
+            paddings.bottom
+        )
         binding.contentFrame.setPadding(
             paddings.left,
             0,

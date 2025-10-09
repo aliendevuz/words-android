@@ -5,6 +5,7 @@
     android:orientation="vertical">
 
     <ImageView
+        android:id="@+id/ivHeader"
         android:layout_width="match_parent"
         android:layout_height="140dp"
         android:background="@color/primary"
@@ -24,6 +25,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
+        android:textColor="@color/white"
         android:text="Share App" />
 
     <Button
@@ -31,6 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
+        android:textColor="@color/white"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
         android:text="Show Ad" />
@@ -39,6 +42,7 @@
         android:id="@+id/bOpenSetting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/white"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"

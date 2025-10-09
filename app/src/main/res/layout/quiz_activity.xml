@@ -14,55 +14,64 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:layout_marginTop="20dp"
-            android:textSize="18dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:text="Test sinovi" />
+            android:layout_marginTop="20dp"
+            android:textStyle="normal"
+            android:textColor="@color/secondary_text"
+            android:text="Test sinovi"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tvIndex"
-            android:textSize="18sp"
-            android:layout_marginTop="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:layout_marginEnd="20sp"
-            app:layout_constraintTop_toTopOf="parent"
+            android:text="1/20"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
-            android:text="1/20" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/iProgress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:progress="20"
-            android:layout_marginTop="20dp"
             android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
+            app:trackColor="@color/track"
+            app:indicatorTrackGapSize="0dp"
+            app:trackStopIndicatorSize="0dp"
+            android:progress="0"
             app:layout_constraintTop_toBottomOf="@+id/tvIndex" />
 
 
         <TextView
-            android:text="orol"
-            app:layout_constraintTop_toBottomOf="@id/iProgress"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginVertical="24dp"
-            android:layout_marginHorizontal="20dp"
-            android:textAlignment="center"
-            android:textStyle="bold"
-            android:textSize="18sp"
+            android:id="@+id/tvQuestion"
+            android:textColor="@color/secondary_text"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="24dp"
+            android:text="orol"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iProgress" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        app:layout_constraintTop_toBottomOf="@id/clTop"
-        app:layout_constraintBottom_toTopOf="@id/clBottom"
+        android:id="@+id/rvOptions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        app:layout_constraintBottom_toTopOf="@id/clBottom"
+        app:layout_constraintTop_toBottomOf="@id/clTop"
         app:layout_constraintVertical_weight="1" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -73,20 +82,24 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:text="Next"
-            android:textAlignment="center"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:paddingVertical="12dp"
-            android:background="@drawable/back_general_button"
-            android:textColor="@color/white"
-            android:textStyle="bold"
+            android:id="@+id/bNext"
+            android:layout_width="264dp"
+            android:layout_height="52dp"
+            android:textAllCaps="false"
+            android:gravity="center"
+            android:layout_marginTop="24dp"
             android:layout_marginBottom="64dp"
-            android:layout_marginTop="24dp" />
+            android:background="@drawable/back_general_button"
+            android:paddingVertical="12dp"
+            android:text="Keyingi"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

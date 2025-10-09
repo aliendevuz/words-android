@@ -46,14 +46,14 @@ class SelectViewModel @Inject constructor(
     private val _collectionsFlow = MutableStateFlow(collections)
     val collectionsFlow: StateFlow<List<CollectionUIState>> = _collectionsFlow.asStateFlow()
 
-    private var currentCollection = 0
+    val currentCollection = MutableStateFlow(0)
     private val currentParts: MutableMap<Int, Int> = mutableMapOf()
 
     val partsFlows: MutableList<MutableStateFlow<List<PartUIState>>> = mutableListOf()
     val unitFlows: MutableList<List<MutableStateFlow<List<UnitUIState>>>> = mutableListOf()
 
-    val quizCount = MutableStateFlow(20f)
-    val selectedUnitsCount = MutableStateFlow(0)
+    val quizCount = MutableStateFlow(Pair(20f, 20f))
+    val selectedUnitsCount = MutableStateFlow(Pair(0, 0))
 
     init {
         _collectionsFlow.value.forEachIndexed { collectionIndex, collection ->
@@ -90,13 +90,13 @@ class SelectViewModel @Inject constructor(
 
         viewModelScope.launch {
 
-            val curColl = currentCollection
-            currentParts[currentCollection]?.let { currentPart ->
-                val progressList = getUnitsPercentUseCase(currentCollection, currentPart)
+            val curColl = currentCollection.value
+            currentParts[currentCollection.value]?.let { currentPart ->
+                val progressList = getUnitsPercentUseCase(currentCollection.value, currentPart)
 
-                if (currentCollection == curColl) {
+                if (currentCollection.value == curColl) {
 
-                    unitFlows[currentCollection][currentPart].update { units ->
+                    unitFlows[currentCollection.value][currentPart].update { units ->
                         units.mapIndexed { index, unit ->
                             unit.copy(progress = progressList.getOrNull(index) ?: unit.progress)
                         }
@@ -113,20 +113,22 @@ class SelectViewModel @Inject constructor(
                 else collection.copy(isCurrent = false)
             }
         }
-        currentCollection = collectionId
+        currentCollection.value = collectionId
         updateUnits()
     }
 
     fun setQuizCount(count: Float) {
-        quizCount.value = count
+        if (currentCollection.value == 0) quizCount.value = Pair(count, quizCount.value.second)
+        else quizCount.value = Pair(quizCount.value.first, count)
     }
 
-    fun getQuizCount(): Float {
-        return quizCount.value
+    fun getQuizCount(): Int {
+        return if (currentCollection.value == 0) quizCount.value.first.toInt()
+        else quizCount.value.second.toInt()
     }
 
     fun setCurrentPart(partId: Int) {
-        val collectionId = currentCollection
+        val collectionId = currentCollection.value
         partsFlows[collectionId].update { parts ->
             parts.map { part ->
                 part.copy(isCurrent = part.id == partId)
@@ -151,7 +153,7 @@ class SelectViewModel @Inject constructor(
     }
 
     fun toggleUnitSelection(unitId: Int) {
-        unitFlows[currentCollection][currentParts[currentCollection]!!].update { units ->
+        unitFlows[currentCollection.value][currentParts[currentCollection.value]!!].update { units ->
             units.map { unit ->
                 if (unit.id == unitId) {
                     val u = unit.copy(isSelected = !unit.isSelected)
@@ -163,7 +165,7 @@ class SelectViewModel @Inject constructor(
     }
 
     fun selectUnit(unitId: Int) {
-        unitFlows[currentCollection][currentParts[currentCollection]!!].update { units ->
+        unitFlows[currentCollection.value][currentParts[currentCollection.value]!!].update { units ->
             units.map { unit ->
                 if (unit.id == unitId && !unit.isSelected) {
                     val u = unit.copy(isSelected = true)
@@ -175,7 +177,7 @@ class SelectViewModel @Inject constructor(
     }
 
     fun unselectUnit(unitId: Int) {
-        unitFlows[currentCollection][currentParts[currentCollection]!!].update { units ->
+        unitFlows[currentCollection.value][currentParts[currentCollection.value]!!].update { units ->
             units.map { unit ->
                 if (unit.id == unitId && unit.isSelected) {
                     val u = unit.copy(isSelected = false)
@@ -187,12 +189,12 @@ class SelectViewModel @Inject constructor(
     }
 
     fun isUnitSelected(unitId: Int): Boolean {
-        return unitFlows[currentCollection][currentParts[currentCollection]!!].value.any { it.id == unitId && it.isSelected }
+        return unitFlows[currentCollection.value][currentParts[currentCollection.value]!!].value.any { it.id == unitId && it.isSelected }
     }
 
     fun selectAll() {
         viewModelScope.launch {
-            unitFlows[currentCollection][currentParts[currentCollection]!!].value.forEach { unit ->
+            unitFlows[currentCollection.value][currentParts[currentCollection.value]!!].value.forEach { unit ->
                 selectUnit(unit.id)
                 delay(5L)
             }
@@ -201,7 +203,7 @@ class SelectViewModel @Inject constructor(
 
     fun clearAll() {
         viewModelScope.launch {
-            unitFlows[currentCollection][currentParts[currentCollection]!!].value.forEach { unit ->
+            unitFlows[currentCollection.value][currentParts[currentCollection.value]!!].value.forEach { unit ->
                 unselectUnit(unit.id)
                 delay(5L)
             }
@@ -210,7 +212,7 @@ class SelectViewModel @Inject constructor(
 
     fun invertAll() {
         viewModelScope.launch {
-            unitFlows[currentCollection][currentParts[currentCollection]!!].value.forEach { unit ->
+            unitFlows[currentCollection.value][currentParts[currentCollection.value]!!].value.forEach { unit ->
                 toggleUnitSelection(unit.id)
                 delay(5L)
             }
@@ -219,7 +221,7 @@ class SelectViewModel @Inject constructor(
 
     fun randomSelect() {
         viewModelScope.launch {
-            unitFlows[currentCollection][currentParts[currentCollection]!!].value.forEach { unit ->
+            unitFlows[currentCollection.value][currentParts[currentCollection.value]!!].value.forEach { unit ->
                 if (nextBoolean()) selectUnit(unit.id)
                 else unselectUnit(unit.id)
                 delay(5L)
@@ -250,7 +252,13 @@ class SelectViewModel @Inject constructor(
 
         val isSelected = unit.isSelected
 
-        selectedUnitsCount.update { it + if (isSelected) 1 else -1 }
+        selectedUnitsCount.update { (beginnerCount, essentialCount) ->
+            if (currentCollection.value == 0) {
+                Pair(beginnerCount + if (isSelected) 1 else -1, essentialCount)
+            } else {
+                Pair(beginnerCount, essentialCount + if (isSelected) 1 else -1)
+            }
+        }
 
         partsFlows[collectionId].update { parts ->
             parts.map {

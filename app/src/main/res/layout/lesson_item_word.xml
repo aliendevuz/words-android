@@ -6,7 +6,7 @@
     android:layout_margin="1.6dp"
     android:textSize="16sp"
     android:text="target"
-    android:textStyle="bold"
+    android:textStyle="normal"
     android:textColor="@color/secondary_text"
     android:textAlignment="center"
     android:paddingVertical="4dp"

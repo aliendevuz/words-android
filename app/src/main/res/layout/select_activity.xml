@@ -48,15 +48,17 @@
             android:layout_weight="1"
             android:background="@drawable/back_general_button"
             android:clickable="true"
-            android:contentDescription="Testni boshlash"
+            android:textSize="16sp"
+            android:contentDescription="Testni Boshlash"
             android:elevation="4dp"
             android:focusable="true"
             android:fontFamily="@font/golos"
             android:gravity="center"
+            android:textStyle="normal"
             android:importantForAccessibility="yes"
             android:outlineSpotShadowColor="@color/black"
             android:text="Testni boshlash"
-            android:textAllCaps="true"
+            android:textAllCaps="false"
             android:textColor="@color/white" />
 
         <ImageButton

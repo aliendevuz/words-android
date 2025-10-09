@@ -78,5 +78,6 @@
     <color name="secondary_text">#0C6A96</color>
     <color name="text_highlight">#16B41B</color>
     <color name="text_selected">#6616B41B</color>
+    <color name="text_no_background">#7986CB</color>
 
 </resources>

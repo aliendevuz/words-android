@@ -9,26 +9,33 @@
         android:gravity="center"
         android:orientation="vertical">
 
-        <TextView
-            android:text="Do you want to do quiz?"
-            android:textColor="@color/primary_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/bRestart"
+            android:layout_width="216sp"
+            android:textStyle="normal"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:text="Qaytadan boshlash" />
 
         <Button
             android:id="@+id/bOpenQuiz"
-            android:layout_marginTop="20dp"
-            android:layout_width="wrap_content"
+            android:backgroundTint="@color/secondary"
+            android:layout_width="216sp"
+            android:textStyle="normal"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/white"
             android:text="Test bajarish" />
 
-        <TextView
-            android:layout_marginTop="12dp"
-            android:id="@+id/tvExit"
-            android:text="chiqish"
-            android:textColor="@color/primary_text"
+        <Button
+            android:id="@+id/bExit"
+            android:backgroundTint="@android:color/transparent"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="chiqish"
+            android:textStyle="normal"
+            android:textColor="@color/text_no_background" />
 
     </LinearLayout>
 

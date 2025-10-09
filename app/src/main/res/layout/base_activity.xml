@@ -46,10 +46,10 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/golos"
                         android:text="Vocabulary Books"
-                        android:textAllCaps="true"
+                        android:textAllCaps="false"
                         android:textColor="@color/secondary_text"
                         android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:textStyle="normal" />
 
                 </LinearLayout>
 

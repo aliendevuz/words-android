@@ -24,7 +24,8 @@ class CollectionViewHolder(
         val backgroundRes = when {
             isSelected and isCurrent -> R.drawable.select_item_collection_background_current
             isCurrent -> R.drawable.select_item_collection_background_current
-            isSelected -> R.drawable.select_item_collection_background_selected
+//            isSelected -> R.drawable.select_item_collection_background_selected
+            isSelected -> R.drawable.select_item_collection_background
             else -> R.drawable.select_item_collection_background
         }
 

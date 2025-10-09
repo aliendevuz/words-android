@@ -20,7 +20,7 @@ class WordViewHolder(
         if (word.score < 0) {
             itemTextView.setTextColor(itemTextView.context.getColor(R.color.red_500))
         } else if (word.score >= 5) {
-            itemTextView.setTextColor(itemTextView.context.getColor(R.color.green_700))
+            itemTextView.setTextColor(itemTextView.context.getColor(R.color.text_highlight))
         } else {
             itemTextView.setTextColor(itemTextView.context.getColor(R.color.secondary_text))
         }

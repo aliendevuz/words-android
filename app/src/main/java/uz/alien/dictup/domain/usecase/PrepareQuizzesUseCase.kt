@@ -11,34 +11,39 @@ class PrepareQuizzesUseCase(
     private val scoreRepository: ScoreRepository
 ) {
 
-    suspend operator fun invoke(selectedUnits: List<SelectedUnit>, quizCount: Int, quizVariantCount: Int): List<Quiz> {
-
+    suspend operator fun invoke(
+        selectedUnits: List<SelectedUnit>,
+        quizCount: Int,
+        quizVariantCount: Int
+    ): List<Quiz> {
         val triples = selectedUnits.map { Triple(it.collectionId, it.partId, it.unitId) }
 
         val scores = scoreRepository.getScoresForUnits(triples)
 
+        // 1️⃣ Saralash: ko‘p xatolarga ega so‘zlar birinchi bo‘ladi
         val sorted = scores
             .shuffled()
             .sortedWith(
                 compareByDescending<Score> { it.incorrectCount }
-                .thenBy { it.correctCount }
+                    .thenBy { it.correctCount }
             )
             .take(quizCount)
-            .shuffled()
 
-        val quizzes = sorted.map { score ->
+        // 2️⃣ Har bir quiz uchun variantlar yaratish
+        val quizzes = sorted.map { correctScore ->
 
-            val otherOptions = scores.toMutableList().apply { remove(score) }
-
-            val wrongOptions = otherOptions
+            // Shu to‘g‘ri javobni chiqarib tashlagan holatda noto‘g‘ri variantlar tanlash
+            val wrongOptions = scores
+                .filter { it.id != correctScore.id }  // <-- safe remove
                 .shuffled()
                 .take(quizVariantCount - 1)
                 .map { it.id }
 
-            val options = (wrongOptions + score.id).shuffled()
+            // To‘g‘ri + noto‘g‘ri variantlarni aralashtirish
+            val options = (wrongOptions + correctScore.id).shuffled()
 
             Quiz(
-                quiz = score.id,
+                quiz = correctScore.id,
                 options = options,
                 isQuizNative = nextBoolean()
             )

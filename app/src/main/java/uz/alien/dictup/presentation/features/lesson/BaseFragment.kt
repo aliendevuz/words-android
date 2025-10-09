@@ -221,7 +221,7 @@ class BaseFragment : Fragment() {
                 if (viewModel.words.value[getCurrentPage()].score < 0) {
                     binding.tvItemWord.setTextColor(binding.tvItemWord.context.getColor(R.color.red_500))
                 } else if (viewModel.words.value[getCurrentPage()].score >= 5) {
-                    binding.tvItemWord.setTextColor(binding.tvItemWord.context.getColor(R.color.green_700))
+                    binding.tvItemWord.setTextColor(binding.tvItemWord.context.getColor(R.color.text_highlight))
                 } else {
                     binding.tvItemWord.setTextColor(binding.tvItemWord.context.getColor(R.color.secondary_text))
                 }
@@ -241,12 +241,16 @@ class BaseFragment : Fragment() {
         animator.start()
     }
 
-    private fun dismissWithAnimation() {
-        (activity as? LessonActivity)?.dismissFragmentWithAnimation(this, startBounds)
+    fun dismissWithAnimation(onDone: () -> Unit = {}) {
+        (activity as? LessonActivity)?.dismissFragmentWithAnimation(this, startBounds, onDone)
     }
 
     fun getCurrentPage(): Int {
         return binding.vpWord.currentItem
+    }
+
+    fun setCurrentPage(position: Int) {
+        binding.vpWord.currentItem = position
     }
 
     override fun onDestroyView() {

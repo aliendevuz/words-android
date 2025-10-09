@@ -4,6 +4,7 @@ import android.app.Activity.OVERRIDE_TRANSITION_CLOSE
 import android.app.Activity.OVERRIDE_TRANSITION_OPEN
 import android.content.Intent
 import android.os.Build
+import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import uz.alien.dictup.R
@@ -35,6 +36,18 @@ fun AppCompatActivity.overrideTransitionWithAlpha() {
         )
     } else {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+    }
+}
+
+fun AppCompatActivity.overrideTransitionWithZoom() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        overrideActivityTransition(
+            OVERRIDE_TRANSITION_OPEN,
+            R.anim.zoom_in_out,
+            R.anim.zoom_out_in
+        )
+    } else {
+        overridePendingTransition(R.anim.zoom_in_out, R.anim.zoom_out_in)
     }
 }
 
@@ -84,6 +97,15 @@ fun AppCompatActivity.startActivityWithZoomAnimation(intent: Intent? = null) {
     } else {
         overridePendingTransition(R.anim.zoom_in_out, R.anim.zoom_out_in)
     }
+}
+
+fun AppCompatActivity.startActivityForResultWithZoomAnimation(launcher: ActivityResultLauncher<Intent>, intent: Intent? = null) {
+    val options = ActivityOptionsCompat.makeCustomAnimation(
+        this,
+        R.anim.zoom_in_out,
+        R.anim.zoom_out_in
+    )
+    intent?.let { launcher.launch(it, options) }
 }
 
 fun AppCompatActivity.applyExitZoomTransition() {

@@ -42,15 +42,12 @@ class WordFragment : Fragment() {
         if (word.score < 0) {
             binding.tvWord.setTextColor(binding.tvWord.context.getColor(R.color.red_500))
             binding.tvNativeWord.setTextColor(binding.tvWord.context.getColor(R.color.red_500))
-            binding.tvPageNumber.setTextColor(binding.tvWord.context.getColor(R.color.red_500))
         } else if (word.score >= 5) {
-            binding.tvWord.setTextColor(binding.tvWord.context.getColor(R.color.green_700))
-            binding.tvNativeWord.setTextColor(binding.tvWord.context.getColor(R.color.green_700))
-            binding.tvPageNumber.setTextColor(binding.tvWord.context.getColor(R.color.green_700))
+            binding.tvWord.setTextColor(binding.tvWord.context.getColor(R.color.text_highlight))
+            binding.tvNativeWord.setTextColor(binding.tvWord.context.getColor(R.color.text_highlight))
         } else {
             binding.tvWord.setTextColor(binding.tvWord.context.getColor(R.color.secondary_text))
             binding.tvNativeWord.setTextColor(binding.tvWord.context.getColor(R.color.secondary_text))
-            binding.tvPageNumber.setTextColor(binding.tvWord.context.getColor(R.color.secondary_text))
         }
 
         binding.tvTranscription.text = prepareTranscription(word.transcription)
@@ -87,8 +84,6 @@ class WordFragment : Fragment() {
 
         binding.tvWord.setOnClickListener {
             viewModel.speakAloud(word.word)
-            viewModel.levelUp(word.wordId ?: return@setOnClickListener)
-            viewModel.updateLessonProgress()
         }
 
         binding.tvTranscription.setOnClickListener {

@@ -124,6 +124,8 @@ class PickActivity : BaseActivity() {
                 when(event) {
                     is NavigationEvent -> {
                         val intent = Intent(this@PickActivity, LessonActivity::class.java)
+                        intent.putExtra("collection", collectionId)
+                        intent.putExtra("part", part)
                         intent.putExtra("unit", event.unitId)
                         intent.putParcelableArrayListExtra("words", event.words)
                         intent.putParcelableArrayListExtra("native_words", event.nativeWords)

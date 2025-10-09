@@ -6,6 +6,7 @@ import androidx.activity.viewModels
 import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -88,12 +89,28 @@ class SelectActivity : BaseActivity() {
         }
 
         binding.bStart.setOnClickListener {
-            val selectedUnits = ArrayList(viewModel.getSelectedUnits())
-            val intent = Intent(this, QuizActivity::class.java)
-            intent.putExtra("quiz_count", viewModel.getQuizCount())
-            intent.putParcelableArrayListExtra("selected_units", selectedUnits)
-            baseViewModel.startActivityWithAnimation(intent, AnimationType.FADE)
+            val units = viewModel.getSelectedUnits()
+            if (units.isNotEmpty()) {
+                val selectedUnits = ArrayList(units.filter { it.collectionId == viewModel.currentCollection.value })
+                val intent = Intent(this, QuizActivity::class.java)
+                intent.putExtra("quiz_count", viewModel.getQuizCount())
+                intent.putParcelableArrayListExtra("selected_units", selectedUnits)
+                baseViewModel.startActivityWithAnimation(intent, AnimationType.FADE)
+            } else {
+                // TODO: show snackbar
+                Logger.d("Select at least one unit")
+                val snackbar = Snackbar.make(binding.root, "Select at least one unit", Snackbar.LENGTH_SHORT)
+                snackbar.setAction("OK") {
+                    snackbar.dismiss()
+                }
+                snackbar.show()
+            }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.updateUnits()
     }
 
     override fun finish() {

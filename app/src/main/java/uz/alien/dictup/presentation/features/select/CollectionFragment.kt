@@ -1,12 +1,10 @@
 package uz.alien.dictup.presentation.features.select
 
-import android.content.Context.MODE_PRIVATE
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -110,17 +108,30 @@ class CollectionFragment : Fragment() {
 
         lifecycleScope.launch {
             viewModel.selectedUnitsCount.collectLatest { count ->
-                if (count != 0 && count <= 5) {
-                    if (binding.sbQuizCount.value > count * 20) {
-                        binding.sbQuizCount.value = (count * 20).toFloat()
+                if (collection.id == viewModel.currentCollection.value) {
+                    if (collection.id == 0) {
+                        if (count.first in 1..6) {
+                            if (binding.sbQuizCount.value > count.first * 20) {
+                                binding.sbQuizCount.value = (count.first * 20).toFloat()
+                            }
+                            binding.sbQuizCount.valueTo = (count.first * 20).toFloat()
+                        }
+                    } else {
+                        if (count.second in 1..6) {
+                            if (binding.sbQuizCount.value > count.second * 20) {
+                                binding.sbQuizCount.value = (count.second * 20).toFloat()
+                            }
+                            binding.sbQuizCount.valueTo = (count.second * 20).toFloat()
+                        }
                     }
-                    binding.sbQuizCount.valueTo = (count * 20).toFloat()
                 }
             }
         }
 
         lifecycleScope.launch {
-            viewModel.quizCount.collectLatest { count ->
+            viewModel.quizCount.collectLatest { c ->
+                val count = if (collection.id == 0) c.first
+                else c.second
                 binding.sbQuizCount.value = count
                 binding.tvQuizCount.text = "${count.toInt()}"
             }

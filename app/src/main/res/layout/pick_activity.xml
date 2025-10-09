@@ -67,8 +67,8 @@
             android:gravity="center"
             android:importantForAccessibility="yes"
             android:outlineSpotShadowColor="@color/black"
-            android:text="Davom etish"
-            android:textAllCaps="true"
+            android:text="Davom Etish"
+            android:textAllCaps="false"
             android:textColor="@color/white" />
 
         <ImageButton

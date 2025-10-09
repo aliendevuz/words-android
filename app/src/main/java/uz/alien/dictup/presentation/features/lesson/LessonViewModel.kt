@@ -63,17 +63,6 @@ class LessonViewModel @Inject constructor(
         _words.value = updatedList
     }
 
-    fun levelUp(wordId: Int) {
-        viewModelScope.launch {
-            val score = scoreRepository.getScoreById(wordId)
-            if (score != null) {
-                scoreRepository.updateScore(score.copy(correctCount = 6))
-            } else {
-                Logger.d("Can't: $wordId")
-            }
-        }
-    }
-
     fun setContent(content: String): String {
         return content.replace("<br>", " ").trim()
     }

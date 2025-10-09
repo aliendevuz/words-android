@@ -25,7 +25,7 @@
     <color name="main_background">#2F3645</color>
     <color name="background">#3D4659</color>
     <color name="inner_background">#4E5971</color>
-    <color name="background_ripple">#56586A</color>
+    <color name="background_ripple">#99FFFFFF</color>
 
     <color name="color_welcome_text">#FFFFFFFF</color>
 
@@ -39,10 +39,12 @@
     <color name="brand">#CCD1E4</color>
 
     <color name="primary">#1976D2</color>
-    <color name="ripple">#CCD1E4</color>
+    <color name="ripple">#FFFFFF</color>
     <color name="primary_text">#FFFFFF</color>
     <color name="secondary_text">#FFFFFF</color>
     <color name="text_highlight">#19A81D</color>
     <color name="text_selected">#6619A81D</color>
+    <color name="text_no_background">#FFFFFF</color>
+
 
 </resources>
