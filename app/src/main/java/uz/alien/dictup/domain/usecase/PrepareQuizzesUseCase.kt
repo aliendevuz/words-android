@@ -24,10 +24,10 @@ class PrepareQuizzesUseCase(
         val sorted = scores
             .shuffled()
             .sortedWith(
-                compareByDescending<Score> { it.incorrectCount }
-                    .thenBy { it.correctCount }
+                compareByDescending { it.incorrectCount + it.correctCount }
             )
             .take(quizCount)
+            .shuffled()
 
         // 2️⃣ Har bir quiz uchun variantlar yaratish
         val quizzes = sorted.map { correctScore ->

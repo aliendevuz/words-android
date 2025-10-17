@@ -12,7 +12,7 @@
         app:layout_constraintBottom_toTopOf="@id/cvImage"
         app:layout_constraintStart_toStartOf="@id/cvImage"
         app:layout_constraintEnd_toEndOf="@id/cvImage"
-        android:layout_marginBottom="54dp"
+        android:layout_marginBottom="20dp"
         android:textStyle="normal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -21,7 +21,7 @@
         android:id="@+id/cvImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="80dp"
+        android:layout_marginBottom="20dp"
         app:cardBackgroundColor="@color/inner_background"
         app:cardCornerRadius="20dp"
         app:cardElevation="4dp"
@@ -31,8 +31,8 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/image"
-            android:layout_width="180dp"
-            android:layout_height="180dp"
+            android:layout_width="256dp"
+            android:layout_height="256dp"
             android:layout_margin="4dp"
             android:background="@color/brand"
             android:scaleType="centerCrop"

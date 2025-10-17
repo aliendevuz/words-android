@@ -100,7 +100,7 @@
             android:fontFamily="@font/golos"
             android:gravity="center"
             android:outlineSpotShadowColor="@color/black"
-            android:text="Umumiy Topshiriqlar"
+            android:text="Test Bajarish"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="normal" />
