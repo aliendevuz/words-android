@@ -7,6 +7,7 @@ import android.view.ViewTreeObserver
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AlphaAnimation
 import android.view.animation.AnimationSet
+import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.view.animation.TranslateAnimation
 import androidx.core.os.postDelayed
@@ -36,6 +37,7 @@ fun startWelcome(binding: WelcomeActivityBinding, setHomeScreen: Runnable, handl
 
             binding.tvWelcomeBrand.alpha = 0.0f
             binding.tvWelcomeProduct.alpha = 0.0f
+            binding.tvCompany.alpha = 0.0f
 
             handler.postDelayed(BuildConfig.DURATION) {
 
@@ -103,9 +105,19 @@ fun startWelcome(binding: WelcomeActivityBinding, setHomeScreen: Runnable, handl
                                             this.interpolator = LinearInterpolator()
                                         })
 
-                                        handler.postDelayed(2000L) {
+                                        handler.postDelayed(3000L) {
 
-                                            setHomeScreen.run()
+                                            binding.tvCompany.alpha = 1.0f
+                                            binding.tvCompany.startAnimation(AnimationSet(true).apply {
+                                                addAnimation(AlphaAnimation(0f, 1f))
+                                                this.duration = 300L
+                                                this.interpolator = DecelerateInterpolator()
+                                            })
+
+                                            handler.postDelayed(2000L) {
+
+                                                setHomeScreen.run()
+                                            }
                                         }
                                     }
                                 }

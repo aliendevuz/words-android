@@ -27,4 +27,8 @@ object DataStore {
     const val QUIZ_LANG = "quiz_lang"
 
     const val QUIZ_VARIANT_COUNT = "quiz_variant_count"
+
+    const val IS_SFX_AVAILABLE = "is_sfx_available"
+
+    const val IS_BG_MUSIC_AVAILABLE = "is_bg_music_available"
 }

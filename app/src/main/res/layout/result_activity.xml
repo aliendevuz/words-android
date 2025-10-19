@@ -1,40 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/ivStatus"
-        android:src="@drawable/ic_words_foreground"
-        android:layout_width="188dp"
-        android:layout_height="188dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tvResult"
-        android:layout_marginTop="56dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:text="Sizning natijangiz:" />
+        <TextView
+            android:text="Sizning natijangiz:"
+            android:textSize="20sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-    <Button
-        android:id="@+id/bRetry"
-        android:layout_marginTop="40dp"
-        android:text="Qayta boshlash"
-        android:backgroundTint="@color/secondary"
-        android:layout_width="216dp"
-        android:textColor="@color/white"
-        android:layout_height="wrap_content" />
+        <LinearLayout
+            android:id="@+id/llResult"
+            android:layout_marginTop="48dp"
+            android:padding="10dp"
+            android:background="@drawable/result_circle_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/bExit"
-        android:text="Chiqish"
-        android:textColor="@color/white"
-        android:backgroundTint="@color/red_700"
-        android:layout_marginTop="4dp"
-        android:layout_width="216dp"
-        android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/tvResult"
+                android:layout_width="196dp"
+                android:layout_height="196dp"
+                android:textColor="@color/white"
+                android:textSize="40sp"
+                android:fontFamily="@font/golos"
+                android:gravity="center"
+                android:shadowColor="#99000000"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="10"
+                android:background="@drawable/result_circle"
+                android:text="37%" />
 
-</LinearLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/bRetry"
+            android:layout_marginTop="140dp"
+            android:text="Qayta boshlash"
+            android:backgroundTint="@color/secondary"
+            android:layout_width="216dp"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/bExit"
+            android:text="Chiqish"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/red_700"
+            android:layout_marginTop="4dp"
+            android:layout_width="216dp"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <nl.dionsegijn.konfetti.xml.KonfettiView
+        android:id="@+id/konfetti"
+        android:clickable="false"
+        android:focusable="false"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</FrameLayout>

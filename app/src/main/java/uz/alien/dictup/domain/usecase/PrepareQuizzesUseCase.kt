@@ -20,19 +20,16 @@ class PrepareQuizzesUseCase(
 
         val scores = scoreRepository.getScoresForUnits(triples)
 
-        // 1️⃣ Saralash: ko‘p xatolarga ega so‘zlar birinchi bo‘ladi
         val sorted = scores
             .shuffled()
             .sortedWith(
-                compareByDescending { it.incorrectCount + it.correctCount }
+                compareBy { it.correctCount - it.incorrectCount }
             )
             .take(quizCount)
             .shuffled()
 
-        // 2️⃣ Har bir quiz uchun variantlar yaratish
         val quizzes = sorted.map { correctScore ->
 
-            // Shu to‘g‘ri javobni chiqarib tashlagan holatda noto‘g‘ri variantlar tanlash
             val wrongOptions = scores
                 .filter { it.id != correctScore.id }  // <-- safe remove
                 .shuffled()

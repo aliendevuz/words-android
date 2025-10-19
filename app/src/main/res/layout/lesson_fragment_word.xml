@@ -6,22 +6,22 @@
 
     <TextView
         android:id="@+id/tvPageNumber"
-        android:textColor="@color/secondary_text"
-        android:text="1"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@id/cvImage"
-        app:layout_constraintStart_toStartOf="@id/cvImage"
-        app:layout_constraintEnd_toEndOf="@id/cvImage"
-        android:layout_marginBottom="20dp"
-        android:textStyle="normal"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:text="1"
+        android:textColor="@color/secondary_text"
+        android:textSize="20sp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toTopOf="@id/cvImage"
+        app:layout_constraintEnd_toEndOf="@id/cvImage"
+        app:layout_constraintStart_toStartOf="@id/cvImage" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cvImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="24dp"
         app:cardBackgroundColor="@color/inner_background"
         app:cardCornerRadius="20dp"
         app:cardElevation="4dp"
@@ -43,9 +43,11 @@
 
     <TextView
         android:id="@+id/tvWord"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginHorizontal="24dp"
+        android:gravity="center"
         android:text="target"
         android:textColor="@color/secondary_text"
         android:textSize="16sp"
@@ -62,16 +64,18 @@
         android:layout_marginEnd="24dp"
         android:background="@android:color/transparent"
         android:src="@drawable/v_speaker"
-        app:layout_constraintBottom_toBottomOf="@id/tvWord"
+        app:layout_constraintBottom_toBottomOf="@+id/tvNativeWord"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/tvWord" />
 
     <TextView
         android:id="@+id/tvTranscription"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="12dp"
+        android:layout_marginHorizontal="72dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
         android:text="transcript"
         android:textColor="@color/primary_text"
         app:layout_constraintEnd_toEndOf="parent"
@@ -80,10 +84,12 @@
 
     <TextView
         android:id="@+id/tvType"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="12dp"
+        android:layout_marginHorizontal="72dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
         android:includeFontPadding="true"
         android:paddingHorizontal="8dp"
         android:text="type"
@@ -95,11 +101,13 @@
 
     <TextView
         android:id="@+id/tvNativeWord"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
         android:text="native"
+        android:layout_marginHorizontal="24dp"
         android:textColor="@color/secondary_text"
         android:textSize="16sp"
         android:textStyle="normal"
@@ -112,45 +120,47 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="40dp"
         android:text="definition"
         android:textColor="@color/primary_text"
         android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/ibSpeechDefinition"
         app:layout_constraintEnd_toStartOf="@id/ibSpeechDefinition"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvNativeWord" />
+        app:layout_constraintTop_toTopOf="@id/ibSpeechDefinition" />
 
     <ImageButton
         android:id="@+id/ibSpeechDefinition"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginEnd="24dp"
+        android:layout_marginTop="20dp"
         android:background="@android:color/transparent"
         android:src="@drawable/v_speaker"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tvDefinition" />
+        app:layout_constraintTop_toBottomOf="@id/tvNativeWord" />
 
     <TextView
         android:id="@+id/tvSentence"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="40dp"
         android:text="sentence"
         android:textColor="@color/primary_text"
         android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/ibSpeechSentence"
         app:layout_constraintEnd_toStartOf="@id/ibSpeechSentence"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvDefinition" />
+        app:layout_constraintTop_toTopOf="@id/ibSpeechSentence" />
 
     <ImageButton
         android:id="@+id/ibSpeechSentence"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginEnd="24dp"
+        android:layout_marginTop="12dp"
         android:background="@android:color/transparent"
         android:src="@drawable/v_speaker"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tvSentence" />
+        app:layout_constraintTop_toBottomOf="@id/ibSpeechDefinition" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

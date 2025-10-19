@@ -1,19 +1,23 @@
 package uz.alien.dictup.presentation.features.result
 
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.animation.ValueAnimator
-import androidx.activity.viewModels
 import android.view.animation.AccelerateDecelerateInterpolator
+import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import nl.dionsegijn.konfetti.core.Party
+import nl.dionsegijn.konfetti.core.Position
+import nl.dionsegijn.konfetti.core.emitter.Emitter
 import uz.alien.dictup.databinding.ResultActivityBinding
 import uz.alien.dictup.presentation.common.extention.applyExitZoomTransition
 import uz.alien.dictup.presentation.common.extention.setClearEdge
 import uz.alien.dictup.presentation.common.model.Attempt
 import uz.alien.dictup.presentation.features.base.BaseActivity
-import kotlin.math.pow
+import java.util.concurrent.TimeUnit
+
 
 class ResultActivity : BaseActivity() {
 
@@ -21,6 +25,10 @@ class ResultActivity : BaseActivity() {
     private val viewModel: ResultViewModel by viewModels()
 
     private var restart = false
+
+    // Drawable'lar
+    private lateinit var innerCircleDrawable: DynamicCircleDrawable
+    private lateinit var outerCircleDrawable: DynamicCircleDrawable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,9 +39,26 @@ class ResultActivity : BaseActivity() {
         }
 
         setClearEdge()
-
         hideAppBar()
 
+        // Dinamik drawable'lar yaratish
+        innerCircleDrawable = DynamicCircleDrawable(
+            radius = 500f,
+            startColor = 0xFFE57373.toInt(), // Qizil
+            endColor = 0xFF8CE573.toInt()    // Yashil
+        )
+
+        outerCircleDrawable = DynamicCircleDrawable(
+            radius = 500f,
+            startColor = 0x80E57373.toInt(),
+            endColor = 0x808CE573.toInt()
+        )
+
+        // Parenti (outer circle) background qilish
+        binding.llResult.background = outerCircleDrawable
+
+        // TextView (inner circle) background qilish
+        binding.tvResult.background = innerCircleDrawable
 
         initViews()
     }
@@ -70,13 +95,23 @@ class ResultActivity : BaseActivity() {
 
     private fun animateResult(targetValue: Float) {
         val animator = ValueAnimator.ofFloat(0f, targetValue)
-        animator.duration = 1500L  // 1.5 soniya
-        animator.interpolator = AccelerateDecelerateInterpolator() // tabiiy silliqlik
+        animator.duration = 1500L
+        animator.interpolator = AccelerateDecelerateInterpolator()
 
         animator.addUpdateListener { animation ->
             val animatedValue = animation.animatedValue as Float
+            val percentageProgress = animatedValue / 100f // 0f to 1f oralig'ida
+
             val displayValue = String.format("%.1f%%", animatedValue)
-            binding.tvResult.text = "Sizning natijangiz: $displayValue"
+            binding.tvResult.text = displayValue
+
+            // Drawable'lar uchun progress o'rnatish
+            innerCircleDrawable.setProgress(percentageProgress)
+            outerCircleDrawable.setProgress(percentageProgress)
+
+            if (animatedValue == 100f) {
+                binding.konfetti.start(KonfettiPartyConfig.getQuickParty())
+            }
         }
 
         animator.start()

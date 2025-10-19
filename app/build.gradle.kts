@@ -93,6 +93,7 @@ dependencies {
     implementation(libs.markwon)
     implementation(libs.image.plugin)
     implementation(libs.glide.image.plugin)
+    implementation(libs.konfetti)
     ksp(libs.glide)
     ksp(libs.androidx.room.compiler)
     ksp(libs.hilt.compiler)

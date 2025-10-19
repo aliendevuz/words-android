@@ -41,6 +41,9 @@
 
     <color name="brand">#2B73B3</color>
 
+    <color name="start">#E57373</color>
+    <color name="end">#8CE573</color>
+
     <color name="red_300">#E57373</color>
     <color name="blue_300">#64B5F6</color>
     <color name="yellow_300">#FFF176</color>

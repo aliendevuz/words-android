@@ -23,14 +23,9 @@ import uz.alien.dictup.presentation.common.extention.setSystemPadding
 import uz.alien.dictup.presentation.features.base.BaseActivity
 import uz.alien.dictup.domain.model.SelectedUnit
 import uz.alien.dictup.presentation.common.component.AutoLayoutManager
-import uz.alien.dictup.presentation.common.extention.hideSystemUI
-import uz.alien.dictup.presentation.common.extention.overrideTransitionWithZoom
 import uz.alien.dictup.presentation.common.extention.startActivityForResultWithZoomAnimation
-import uz.alien.dictup.presentation.common.model.AnimationType
 import uz.alien.dictup.presentation.features.quiz.recycler.OptionAdapter
 import uz.alien.dictup.presentation.features.result.ResultActivity
-import uz.alien.dictup.utils.Logger
-import uz.alien.dictup.utils.Logger.isCalled
 
 @AndroidEntryPoint
 class QuizActivity : BaseActivity() {
@@ -38,11 +33,12 @@ class QuizActivity : BaseActivity() {
     private lateinit var binding: QuizActivityBinding
     private val viewModel: QuizViewModel by viewModels()
 
-    private var mediaPlayer: MediaPlayer? = null
+    private var sfxPlayer: MediaPlayer? = null
     private var bgPlayer: MediaPlayer? = null
 
-    private val maxVolume = 0.32f
-    private val sfxVolume = 0.8f
+    private val fadeHandler = Handler(Looper.getMainLooper())
+    private var maxVolume = 0.32f
+    private var sfxVolume = 0.8f
 
 
     private lateinit var optionAdapter: OptionAdapter
@@ -108,7 +104,8 @@ class QuizActivity : BaseActivity() {
             if (viewModel.isCorrect.value && viewModel.currentIndex.value == viewModel.quizCount.intValue - 1) {
                 binding.bNext.text = "Natijani ko'rish"
                 fadeOutMusic {
-                    mediaPlayer?.release()
+                    sfxPlayer?.release()
+                    bgPlayer?.pause()
                 }
                 binding.bNext.setOnClickListener {
                     val intent = Intent(this@QuizActivity, ResultActivity::class.java)
@@ -122,6 +119,7 @@ class QuizActivity : BaseActivity() {
         binding.rvOptions.adapter = optionAdapter
 
         collectQuiz()
+        collectSoundSettings()
         collectOptions()
         collectIndex()
     }
@@ -148,17 +146,15 @@ class QuizActivity : BaseActivity() {
             val delay = durationMs / steps
             var volume = 0f
 
-            val handler = Handler(Looper.getMainLooper())
-            val runnable = object : Runnable {
+            fadeHandler.post(object : Runnable {
                 override fun run() {
                     volume += maxVolume / steps
                     if (volume <= maxVolume) {
                         setVolume(volume, volume)
-                        handler.postDelayed(this, delay)
+                        fadeHandler.postDelayed(this, delay)
                     }
                 }
-            }
-            handler.post(runnable)
+            })
         }
     }
 
@@ -168,21 +164,19 @@ class QuizActivity : BaseActivity() {
             val delay = durationMs / steps
             var volume = maxVolume
 
-            val handler = Handler(Looper.getMainLooper())
-            val runnable = object : Runnable {
+            fadeHandler.post(object : Runnable {
                 override fun run() {
                     volume -= maxVolume / steps
                     if (volume > 0f) {
                         setVolume(volume, volume)
-                        handler.postDelayed(this, delay)
+                        fadeHandler.postDelayed(this, delay)
                     } else {
                         pause()
                         setVolume(maxVolume, maxVolume)
                         onEnd?.invoke()
                     }
                 }
-            }
-            handler.post(runnable)
+            })
         }
     }
 
@@ -204,14 +198,28 @@ class QuizActivity : BaseActivity() {
         }
     }
 
+    fun collectSoundSettings() {
+        lifecycleScope.launch {
+            viewModel.isSFXAvailable.collect { isAvailable ->
+                sfxVolume = if (isAvailable) 0.8f else 0f
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.isBgMusicAvailable.collect { isAvailable ->
+                maxVolume = if (isAvailable) 0.32f else 0f
+            }
+        }
+    }
+
     private fun playSound(soundResId: Int) {
-        mediaPlayer?.release()
-        mediaPlayer = MediaPlayer.create(this, soundResId)
-        mediaPlayer?.setVolume(sfxVolume, sfxVolume)
-        mediaPlayer?.setOnCompletionListener {
+        sfxPlayer?.release()
+        sfxPlayer = MediaPlayer.create(this, soundResId)
+        sfxPlayer?.setVolume(sfxVolume, sfxVolume)
+        sfxPlayer?.setOnCompletionListener {
             it.release()
         }
-        mediaPlayer?.start()
+        sfxPlayer?.start()
     }
 
     fun collectOptions() {
@@ -234,7 +242,12 @@ class QuizActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         bgPlayer?.start()
-        fadeInMusic()
+        viewModel.updateSoundSettings()
+        if (viewModel.currentIndex.value == -1) {
+            fadeInMusic()
+        } else {
+            fadeInMusic(400)
+        }
         binding.bNext.setOnClickListener {
             if (viewModel.isCorrect.value) {
                 viewModel.nextQuestion()
@@ -245,8 +258,17 @@ class QuizActivity : BaseActivity() {
     override fun onPause() {
         super.onPause()
         if (bgPlayer?.isPlaying == true) {
-            bgPlayer?.pause()
+            fadeOutMusic(400L) {
+                bgPlayer?.pause()
+            }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        fadeHandler.removeCallbacksAndMessages(null)
+        sfxPlayer?.release()
+        bgPlayer?.release()
     }
 
     override fun finish() {

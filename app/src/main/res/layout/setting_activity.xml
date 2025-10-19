@@ -5,27 +5,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:text="Pitch" />
+<!--    <TextView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="24dp"-->
+<!--        android:layout_marginTop="24dp"-->
+<!--        android:text="Pitch" />-->
 
-    <SeekBar
-        android:id="@+id/seekPitch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginVertical="12dp"
-        android:max="100" />
+<!--    <SeekBar-->
+<!--        android:id="@+id/seekPitch"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginHorizontal="24dp"-->
+<!--        android:layout_marginVertical="12dp"-->
+<!--        android:max="100" />-->
 
-    <TextView
-        android:id="@+id/tvPitchValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp" />
+<!--    <TextView-->
+<!--        android:id="@+id/tvPitchValue"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="24dp"-->
+<!--        android:layout_marginTop="8dp" />-->
 
     <TextView
         android:layout_width="wrap_content"
@@ -44,9 +44,24 @@
 
     <TextView
         android:id="@+id/tvSpeedValue"
+        android:text="1.0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp" />
+
+    <CheckBox
+        android:id="@+id/cbSFX"
+        android:text="SFX"
+        android:layout_marginStart="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:id="@+id/cbMusic"
+        android:text="Music"
+        android:layout_marginStart="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

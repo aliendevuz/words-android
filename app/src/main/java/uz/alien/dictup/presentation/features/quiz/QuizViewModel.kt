@@ -1,15 +1,18 @@
 package uz.alien.dictup.presentation.features.quiz
 
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.alien.dictup.domain.model.Quiz
 import uz.alien.dictup.domain.model.SelectedUnit
+import uz.alien.dictup.domain.repository.DataStoreRepository
 import uz.alien.dictup.domain.repository.room.NativeWordRepository
 import uz.alien.dictup.domain.repository.room.WordRepository
 import uz.alien.dictup.domain.usecase.PrepareQuizzesUseCase
@@ -17,6 +20,7 @@ import uz.alien.dictup.presentation.common.model.Attempt
 import uz.alien.dictup.presentation.features.quiz.model.Option
 import uz.alien.dictup.presentation.features.quiz.model.Status
 import uz.alien.dictup.utils.Logger
+import uz.alien.dictup.value.strings.DataStore
 import javax.inject.Inject
 import kotlin.random.Random.Default.nextBoolean
 
@@ -24,13 +28,20 @@ import kotlin.random.Random.Default.nextBoolean
 class QuizViewModel @Inject constructor(
     private val prepareQuizzesUseCase: PrepareQuizzesUseCase,
     private val wordRepository: WordRepository,
-    private val nativeWordRepository: NativeWordRepository
+    private val nativeWordRepository: NativeWordRepository,
+    private val dataStoreRepository: DataStoreRepository
 ) : ViewModel() {
 
     enum class Language {
         TARGET,
         NATIVE
     }
+
+    private val _isSFXAvailable = MutableStateFlow(false)
+    val isSFXAvailable = _isSFXAvailable.asStateFlow()
+
+    private val _isBgMusicAvailable = MutableStateFlow(false)
+    val isBgMusicAvailable = _isBgMusicAvailable.asStateFlow()
 
     val quizCount = mutableIntStateOf(20)
     val currentIndex = MutableStateFlow(-1)
@@ -52,6 +63,14 @@ class QuizViewModel @Inject constructor(
     val quizzes = MutableStateFlow<List<Quiz>>(emptyList())
 
     val attempt = ArrayList<Attempt>()
+
+    fun updateSoundSettings() {
+        viewModelScope.launch {
+            _isSFXAvailable.value = dataStoreRepository.getBoolean(DataStore.IS_SFX_AVAILABLE).first()
+            _isBgMusicAvailable.value =
+                dataStoreRepository.getBoolean(DataStore.IS_BG_MUSIC_AVAILABLE).first()
+        }
+    }
 
     fun setQuizCount(count: Int) {
         quizCount.intValue = count
@@ -124,7 +143,8 @@ class QuizViewModel @Inject constructor(
         if (currentLanguage == Language.TARGET) {
             return wordRepository.getWordById(quizzes.value[currentIndex.value].quiz)?.word ?: ""
         } else {
-            return nativeWordRepository.getNativeWordById(quizzes.value[currentIndex.value].quiz)?.word ?: ""
+            return nativeWordRepository.getNativeWordById(quizzes.value[currentIndex.value].quiz)?.word
+                ?: ""
         }
     }
 

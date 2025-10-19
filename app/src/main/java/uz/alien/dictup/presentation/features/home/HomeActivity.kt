@@ -57,7 +57,7 @@ class HomeActivity : BaseActivity() {
 
         // TODO: app update API ni ham ulab qo'yishim kerak
 
-        if (viewModel.isFirstTime()) {
+        if (viewModel.isFirstTime() or true) {
 
             viewModel.setFirstTimeFalse()
 
