@@ -110,13 +110,13 @@ class SettingActivity : AppCompatActivity() {
 
     private fun collectVolume() {
         lifecycleScope.launch {
-            viewModel.dataStore.getBoolean(DataStore.IS_SFX_AVAILABLE).collect {
+            viewModel.dataStore.getBoolean(DataStore.IS_SFX_AVAILABLE, true).collect {
                 binding.cbSFX.isChecked = it
             }
         }
 
         lifecycleScope.launch {
-            viewModel.dataStore.getBoolean(DataStore.IS_BG_MUSIC_AVAILABLE).collect {
+            viewModel.dataStore.getBoolean(DataStore.IS_BG_MUSIC_AVAILABLE, true).collect {
                 binding.cbMusic.isChecked = it
             }
         }

@@ -55,7 +55,9 @@ class PickActivity : BaseActivity() {
         val autoOpen = intent.getBooleanExtra("auto_open", false)
 
         if (unit != -1) {
-            viewModel.openLesson(unit, storyNumber)
+            binding.root.postDelayed(20L) {
+                viewModel.openLesson(unit, storyNumber)
+            }
         }
 
         viewModel.setCollection(collection)

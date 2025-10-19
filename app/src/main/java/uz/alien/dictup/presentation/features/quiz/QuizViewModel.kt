@@ -66,9 +66,9 @@ class QuizViewModel @Inject constructor(
 
     fun updateSoundSettings() {
         viewModelScope.launch {
-            _isSFXAvailable.value = dataStoreRepository.getBoolean(DataStore.IS_SFX_AVAILABLE).first()
+            _isSFXAvailable.value = dataStoreRepository.getBoolean(DataStore.IS_SFX_AVAILABLE, true).first()
             _isBgMusicAvailable.value =
-                dataStoreRepository.getBoolean(DataStore.IS_BG_MUSIC_AVAILABLE).first()
+                dataStoreRepository.getBoolean(DataStore.IS_BG_MUSIC_AVAILABLE, true).first()
         }
     }
 

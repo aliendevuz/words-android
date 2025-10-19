@@ -55,10 +55,10 @@ class ResultActivity : BaseActivity() {
         )
 
         // Parenti (outer circle) background qilish
-        binding.llResult.background = outerCircleDrawable
+//        binding.llResult.background = outerCircleDrawable
 
         // TextView (inner circle) background qilish
-        binding.tvResult.background = innerCircleDrawable
+//        binding.tvResult.background = innerCircleDrawable
 
         initViews()
     }
@@ -100,14 +100,15 @@ class ResultActivity : BaseActivity() {
 
         animator.addUpdateListener { animation ->
             val animatedValue = animation.animatedValue as Float
-            val percentageProgress = animatedValue / 100f // 0f to 1f oralig'ida
+//            val percentageProgress = animatedValue / 100f // 0f to 1f oralig'ida
 
             val displayValue = String.format("%.1f%%", animatedValue)
             binding.tvResult.text = displayValue
 
             // Drawable'lar uchun progress o'rnatish
-            innerCircleDrawable.setProgress(percentageProgress)
-            outerCircleDrawable.setProgress(percentageProgress)
+//            innerCircleDrawable.setProgress(percentageProgress)
+//            outerCircleDrawable.setProgress(percentageProgress)
+            binding.circular.progress = animatedValue.toInt()
 
             if (animatedValue == 100f) {
                 binding.konfetti.start(KonfettiPartyConfig.getQuickParty())

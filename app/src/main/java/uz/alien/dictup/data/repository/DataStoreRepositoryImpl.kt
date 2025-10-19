@@ -26,9 +26,9 @@ class DataStoreRepositoryImpl (private val context: Context) : DataStoreReposito
         }
     }
 
-    override suspend fun getBoolean(key: String): Flow<Boolean> {
+    override suspend fun getBoolean(key: String, default: Boolean): Flow<Boolean> {
         return context.dataStore.data.map { prefs ->
-            prefs[booleanPreferencesKey(key)] ?: false
+            prefs[booleanPreferencesKey(key)] ?: default
         }.distinctUntilChanged()
     }
 

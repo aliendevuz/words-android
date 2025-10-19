@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,30 +16,39 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/llResult"
             android:layout_marginTop="48dp"
-            android:padding="10dp"
-            android:background="@drawable/result_circle_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/circular"
+                android:progress="82"
+                android:max="100"
+                app:trackColor="#604CAF50"
+                app:indicatorColor="#4CAF50"
+                app:trackThickness="16dp"
+                app:indicatorSize="196dp"
+                android:layout_width="216dp"
+                android:layout_height="216dp" />
+
             <TextView
                 android:id="@+id/tvResult"
-                android:layout_width="196dp"
-                android:layout_height="196dp"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:textSize="40sp"
                 android:fontFamily="@font/golos"
                 android:gravity="center"
-                android:shadowColor="#99000000"
+                android:shadowColor="#40000000"
                 android:shadowDx="2"
                 android:shadowDy="2"
                 android:shadowRadius="10"
-                android:background="@drawable/result_circle"
                 android:text="37%" />
 
-        </LinearLayout>
+        </FrameLayout>
 
         <Button
             android:id="@+id/bRetry"

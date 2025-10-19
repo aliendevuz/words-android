@@ -17,10 +17,12 @@ import uz.alien.dictup.presentation.common.extention.interstitialAd
 import uz.alien.dictup.presentation.common.extention.loadInterstitialAd
 import uz.alien.dictup.presentation.common.extention.setSystemExclusion
 import androidx.core.graphics.Insets
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import uz.alien.dictup.BuildConfig
 import uz.alien.dictup.presentation.common.extention.getSystemStatusPadding
 import uz.alien.dictup.presentation.common.extention.startActivityWithAlphaAnimation
 import uz.alien.dictup.presentation.common.extention.startActivityWithSlideAnimation
@@ -82,7 +84,7 @@ abstract class BaseActivity : AppCompatActivity() {
             paddings.right,
             0
         )
-        navigationBinding.ivHeader.setPadding(
+        navigationBinding.clHeader.setPadding(
             paddings.left,
             paddings.top,
             paddings.right,
@@ -150,21 +152,29 @@ abstract class BaseActivity : AppCompatActivity() {
 
     private fun initViews() {
 
-        navigationBinding.bShare.setOnClickListener {
-            val shareIntent = Intent(Intent.ACTION_SEND)
-            shareIntent.type = "text/plain"
-            val appLink = "https://play.google.com/store/apps/details?id=$packageName"
-            shareIntent.putExtra(Intent.EXTRA_TEXT, appLink)
-            startActivity(Intent.createChooser(shareIntent, "Do'stlaringiz bilan ulashing"))
-        }
+//        navigationBinding.bShare.setOnClickListener {
+//            val shareIntent = Intent(Intent.ACTION_SEND)
+//            shareIntent.type = "text/plain"
+//            val appLink = "https://play.google.com/store/apps/details?id=$packageName"
+//            shareIntent.putExtra(Intent.EXTRA_TEXT, appLink)
+//            startActivity(Intent.createChooser(shareIntent, "Do'stlaringiz bilan ulashing"))
+//        }
+//
+//        navigationBinding.bShowAd.setOnClickListener {
+//            interstitialAd?.show(this)
+//        }
+//
+//        navigationBinding.bOpenSetting.setOnClickListener {
+//            val intent = Intent(this, SettingActivity::class.java)
+//            baseViewModel.startActivityWithAnimation(intent, AnimationType.SLIDE)
+//        }
 
-        navigationBinding.bShowAd.setOnClickListener {
-            interstitialAd?.show(this)
-        }
+        navigationBinding.tvVersion.text = "Version: ${BuildConfig.VERSION_NAME}"
 
-        navigationBinding.bOpenSetting.setOnClickListener {
-            val intent = Intent(this, SettingActivity::class.java)
-            baseViewModel.startActivityWithAnimation(intent, AnimationType.SLIDE)
+        navigationBinding.tvVersion.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = "https://aliendevuz.t.me".toUri()
+            startActivity(intent)
         }
 
         binding.drawerButton.setOnClickListener {

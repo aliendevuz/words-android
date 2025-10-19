@@ -57,7 +57,7 @@ class HomeActivity : BaseActivity() {
 
         // TODO: app update API ni ham ulab qo'yishim kerak
 
-        if (viewModel.isFirstTime() or true) {
+        if (viewModel.isFirstTime()) {
 
             viewModel.setFirstTimeFalse()
 
@@ -262,7 +262,12 @@ class HomeActivity : BaseActivity() {
 
             if (nextCollection != null) {
                 val intent = Intent(this@HomeActivity, PickActivity::class.java).apply {
-                    val lastPart = viewModel.getLastPart()
+//                    val lastPart = viewModel.getLastPart()
+                    val lastPart = if (nextCollection == 0 && viewModel.getLastPart() > 3) {
+                        0
+                    } else {
+                        viewModel.getLastPart()
+                    }
                     putExtra("collection", nextCollection)
                     putExtra("part", lastPart)
                     putExtra("auto_open", true)

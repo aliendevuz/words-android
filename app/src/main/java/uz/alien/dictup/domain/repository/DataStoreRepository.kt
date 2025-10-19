@@ -6,7 +6,7 @@ interface DataStoreRepository {
 
     suspend fun saveBoolean(key: String, value: Boolean)
 
-    suspend fun getBoolean(key: String): Flow<Boolean>
+    suspend fun getBoolean(key: String, default: Boolean = false): Flow<Boolean>
 
     suspend fun saveInt(key: String, value: Int)
 

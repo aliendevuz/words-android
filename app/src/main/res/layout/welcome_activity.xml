@@ -39,9 +39,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textAlignment="center"
-        android:text="Ilova.uz"
+        android:text="4000"
         android:textColor="@color/brand"
-        android:textSize="24sp"
+        android:textSize="40sp"
         android:fontFamily="@font/shuttle_x"
         android:layout_marginTop="40dp"
         android:textStyle="normal" />
@@ -51,15 +51,16 @@
         android:id="@+id/tv_welcome_product"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="84dp"
+        android:textSize="32sp"
+        android:layout_marginTop="76dp"
         android:fontFamily="@font/shuttle_x"
-        android:text="mahsuloti"
+        android:text="words"
         android:textColor="@color/brand" />
 
     <TextView
         android:id="@+id/tvCompany"
         android:textColor="@color/color_welcome_text"
-        android:text="by MohirLab"
+        android:text="by Alien Dev"
         android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
