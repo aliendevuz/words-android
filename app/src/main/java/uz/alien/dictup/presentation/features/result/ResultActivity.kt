@@ -13,6 +13,7 @@ import nl.dionsegijn.konfetti.core.Position
 import nl.dionsegijn.konfetti.core.emitter.Emitter
 import uz.alien.dictup.databinding.ResultActivityBinding
 import uz.alien.dictup.presentation.common.extention.applyExitZoomTransition
+import uz.alien.dictup.presentation.common.extention.interstitialAd
 import uz.alien.dictup.presentation.common.extention.setClearEdge
 import uz.alien.dictup.presentation.common.model.Attempt
 import uz.alien.dictup.presentation.features.base.BaseActivity
@@ -73,10 +74,12 @@ class ResultActivity : BaseActivity() {
 
         binding.bRetry.setOnClickListener {
             restart = true
+            interstitialAd?.show(this)
             finish()
         }
 
         binding.bExit.setOnClickListener {
+            interstitialAd?.show(this)
             finish()
         }
 

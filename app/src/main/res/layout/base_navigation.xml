@@ -6,11 +6,11 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clHeader"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary"
-        android:clipToPadding="false">
+        android:clipToPadding="false"
+        app:layout_constraintTop_toTopOf="parent">
 
         <FrameLayout
             android:layout_width="200dp"
@@ -145,48 +145,88 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-<!--    <Button-->
-<!--        android:id="@+id/bShare"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="24dp"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:layout_marginEnd="24dp"-->
-<!--        android:text="Share App"-->
-<!--        android:textColor="@color/white" />-->
+    <Button
+        android:id="@+id/bSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="24dp"
+        android:text="Sozlamalar"
+        android:textColor="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/clHeader" />
 
-<!--    <Button-->
-<!--        android:id="@+id/bShowAd"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="24dp"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:layout_marginEnd="24dp"-->
-<!--        android:text="Show Ad"-->
-<!--        android:textColor="@color/white" />-->
+    <TextView
+        android:id="@+id/tvSubscribtionTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/golos"
+        android:text="Dastur haqida so'nggi yangiliklardan xabardor bo'lish uchun quyidagi\nkanalga a'zo bo'ling 👇"
+        app:layout_constraintTop_toBottomOf="@id/bSettings" />
 
-<!--    <Button-->
-<!--        android:id="@+id/bOpenSetting"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="24dp"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:layout_marginEnd="24dp"-->
-<!--        android:text="Open Setting"-->
-<!--        android:textColor="@color/white" />-->
+    <Button
+        android:id="@+id/bSubscribe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Kanalga obuna bo'lish"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="@id/tvSubscribtionTitle"
+        app:layout_constraintTop_toBottomOf="@+id/tvSubscribtionTitle" />
+
+    <TextView
+        android:id="@+id/warning"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/golos"
+        android:text="DIQQAT! Ilovani hozirgi versiyasida kamchiliklari ko'p bo'lishi mumkin va imkon topsam birma bir ularni tuzatib chiqaman, ilova to'liq tayyor bo'lmasidan turib nashr qildim va buni to'g'ri tushunasiz degan umiddaman. O'ylaymanki u to'liq tayyor bo'lmagan bo'lsa ham sizlarga foydasi tegadi 😇"
+        app:layout_constraintTop_toBottomOf="@+id/bSubscribe" />
+
+    <!--    <Button-->
+    <!--        android:id="@+id/bShare"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginStart="24dp"-->
+    <!--        android:layout_marginTop="16dp"-->
+    <!--        android:layout_marginEnd="24dp"-->
+    <!--        android:text="Share App"-->
+    <!--        android:textColor="@color/white" />-->
+
+    <!--    <Button-->
+    <!--        android:id="@+id/bShowAd"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginStart="24dp"-->
+    <!--        android:layout_marginTop="16dp"-->
+    <!--        android:layout_marginEnd="24dp"-->
+    <!--        android:text="Show Ad"-->
+    <!--        android:textColor="@color/white" />-->
+
+    <!--    <Button-->
+    <!--        android:id="@+id/bOpenSetting"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginStart="24dp"-->
+    <!--        android:layout_marginTop="16dp"-->
+    <!--        android:layout_marginEnd="24dp"-->
+    <!--        android:text="Open Setting"-->
+    <!--        android:textColor="@color/white" />-->
 
     <TextView
         android:id="@+id/tvVersion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="28dp"
+        android:fontFamily="@font/shuttle_x"
         android:text="Version: 5.1.4"
         android:textAlignment="center"
-        android:fontFamily="@font/shuttle_x"
-        android:layout_marginBottom="28dp"
-        android:layout_marginHorizontal="20dp"
         android:textColor="#708090"
         android:textSize="12sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

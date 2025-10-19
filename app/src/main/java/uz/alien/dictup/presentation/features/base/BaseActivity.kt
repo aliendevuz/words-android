@@ -164,10 +164,15 @@ abstract class BaseActivity : AppCompatActivity() {
 //            interstitialAd?.show(this)
 //        }
 //
-//        navigationBinding.bOpenSetting.setOnClickListener {
-//            val intent = Intent(this, SettingActivity::class.java)
-//            baseViewModel.startActivityWithAnimation(intent, AnimationType.SLIDE)
-//        }
+        navigationBinding.bSettings.setOnClickListener {
+            val intent = Intent(this, SettingActivity::class.java)
+            baseViewModel.startActivityWithAnimation(intent, AnimationType.SLIDE)
+        }
+
+        navigationBinding.bSubscribe.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, "https://t.me/dictup".toUri())
+            startActivity(intent)
+        }
 
         navigationBinding.tvVersion.text = "Version: ${BuildConfig.VERSION_NAME}"
 
