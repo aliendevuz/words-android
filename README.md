@@ -1,5 +1,17 @@
 # 4000 Words | Android
 
-Ushbu repo 4000 Words ning android bo'limi
-
 [Asosiy bo'lim](https://github.com/aliendevuz/words)
+
+**4000 Words loyihasining Android bo'limi**
+
+## Foydalanilgan texnologiyalar
+- Kotlin
+- XML
+- Room
+- Okhttp3
+- MVVM
+- Admob
+- AppLinking
+- Dagger Hilt
+
+`* Loyiha to'liq oxiriga yetmagan!`
