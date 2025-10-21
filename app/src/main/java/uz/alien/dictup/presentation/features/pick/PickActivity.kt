@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.view.postDelayed
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -106,40 +108,44 @@ class PickActivity : BaseActivity() {
         var isFirst = true
 
         lifecycleScope.launch {
-            viewModel.parts.collectLatest { parts ->
-                partAdapter.submitList(parts)
-                if (viewModel.scrollPage) {
-                    viewModel.scrollPage = false
-                    binding.vpPart.currentItem = viewModel.currentPart.value
-                }
-                if (isFirst) {
-                    binding.vpPart.postDelayed(200L) {
-                        binding.vpPart.offscreenPageLimit = if (BuildConfig.DEBUG) 1 else parts.size
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.parts.collectLatest { parts ->
+                    partAdapter.submitList(parts)
+                    if (viewModel.scrollPage) {
+                        viewModel.scrollPage = false
+                        binding.vpPart.currentItem = viewModel.currentPart.value
                     }
-                    isFirst = false
+                    if (isFirst) {
+                        binding.vpPart.postDelayed(200L) {
+                            binding.vpPart.offscreenPageLimit = if (BuildConfig.DEBUG) 1 else parts.size
+                        }
+                        isFirst = false
+                    }
                 }
             }
         }
 
         lifecycleScope.launch {
-            viewModel.navigationEvent.collectLatest { event ->
-                when(event) {
-                    is NavigationEvent -> {
-                        val intent = Intent(this@PickActivity, LessonActivity::class.java)
-                        intent.putExtra("collection", collectionId)
-                        intent.putExtra("part", part)
-                        intent.putExtra("unit", event.unitId)
-                        intent.putParcelableArrayListExtra("words", event.words)
-                        intent.putParcelableArrayListExtra("native_words", event.nativeWords)
-                        intent.putParcelableArrayListExtra("scores", event.scores)
-                        intent.putParcelableArrayListExtra("stories", event.stories)
-                        intent.putExtra("sn", event.storyNumber)
-                        baseViewModel.startActivityWithAnimation(intent)
-                    }
-                    null -> {
-                        Toast.makeText(this@PickActivity, "Siz barcha darslarni tugatdingiz 🎉", Toast.LENGTH_LONG).show()
-                        val intent = Intent(this@PickActivity, SelectActivity::class.java)
-                        baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.navigationEvent.collectLatest { event ->
+                    when(event) {
+                        is NavigationEvent -> {
+                            val intent = Intent(this@PickActivity, LessonActivity::class.java)
+                            intent.putExtra("collection", collectionId)
+                            intent.putExtra("part", part)
+                            intent.putExtra("unit", event.unitId)
+                            intent.putParcelableArrayListExtra("words", event.words)
+                            intent.putParcelableArrayListExtra("native_words", event.nativeWords)
+                            intent.putParcelableArrayListExtra("scores", event.scores)
+                            intent.putParcelableArrayListExtra("stories", event.stories)
+                            intent.putExtra("sn", event.storyNumber)
+                            baseViewModel.startActivityWithAnimation(intent)
+                        }
+                        null -> {
+                            Toast.makeText(this@PickActivity, "Siz barcha darslarni tugatdingiz 🎉", Toast.LENGTH_LONG).show()
+                            val intent = Intent(this@PickActivity, SelectActivity::class.java)
+                            baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
+                        }
                     }
                 }
             }

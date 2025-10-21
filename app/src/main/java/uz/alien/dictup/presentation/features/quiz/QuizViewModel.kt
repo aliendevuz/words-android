@@ -8,11 +8,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uz.alien.dictup.domain.model.Quiz
 import uz.alien.dictup.domain.model.SelectedUnit
 import uz.alien.dictup.domain.repository.DataStoreRepository
+import uz.alien.dictup.domain.repository.RemoteConfigRepository
+import uz.alien.dictup.domain.repository.SharedPrefsRepository
 import uz.alien.dictup.domain.repository.room.NativeWordRepository
 import uz.alien.dictup.domain.repository.room.WordRepository
 import uz.alien.dictup.domain.usecase.PrepareQuizzesUseCase
@@ -21,6 +24,9 @@ import uz.alien.dictup.presentation.features.quiz.model.Option
 import uz.alien.dictup.presentation.features.quiz.model.Status
 import uz.alien.dictup.utils.Logger
 import uz.alien.dictup.value.strings.DataStore
+import uz.alien.dictup.value.strings.SharedPrefs
+import java.util.Calendar
+import java.util.Date
 import javax.inject.Inject
 import kotlin.random.Random.Default.nextBoolean
 
@@ -29,7 +35,9 @@ class QuizViewModel @Inject constructor(
     private val prepareQuizzesUseCase: PrepareQuizzesUseCase,
     private val wordRepository: WordRepository,
     private val nativeWordRepository: NativeWordRepository,
-    private val dataStoreRepository: DataStoreRepository
+    private val dataStoreRepository: DataStoreRepository,
+    private val remoteConfigRepository: RemoteConfigRepository,
+    private val sharedPrefsRepository: SharedPrefsRepository
 ) : ViewModel() {
 
     enum class Language {
@@ -64,9 +72,35 @@ class QuizViewModel @Inject constructor(
 
     val attempt = ArrayList<Attempt>()
 
+    var adCountLimit = 0
+    val showAdsCount = MutableStateFlow(0)
+
+    fun refreshAdsCount() {
+
+        adCountLimit = remoteConfigRepository.getFrequencyOfAds().toInt()
+
+        showAdsCount.value = sharedPrefsRepository.getInt(SharedPrefs.DAILY_SHOWN_AD_COUNT, 0)
+    }
+
+    fun shouldShowAd(): Boolean {
+
+        val lastShownTime = sharedPrefsRepository
+            .getLong(SharedPrefs.LAST_SHOWN_AD_TIME, 0)
+
+        val lastShownDate = Date(lastShownTime)
+        val today = Calendar.getInstance()
+        val lastCal = Calendar.getInstance().apply { time = lastShownDate }
+
+        val isNewDay = today.get(Calendar.YEAR) != lastCal.get(Calendar.YEAR) ||
+                today.get(Calendar.DAY_OF_YEAR) != lastCal.get(Calendar.DAY_OF_YEAR)
+
+        return (lastShownTime == 0L || isNewDay) && showAdsCount.value < adCountLimit
+    }
+
     fun updateSoundSettings() {
         viewModelScope.launch {
-            _isSFXAvailable.value = dataStoreRepository.getBoolean(DataStore.IS_SFX_AVAILABLE, true).first()
+            _isSFXAvailable.value =
+                dataStoreRepository.getBoolean(DataStore.IS_SFX_AVAILABLE, true).first()
             _isBgMusicAvailable.value =
                 dataStoreRepository.getBoolean(DataStore.IS_BG_MUSIC_AVAILABLE, true).first()
         }

@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import uz.alien.dictup.utils.Logger
@@ -76,8 +78,10 @@ class PartFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.unitFlows[part.collectionId][part.id].collectLatest { units ->
-                unitAdapter.submitList(units)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.unitFlows[part.collectionId][part.id].collectLatest { units ->
+                    unitAdapter.submitList(units)
+                }
             }
         }
     }

@@ -10,7 +10,7 @@ interface DataStoreRepository {
 
     suspend fun saveInt(key: String, value: Int)
 
-    suspend fun getInt(key: String): Flow<Int>
+    suspend fun getInt(key: String, default: Int = 0): Flow<Int>
 
     suspend fun saveLong(key: String, value: Long)
 

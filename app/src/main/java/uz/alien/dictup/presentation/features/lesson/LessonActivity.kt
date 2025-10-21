@@ -22,7 +22,9 @@ import android.widget.FrameLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import io.noties.markwon.Markwon
@@ -291,8 +293,10 @@ class LessonActivity : BaseActivity() {
         }
 
         lifecycleScope.launch {
-            viewModel.words.collectLatest {
-                adapter.submitList(it)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.words.collectLatest {
+                    adapter.submitList(it)
+                }
             }
         }
     }
@@ -368,7 +372,7 @@ class LessonActivity : BaseActivity() {
                 pagerBaseBinding.root.visibility = View.GONE
                 supportFragmentManager.beginTransaction()
                     .remove(fragment)
-                    .commit()
+                    .commitAllowingStateLoss()
                 fragmentView = null
                 fragmentBounds = null
                 onDone()

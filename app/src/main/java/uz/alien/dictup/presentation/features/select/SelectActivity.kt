@@ -4,7 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.content.edit
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -79,11 +81,13 @@ class SelectActivity : BaseActivity() {
         var isFirst = true
 
         lifecycleScope.launch {
-            viewModel.collectionsFlow.collectLatest { collections ->
-                collectionAdapter.submitList(collections)
-                if (isFirst) {
-                    binding.vpCollection.offscreenPageLimit = if (BuildConfig.DEBUG) 1 else collections.size
-                    isFirst = false
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.collectionsFlow.collectLatest { collections ->
+                    collectionAdapter.submitList(collections)
+                    if (isFirst) {
+                        binding.vpCollection.offscreenPageLimit = if (BuildConfig.DEBUG) 1 else collections.size
+                        isFirst = false
+                    }
                 }
             }
         }

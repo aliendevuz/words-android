@@ -305,8 +305,10 @@ class StoryActivity : BaseActivity() {
         }
 
         lifecycleScope.launch {
-            viewModel.currentIndex.collectLatest {
-                highlightCurrentSentence(it)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.currentIndex.collectLatest {
+                    highlightCurrentSentence(it)
+                }
             }
         }
 
@@ -321,11 +323,13 @@ class StoryActivity : BaseActivity() {
         }
 
         lifecycleScope.launch {
-            viewModel.isPaused.collectLatest {
-                if (it) {
-                    binding.ibPlay.setImageResource(R.drawable.v_play)
-                } else {
-                    binding.ibPlay.setImageResource(R.drawable.v_pause)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isPaused.collectLatest {
+                    if (it) {
+                        binding.ibPlay.setImageResource(R.drawable.v_play)
+                    } else {
+                        binding.ibPlay.setImageResource(R.drawable.v_pause)
+                    }
                 }
             }
         }

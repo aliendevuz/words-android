@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import uz.alien.dictup.databinding.PickFragmentPartBinding
@@ -56,8 +58,10 @@ class PartFragment : Fragment() {
         binding.rvUnits.adapter = unitAdapter
 
         lifecycleScope.launch {
-            viewModel.unitFlows[part.id].collectLatest { units ->
-                unitAdapter.submitList(units)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.unitFlows[part.id].collectLatest { units ->
+                    unitAdapter.submitList(units)
+                }
             }
         }
     }

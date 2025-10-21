@@ -10,7 +10,10 @@ import android.os.Handler
 import android.os.Looper
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.view.postDelayed
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -23,6 +26,8 @@ import uz.alien.dictup.presentation.common.extention.setSystemPadding
 import uz.alien.dictup.presentation.features.base.BaseActivity
 import uz.alien.dictup.domain.model.SelectedUnit
 import uz.alien.dictup.presentation.common.component.AutoLayoutManager
+import uz.alien.dictup.presentation.common.extention.interstitialAd
+import uz.alien.dictup.presentation.common.extention.loadInterstitialAd
 import uz.alien.dictup.presentation.common.extention.startActivityForResultWithZoomAnimation
 import uz.alien.dictup.presentation.features.quiz.recycler.OptionAdapter
 import uz.alien.dictup.presentation.features.result.ResultActivity
@@ -192,22 +197,28 @@ class QuizActivity : BaseActivity() {
 
     fun collectQuiz() {
         lifecycleScope.launch {
-            viewModel.question.collect { question ->
-                binding.tvQuestion.text = question
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.question.collect { question ->
+                    binding.tvQuestion.text = question
+                }
             }
         }
     }
 
     fun collectSoundSettings() {
         lifecycleScope.launch {
-            viewModel.isSFXAvailable.collect { isAvailable ->
-                sfxVolume = if (isAvailable) 0.8f else 0f
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isSFXAvailable.collect { isAvailable ->
+                    sfxVolume = if (isAvailable) 0.8f else 0f
+                }
             }
         }
 
         lifecycleScope.launch {
-            viewModel.isBgMusicAvailable.collect { isAvailable ->
-                maxVolume = if (isAvailable) 0.32f else 0f
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isBgMusicAvailable.collect { isAvailable ->
+                    maxVolume = if (isAvailable) 0.32f else 0f
+                }
             }
         }
     }
@@ -225,16 +236,20 @@ class QuizActivity : BaseActivity() {
     fun collectOptions() {
 
         lifecycleScope.launch {
-            viewModel.options.collectLatest { options ->
-                optionAdapter.submitList(options)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.options.collectLatest { options ->
+                    optionAdapter.submitList(options)
+                }
             }
         }
     }
 
     fun collectIndex() {
         lifecycleScope.launch {
-            viewModel.currentIndex.collect { id ->
-                binding.tvIndex.text = "${id + 1}/${viewModel.quizCount.intValue}"
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.currentIndex.collect { id ->
+                    binding.tvIndex.text = "${id + 1}/${viewModel.quizCount.intValue}"
+                }
             }
         }
     }
@@ -252,6 +267,10 @@ class QuizActivity : BaseActivity() {
             if (viewModel.isCorrect.value) {
                 viewModel.nextQuestion()
             }
+        }
+        viewModel.refreshAdsCount()
+        if (viewModel.shouldShowAd() && application.interstitialAd == null) {
+            application.loadInterstitialAd()
         }
     }
 

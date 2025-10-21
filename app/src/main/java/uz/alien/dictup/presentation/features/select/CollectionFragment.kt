@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -96,32 +98,36 @@ class CollectionFragment : Fragment() {
         var isFirst = true
 
         lifecycleScope.launch {
-            viewModel.partsFlows[collection.id].collectLatest { parts ->
-                partAdapter.submitList(parts)
-                if (isFirst) {
-                    delay(50L)
-                    binding.vpPart.offscreenPageLimit = if (BuildConfig.DEBUG) 1 else collection.partCount
-                    isFirst = false
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.partsFlows[collection.id].collectLatest { parts ->
+                    partAdapter.submitList(parts)
+                    if (isFirst) {
+                        delay(50L)
+                        binding.vpPart.offscreenPageLimit = if (BuildConfig.DEBUG) 1 else collection.partCount
+                        isFirst = false
+                    }
                 }
             }
         }
 
         lifecycleScope.launch {
-            viewModel.selectedUnitsCount.collectLatest { count ->
-                if (collection.id == viewModel.currentCollection.value) {
-                    if (collection.id == 0) {
-                        if (count.first in 1..6) {
-                            if (binding.sbQuizCount.value > count.first * 20) {
-                                binding.sbQuizCount.value = (count.first * 20).toFloat()
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.selectedUnitsCount.collectLatest { count ->
+                    if (collection.id == viewModel.currentCollection.value) {
+                        if (collection.id == 0) {
+                            if (count.first in 1..6) {
+                                if (binding.sbQuizCount.value > count.first * 20) {
+                                    binding.sbQuizCount.value = (count.first * 20).toFloat()
+                                }
+                                binding.sbQuizCount.valueTo = (count.first * 20).toFloat()
                             }
-                            binding.sbQuizCount.valueTo = (count.first * 20).toFloat()
-                        }
-                    } else {
-                        if (count.second in 1..6) {
-                            if (binding.sbQuizCount.value > count.second * 20) {
-                                binding.sbQuizCount.value = (count.second * 20).toFloat()
+                        } else {
+                            if (count.second in 1..6) {
+                                if (binding.sbQuizCount.value > count.second * 20) {
+                                    binding.sbQuizCount.value = (count.second * 20).toFloat()
+                                }
+                                binding.sbQuizCount.valueTo = (count.second * 20).toFloat()
                             }
-                            binding.sbQuizCount.valueTo = (count.second * 20).toFloat()
                         }
                     }
                 }
@@ -129,11 +135,13 @@ class CollectionFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.quizCount.collectLatest { c ->
-                val count = if (collection.id == 0) c.first
-                else c.second
-                binding.sbQuizCount.value = count
-                binding.tvQuizCount.text = "${count.toInt()}"
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.quizCount.collectLatest { c ->
+                    val count = if (collection.id == 0) c.first
+                    else c.second
+                    binding.sbQuizCount.value = count
+                    binding.tvQuizCount.text = "${count.toInt()}"
+                }
             }
         }
     }

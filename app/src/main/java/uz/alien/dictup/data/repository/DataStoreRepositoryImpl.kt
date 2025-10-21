@@ -38,9 +38,9 @@ class DataStoreRepositoryImpl (private val context: Context) : DataStoreReposito
         }
     }
 
-    override suspend fun getInt(key: String): Flow<Int> {
+    override suspend fun getInt(key: String, default: Int): Flow<Int> {
         return context.dataStore.data.map { prefs ->
-            prefs[intPreferencesKey(key)] ?: 0
+            prefs[intPreferencesKey(key)] ?: default
         }.distinctUntilChanged()
     }
 

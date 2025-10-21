@@ -10,7 +10,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.net.toUri
 import androidx.core.view.postDelayed
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -81,9 +83,6 @@ class HomeActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         viewModel.updateData()
-        lifecycleScope.launch {
-            viewModel.updateBook()
-        }
     }
 
     private fun handleIntent(intent: Intent) {
@@ -240,44 +239,47 @@ class HomeActivity : BaseActivity() {
 
     private fun openNextLesson(data: Uri?) {
         lifecycleScope.launch {
-            val lastCollection = viewModel.getLastCollection()
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-            // Helper: progress to‘liq bo‘lmagan collectionni aniqlash
-            suspend fun getNextIncompleteCollection(collectionId: Int): Int? {
-                val state = when (collectionId) {
-                    WordCollection.BEGINNER.id -> viewModel.beginnerBooksState.first()
-                    WordCollection.ESSENTIAL.id -> viewModel.essentialBooksState.first()
-                    else -> return null
-                }
+                val lastCollection = viewModel.getLastCollection()
 
-                // Agar progress 100% bo‘lmagan bo‘lsa shu collectionni qaytaramiz
-                return if (state.any { it.progress < 100 }) collectionId else null
-            }
-
-            val nextCollection = getNextIncompleteCollection(lastCollection)
-                ?: getNextIncompleteCollection(
-                    if (lastCollection == WordCollection.BEGINNER.id) WordCollection.ESSENTIAL.id
-                    else WordCollection.BEGINNER.id
-                )
-
-            if (nextCollection != null) {
-                val intent = Intent(this@HomeActivity, PickActivity::class.java).apply {
-//                    val lastPart = viewModel.getLastPart()
-                    val lastPart = if (nextCollection == 0 && viewModel.getLastPart() > 3) {
-                        0
-                    } else {
-                        viewModel.getLastPart()
+                // Helper: progress to‘liq bo‘lmagan collectionni aniqlash
+                suspend fun getNextIncompleteCollection(collectionId: Int): Int? {
+                    val state = when (collectionId) {
+                        WordCollection.BEGINNER.id -> viewModel.beginnerBooksState.first()
+                        WordCollection.ESSENTIAL.id -> viewModel.essentialBooksState.first()
+                        else -> return null
                     }
-                    putExtra("collection", nextCollection)
-                    putExtra("part", lastPart)
-                    putExtra("auto_open", true)
+
+                    // Agar progress 100% bo‘lmagan bo‘lsa shu collectionni qaytaramiz
+                    return if (state.any { it.progress < 100 }) collectionId else null
                 }
-                baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
-            } else {
-                // Ikkalasi ham 100% bo‘lsa → Test sahifasiga yo‘naltirish
-                Toast.makeText(this@HomeActivity, "Siz barcha darslarni tugatdingiz 🎉", Toast.LENGTH_LONG).show()
-                val intent = Intent(this@HomeActivity, SelectActivity::class.java)
-                baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
+
+                val nextCollection = getNextIncompleteCollection(lastCollection)
+                    ?: getNextIncompleteCollection(
+                        if (lastCollection == WordCollection.BEGINNER.id) WordCollection.ESSENTIAL.id
+                        else WordCollection.BEGINNER.id
+                    )
+
+                if (nextCollection != null) {
+                    val intent = Intent(this@HomeActivity, PickActivity::class.java).apply {
+    //                    val lastPart = viewModel.getLastPart()
+                        val lastPart = if (nextCollection == 0 && viewModel.getLastPart() > 3) {
+                            0
+                        } else {
+                            viewModel.getLastPart()
+                        }
+                        putExtra("collection", nextCollection)
+                        putExtra("part", lastPart)
+                        putExtra("auto_open", true)
+                    }
+                    baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
+                } else {
+                    // Ikkalasi ham 100% bo‘lsa → Test sahifasiga yo‘naltirish
+                    Toast.makeText(this@HomeActivity, "Siz barcha darslarni tugatdingiz 🎉", Toast.LENGTH_LONG).show()
+                    val intent = Intent(this@HomeActivity, SelectActivity::class.java)
+                    baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
+                }
             }
         }
     }
@@ -341,19 +343,29 @@ class HomeActivity : BaseActivity() {
             val intent = Intent(this, SelectActivity::class.java)
             baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
         }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.updateBook()
+            }
+        }
     }
 
     private fun collectBooks() {
 
         lifecycleScope.launch {
-            viewModel.beginnerBooksState.collectLatest { books ->
-                beginnerBookAdapter.submitList(books)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.beginnerBooksState.collectLatest { books ->
+                    beginnerBookAdapter.submitList(books)
+                }
             }
         }
 
         lifecycleScope.launch {
-            viewModel.essentialBooksState.collectLatest { books ->
-                essentialBookAdapter.submitList(books)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.essentialBooksState.collectLatest { books ->
+                    essentialBookAdapter.submitList(books)
+                }
             }
         }
     }

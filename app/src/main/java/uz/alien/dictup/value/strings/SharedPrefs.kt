@@ -18,4 +18,8 @@ object SharedPrefs {
     // Select
     const val LAST_COLLECTION_ID = "LAST_COLLECTION_ID"
     const val LAST_PART_ID = "LAST_PART_ID"
+
+    // Result
+    const val LAST_SHOWN_AD_TIME = "last_shown_ad_time"
+    const val DAILY_SHOWN_AD_COUNT = "daily_shown_add_count"
 }

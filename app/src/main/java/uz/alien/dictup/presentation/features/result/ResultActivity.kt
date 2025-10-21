@@ -6,7 +6,12 @@ import android.os.Build
 import android.os.Bundle
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.activity.viewModels
+import androidx.core.view.postDelayed
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.FullScreenContentCallback
 import kotlinx.coroutines.launch
 import nl.dionsegijn.konfetti.core.Party
 import nl.dionsegijn.konfetti.core.Position
@@ -66,6 +71,25 @@ class ResultActivity : BaseActivity() {
 
     private fun initViews() {
 
+        if (viewModel.shouldShowAd()) {
+            if (application.interstitialAd != null) {
+                application.interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                    override fun onAdDismissedFullScreenContent() {
+                        super.onAdDismissedFullScreenContent()
+                        viewModel.countAdd()
+                        application.interstitialAd = null
+                    }
+
+                    override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                        application.interstitialAd = null
+                    }
+                }
+                application.interstitialAd?.show(this)
+            }
+        } else {
+            viewModel.setLastShownAdTime()
+        }
+
         val attempt = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableArrayListExtra("attempt", Attempt::class.java)
         } else {
@@ -74,12 +98,10 @@ class ResultActivity : BaseActivity() {
 
         binding.bRetry.setOnClickListener {
             restart = true
-            interstitialAd?.show(this)
             finish()
         }
 
         binding.bExit.setOnClickListener {
-            interstitialAd?.show(this)
             finish()
         }
 
@@ -90,8 +112,10 @@ class ResultActivity : BaseActivity() {
 
     private fun collectResult() {
         lifecycleScope.launch {
-            viewModel.result.collect { result ->
-                animateResult(result)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.result.collect { result ->
+                    animateResult(result)
+                }
             }
         }
     }

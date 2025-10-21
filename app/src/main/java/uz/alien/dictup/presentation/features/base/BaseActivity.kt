@@ -18,7 +18,9 @@ import uz.alien.dictup.presentation.common.extention.loadInterstitialAd
 import uz.alien.dictup.presentation.common.extention.setSystemExclusion
 import androidx.core.graphics.Insets
 import androidx.core.net.toUri
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -28,6 +30,7 @@ import uz.alien.dictup.presentation.common.extention.startActivityWithAlphaAnima
 import uz.alien.dictup.presentation.common.extention.startActivityWithSlideAnimation
 import uz.alien.dictup.presentation.common.extention.startActivityWithZoomAnimation
 import uz.alien.dictup.presentation.common.model.AnimationType
+import uz.alien.dictup.presentation.features.about.AboutActivity
 import uz.alien.dictup.presentation.features.setting.SettingActivity
 import uz.alien.dictup.utils.Logger
 
@@ -98,8 +101,6 @@ abstract class BaseActivity : AppCompatActivity() {
         )
 
         initViews()
-
-        loadInterstitialAd()
 
         setSystemExclusion(binding.root)
 
@@ -178,8 +179,13 @@ abstract class BaseActivity : AppCompatActivity() {
 
         navigationBinding.tvVersion.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = "https://aliendevuz.t.me".toUri()
+            intent.data = "https://t.me/aliendevuz".toUri()
             startActivity(intent)
+        }
+
+        navigationBinding.bAbout.setOnClickListener {
+            val intent = Intent(this, AboutActivity::class.java)
+            startActivityWithSlideAnimation(intent)
         }
 
         binding.drawerButton.setOnClickListener {
@@ -190,21 +196,25 @@ abstract class BaseActivity : AppCompatActivity() {
     private fun observeDrawer() {
 
         lifecycleScope.launch {
-            baseViewModel.isDrawerOpen.collectLatest {
-                if (it) {
-                    drawerLayout.openDrawer(GravityCompat.START)
-                } else {
-                    drawerLayout.closeDrawer(GravityCompat.START)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                baseViewModel.isDrawerOpen.collectLatest {
+                    if (it) {
+                        drawerLayout.openDrawer(GravityCompat.START)
+                    } else {
+                        drawerLayout.closeDrawer(GravityCompat.START)
+                    }
                 }
             }
         }
 
         lifecycleScope.launch {
-            baseViewModel.isDrawerLocked.collectLatest {
-                if (it) {
-                    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-                } else {
-                    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                baseViewModel.isDrawerLocked.collectLatest {
+                    if (it) {
+                        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                    } else {
+                        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+                    }
                 }
             }
         }
@@ -213,11 +223,13 @@ abstract class BaseActivity : AppCompatActivity() {
     private fun observeSearchView() {
 
         lifecycleScope.launch {
-            baseViewModel.isSearchVisible.collectLatest {
-                if (it) {
-//                    binding.searchView.visibility = View.VISIBLE
-                } else {
-//                    binding.searchView.visibility = View.GONE
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                baseViewModel.isSearchVisible.collectLatest {
+                    if (it) {
+    //                    binding.searchView.visibility = View.VISIBLE
+                    } else {
+    //                    binding.searchView.visibility = View.GONE
+                    }
                 }
             }
         }
@@ -227,26 +239,29 @@ abstract class BaseActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
 
-            baseViewModel.openActivity.collectLatest { intent ->
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-                if (intent != null) {
+                baseViewModel.openActivity.collectLatest { intent ->
 
-                    when (baseViewModel.animationType.value) {
+                    if (intent != null) {
 
-                        AnimationType.SLIDE -> {
-                            startActivityWithSlideAnimation(intent)
-                        }
+                        when (baseViewModel.animationType.value) {
 
-                        AnimationType.ZOOM -> {
-                            startActivityWithZoomAnimation(intent)
-                        }
+                            AnimationType.SLIDE -> {
+                                startActivityWithSlideAnimation(intent)
+                            }
 
-                        AnimationType.FADE -> {
-                            startActivityWithAlphaAnimation(intent)
-                        }
+                            AnimationType.ZOOM -> {
+                                startActivityWithZoomAnimation(intent)
+                            }
 
-                        AnimationType.NONE -> {
-                            startActivity(intent)
+                            AnimationType.FADE -> {
+                                startActivityWithAlphaAnimation(intent)
+                            }
+
+                            AnimationType.NONE -> {
+                                startActivity(intent)
+                            }
                         }
                     }
                 }

@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.widget.SeekBar
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import uz.alien.dictup.databinding.SettingActivityBinding
@@ -12,11 +14,12 @@ import uz.alien.dictup.presentation.common.extention.applyExitSwipeAnimation
 import uz.alien.dictup.presentation.common.extention.clearPadding
 import uz.alien.dictup.presentation.common.extention.setClearEdge
 import uz.alien.dictup.presentation.common.extention.setSystemPadding
+import uz.alien.dictup.presentation.features.base.BaseActivity
 import uz.alien.dictup.value.strings.DataStore
 import uz.alien.dictup.value.strings.DataStore.TTS_SPEED
 
 @AndroidEntryPoint
-class SettingActivity : AppCompatActivity() {
+class SettingActivity : BaseActivity() {
 
     private lateinit var binding: SettingActivityBinding
     private val viewModel: SettingViewModel by viewModels()
@@ -93,15 +96,17 @@ class SettingActivity : AppCompatActivity() {
 //        }
 
         lifecycleScope.launch {
-            viewModel.dataStore.getFloat(TTS_SPEED).collect {
-                if (!isSpeedCollected) {
-                    isSpeedCollected = true
-                    if (it == 0f) {
-                        binding.seekSpeed.progress = 100 - 40
-                        binding.tvSpeedValue.text = "1.0"
-                    } else {
-                        binding.seekSpeed.progress = ((it * 100) - 40).toInt()
-                        binding.tvSpeedValue.text = String.format("%.2f", it)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.dataStore.getFloat(TTS_SPEED).collect {
+                    if (!isSpeedCollected) {
+                        isSpeedCollected = true
+                        if (it == 0f) {
+                            binding.seekSpeed.progress = 100 - 40
+                            binding.tvSpeedValue.text = "1.0"
+                        } else {
+                            binding.seekSpeed.progress = ((it * 100) - 40).toInt()
+                            binding.tvSpeedValue.text = String.format("%.2f", it)
+                        }
                     }
                 }
             }
@@ -110,14 +115,18 @@ class SettingActivity : AppCompatActivity() {
 
     private fun collectVolume() {
         lifecycleScope.launch {
-            viewModel.dataStore.getBoolean(DataStore.IS_SFX_AVAILABLE, true).collect {
-                binding.cbSFX.isChecked = it
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.dataStore.getBoolean(DataStore.IS_SFX_AVAILABLE, true).collect {
+                    binding.cbSFX.isChecked = it
+                }
             }
         }
 
         lifecycleScope.launch {
-            viewModel.dataStore.getBoolean(DataStore.IS_BG_MUSIC_AVAILABLE, true).collect {
-                binding.cbMusic.isChecked = it
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.dataStore.getBoolean(DataStore.IS_BG_MUSIC_AVAILABLE, true).collect {
+                    binding.cbMusic.isChecked = it
+                }
             }
         }
     }
