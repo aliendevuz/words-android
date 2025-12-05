@@ -2,6 +2,7 @@ package uz.alien.dictup.presentation.features.lesson
 
 import android.animation.Animator
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,8 +16,10 @@ import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import kotlinx.coroutines.launch
 import uz.alien.dictup.BuildConfig
 import uz.alien.dictup.R
 import uz.alien.dictup.databinding.LessonFragmentBaseBinding
@@ -26,8 +29,10 @@ import kotlin.math.abs
 class BaseFragment : Fragment() {
 
     private var _binding: LessonFragmentBaseBinding? = null
-    private val binding get() = _binding!!
-    lateinit var wordPagerAdapter: WordPagerAdapter
+    // Safe binding accessor with null check
+    private val binding get() = _binding ?: throw IllegalStateException("Binding is null")
+
+    private var wordPagerAdapter: WordPagerAdapter? = null
     private val viewModel: LessonViewModel by activityViewModels()
 
     private var position = 0
@@ -38,61 +43,94 @@ class BaseFragment : Fragment() {
     private var startBounds = Rect()
     private var finalBounds = Rect()
 
+    // Animation state
+    private var isAnimating = false
+    private var currentAnimator: ValueAnimator? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = LessonFragmentBaseBinding.inflate(inflater, container, false)
 
-        position = arguments?.getInt(ARG_POSITION, 0)!!
+        position = arguments?.getInt(ARG_POSITION, 0) ?: 0
         startBounds = arguments?.getParcelable(ARG_BOUNDS) ?: Rect()
 
+        setupViews()
+
+        return binding.root
+    }
+
+    private fun setupViews() {
         binding.vpWord.isVisible = false
 
         val fragments = ArrayList<Fragment>()
-        viewModel.words.value.forEach {
-            fragments.add(WordFragment.newInstance(it))
+        val wordsList = viewModel.words.value
+
+        // Safe iteration with null checks
+        wordsList.forEach { word ->
+            fragments.add(WordFragment.newInstance(word))
         }
         fragments.add(LastFragment.newInstance())
 
-        val fragmentActivity = requireActivity()
+        val fragmentActivity = activity
+        if (fragmentActivity == null || fragmentActivity.isFinishing) {
+            return
+        }
+
         wordPagerAdapter = WordPagerAdapter(fragmentActivity, fragments)
 
-        binding.vpWord.adapter = wordPagerAdapter
-        binding.vpWord.orientation = ViewPager2.ORIENTATION_VERTICAL
-        binding.vpWord.setCurrentItem(position, false)
+        binding.vpWord.apply {
+            adapter = wordPagerAdapter
+            orientation = ViewPager2.ORIENTATION_VERTICAL
+            setCurrentItem(position, false)
 
-        // Sahifa o'zgarishini kuzatish
-        binding.vpWord.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                // Yangi sahifa tanlanganda startBounds ni yangilash
-                if (position < fragments.size - 1) { // LastFragment dan tashqari
-                    (activity as? LessonActivity)?.let { activity ->
-                        val bounds = activity.itemBoundsMap[position]
-                        bounds?.let { startBounds = it }
-                    }
+            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    updateStartBounds(position, fragments.size)
                 }
-            }
-        })
+            })
 
-        binding.vpWord.setPageTransformer { page, position ->
-            page.translationY = position * -50f
-            page.scaleX = 1f - abs(position) * 0.1f
-            page.scaleY = 1f - abs(position) * 0.1f
-            page.alpha = 1f - abs(position) * 0.2f
+            setPageTransformer { page, pos ->
+                page.translationY = pos * -50f
+                page.scaleX = 1f - abs(pos) * 0.1f
+                page.scaleY = 1f - abs(pos) * 0.1f
+                page.alpha = 1f - abs(pos) * 0.2f
+            }
         }
 
         binding.root.post {
-            finalBounds.set(0, 0, binding.root.width, binding.root.height)
-            startEnterAnimation()
+            if (_binding != null && isAdded) {
+                finalBounds.set(0, 0, binding.root.width, binding.root.height)
+                startEnterAnimation()
+            }
         }
 
-        val recyclerView = binding.vpWord.getChildAt(0) as? RecyclerView
-        recyclerView?.setOnTouchListener { _, event ->
-            val isFirstPage = binding.vpWord.currentItem == 0
-            val isLastPage = binding.vpWord.currentItem == wordPagerAdapter.itemCount - 1
+        setupTouchListener()
+    }
+
+    private fun updateStartBounds(position: Int, fragmentCount: Int) {
+        if (position < fragmentCount - 1) {
+            (activity as? LessonActivity)?.let { activity ->
+                val bounds = activity.itemBoundsMap[position]
+                bounds?.let { startBounds = it }
+            }
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setupTouchListener() {
+        val recyclerView = binding.vpWord.getChildAt(0) as? RecyclerView ?: return
+
+        recyclerView.setOnTouchListener { _, event ->
+            if (isAnimating) return@setOnTouchListener true
+
+            val adapter = wordPagerAdapter ?: return@setOnTouchListener false
+            val currentItem = binding.vpWord.currentItem
+            val isFirstPage = currentItem == 0
+            val isLastPage = currentItem == adapter.itemCount - 1
             val canScrollDown = recyclerView.canScrollVertically(1)
             val canScrollUp = recyclerView.canScrollVertically(-1)
 
@@ -132,11 +170,10 @@ class BaseFragment : Fragment() {
                 else -> false
             }
         }
-
-        return binding.root
     }
 
     private fun startEnterAnimation() {
+        if (_binding == null || !isAdded || isAnimating) return
 
         val params = binding.flBackground.layoutParams as FrameLayout.LayoutParams
 
@@ -151,26 +188,17 @@ class BaseFragment : Fragment() {
             fromBounds = startBounds,
             toBounds = finalBounds,
             duration = BuildConfig.DURATION * 2,
-            onStart = { binding.vpWord.isVisible = true },
-            onEnd = { startScrollIndicatorAnimation() }
+            onStart = {
+                if (_binding != null) {
+                    binding.vpWord.isVisible = true
+                }
+            },
+            onEnd = {
+                if (_binding != null && isAdded) {
+                    binding.vpWord.offscreenPageLimit = 2
+                }
+            }
         )
-    }
-
-    private fun startScrollIndicatorAnimation() {
-
-        val recyclerView = binding.vpWord.getChildAt(0) as? RecyclerView ?: return
-
-        // Animatsiya uchun ValueAnimator
-//        val animator = ValueAnimator.ofFloat(0f, -100f, 0f, -100f, 0f) // Ikki marta yuqoriga-pastga
-//        animator.duration = 3000 // Umumiy davomiylik (1.5 sekund)
-//        animator.interpolator = OvershootInterpolator(0.5f) // Tabiiy tebranish effekti
-//        animator.addUpdateListener { valueAnimator ->
-//            val translationY = valueAnimator.animatedValue as Float
-//            recyclerView.translationY = translationY
-//        }
-//
-//        animator.startDelay = 300 // Kirish animatsiyasidan keyin biroz kechikish
-//        animator.start()
     }
 
     private fun animateBounds(
@@ -181,7 +209,12 @@ class BaseFragment : Fragment() {
         onStart: () -> Unit = {},
         onEnd: () -> Unit = {}
     ) {
+        if (_binding == null || !isAdded) return
 
+        // Cancel any existing animation
+        currentAnimator?.cancel()
+
+        isAnimating = true
         val params = view.layoutParams as FrameLayout.LayoutParams
         val animator = ValueAnimator.ofFloat(0f, 1f)
 
@@ -189,6 +222,10 @@ class BaseFragment : Fragment() {
         animator.interpolator = AccelerateInterpolator(2f)
 
         animator.addUpdateListener { valueAnimator ->
+            if (_binding == null || !isAdded) {
+                valueAnimator.cancel()
+                return@addUpdateListener
+            }
 
             val fraction = valueAnimator.animatedFraction
             val newLeft = fromBounds.left + (toBounds.left - fromBounds.left) * fraction
@@ -203,59 +240,104 @@ class BaseFragment : Fragment() {
             view.layoutParams = params
 
             binding.tvItemWord.alpha = 1f - fraction
-//            binding.root.elevation = AccelerateInterpolator(10f).getInterpolation(fraction)
-            binding.flBackground.elevation = 4f * resources.displayMetrics.density * DecelerateInterpolator(3f).getInterpolation(fraction)
+            binding.flBackground.elevation = 4f * resources.displayMetrics.density *
+                    DecelerateInterpolator(3f).getInterpolation(fraction)
             (binding.vpWord.getChildAt(0) as? RecyclerView)?.alpha = fraction
             binding.vBackground.alpha = fraction
         }
 
         animator.addListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator) {
+                if (_binding == null || !isAdded) {
+                    animation.cancel()
+                    return
+                }
+
                 onStart()
                 binding.flBackground.background = requireContext().getDrawable(R.drawable.lesson_item_unit_background)
                 (binding.vpWord.getChildAt(0) as? RecyclerView)?.alpha = 0f
                 binding.vBackground.alpha = 0f
                 binding.tvItemWord.alpha = 1f
                 binding.flBackground.elevation = 0f
-                binding.tvItemWord.text = viewModel.words.value[getCurrentPage()].word
-                if (viewModel.words.value[getCurrentPage()].score < 0) {
-                    binding.tvItemWord.setTextColor(binding.tvItemWord.context.getColor(R.color.red_500))
-                } else if (viewModel.words.value[getCurrentPage()].score >= 5) {
-                    binding.tvItemWord.setTextColor(binding.tvItemWord.context.getColor(R.color.text_highlight))
-                } else {
-                    binding.tvItemWord.setTextColor(binding.tvItemWord.context.getColor(R.color.secondary_text))
+
+                // Safe access to words list
+                val wordsList = viewModel.words.value
+                val currentPage = getCurrentPage()
+                if (currentPage >= 0 && currentPage < wordsList.size) {
+                    val currentWord = wordsList[currentPage]
+                    binding.tvItemWord.text = currentWord.word
+
+                    val color = when {
+                        currentWord.score < 0 -> R.color.red_500
+                        currentWord.score >= 5 -> R.color.text_highlight
+                        else -> R.color.secondary_text
+                    }
+                    binding.tvItemWord.setTextColor(binding.tvItemWord.context.getColor(color))
                 }
             }
+
             override fun onAnimationEnd(animation: Animator) {
+                if (_binding != null && isAdded) {
+                    (binding.vpWord.getChildAt(0) as? RecyclerView)?.alpha = 1f
+                    binding.flBackground.elevation = 4 * resources.displayMetrics.density
+                    binding.vBackground.alpha = 1f
+                    binding.tvItemWord.alpha = 0f
+                }
+                isAnimating = false
+                currentAnimator = null
                 onEnd()
-                (binding.vpWord.getChildAt(0) as? RecyclerView)?.alpha = 1f
-                binding.flBackground.elevation = 4 * resources.displayMetrics.density
-                binding.vBackground.alpha = 1f
-                binding.tvItemWord.alpha = 0f
-                binding.vpWord.offscreenPageLimit = 2
             }
-            override fun onAnimationCancel(animation: Animator) {}
+
+            override fun onAnimationCancel(animation: Animator) {
+                isAnimating = false
+                currentAnimator = null
+            }
+
             override fun onAnimationRepeat(animation: Animator) {}
         })
 
+        currentAnimator = animator
         animator.start()
     }
 
     fun dismissWithAnimation(onDone: () -> Unit = {}) {
-        (activity as? LessonActivity)?.dismissFragmentWithAnimation(this, startBounds, onDone)
+        if (isAnimating) return
+
+        // Use lifecycle-aware coroutine
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                (activity as? LessonActivity)?.dismissFragmentWithAnimation(
+                    this@BaseFragment,
+                    startBounds,
+                    onDone
+                )
+            } catch (e: Exception) {
+                // Handle exception silently
+            }
+        }
     }
 
     fun getCurrentPage(): Int {
-        return binding.vpWord.currentItem
+        return if (_binding != null) binding.vpWord.currentItem else 0
     }
 
     fun setCurrentPage(position: Int) {
-        binding.vpWord.currentItem = position
+        if (_binding != null && isAdded) {
+            val adapter = wordPagerAdapter ?: return
+            if (position >= 0 && position < adapter.itemCount) {
+                binding.vpWord.setCurrentItem(position, true)
+            }
+        }
     }
 
+    fun getWordPagerAdapter(): WordPagerAdapter? = wordPagerAdapter
+
     override fun onDestroyView() {
-        super.onDestroyView()
+        currentAnimator?.cancel()
+        currentAnimator = null
+        wordPagerAdapter = null
         _binding = null
+        super.onDestroyView()
     }
 
     companion object {

@@ -51,3 +51,8 @@
 -dontwarn pl.droidsonroids.gif.GifDrawable
 
 -keep class uz.alien.dictup.data.local.legacy.Word { *; }
+
+-keep class uz.alien.dictup.presentation.features.lesson.model.** { *; }
+-keepclassmembers class uz.alien.dictup.presentation.features.lesson.** {
+    public <init>(...);
+}

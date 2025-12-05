@@ -71,29 +71,32 @@ class ResultActivity : BaseActivity() {
 
     private fun initViews() {
 
+        val attempt = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableArrayListExtra("attempt", Attempt::class.java)
+        } else {
+            intent.getParcelableArrayListExtra("attempt")
+        }
+
         if (viewModel.shouldShowAd()) {
             if (application.interstitialAd != null) {
                 application.interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
                     override fun onAdDismissedFullScreenContent() {
                         super.onAdDismissedFullScreenContent()
                         viewModel.countAdd()
+                        viewModel.resolveAttempt(attempt ?: emptyList())
                         application.interstitialAd = null
                     }
 
                     override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                        viewModel.resolveAttempt(attempt ?: emptyList())
                         application.interstitialAd = null
                     }
                 }
                 application.interstitialAd?.show(this)
             }
         } else {
+            viewModel.resolveAttempt(attempt ?: emptyList())
             viewModel.setLastShownAdTime()
-        }
-
-        val attempt = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableArrayListExtra("attempt", Attempt::class.java)
-        } else {
-            intent.getParcelableArrayListExtra("attempt")
         }
 
         binding.bRetry.setOnClickListener {
@@ -104,8 +107,6 @@ class ResultActivity : BaseActivity() {
         binding.bExit.setOnClickListener {
             finish()
         }
-
-        viewModel.resolveAttempt(attempt ?: emptyList())
 
         collectResult()
     }

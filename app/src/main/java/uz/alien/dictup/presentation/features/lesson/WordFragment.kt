@@ -18,7 +18,7 @@ import kotlin.getValue
 class WordFragment : Fragment() {
 
     private var _binding: LessonFragmentWordBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = _binding ?: throw IllegalStateException("Binding is null")
     private val viewModel: LessonViewModel by activityViewModels()
 
     private lateinit var word: WordUIState
@@ -27,35 +27,45 @@ class WordFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-
+    ): View {
         _binding = LessonFragmentWordBinding.inflate(inflater, container, false)
 
         word = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            arguments?.getParcelable(ARG_WORD, WordUIState::class.java)!!
+            arguments?.getParcelable(ARG_WORD, WordUIState::class.java)
         } else {
-            arguments?.getParcelable(ARG_WORD)!!
+            @Suppress("DEPRECATION")
+            arguments?.getParcelable(ARG_WORD)
+        } ?: run {
+            // If word is null, return empty view to prevent crash
+            return binding.root
         }
 
+        setupWordDisplay()
+        setupClickListeners()
+        loadImage()
+
+        return binding.root
+    }
+
+    private fun setupWordDisplay() {
         binding.tvWord.text = word.word
+        binding.tvPageNumber.text = "${word.id + 1}"
 
-        if (word.score < 0) {
-            binding.tvWord.setTextColor(binding.tvWord.context.getColor(R.color.red_500))
-            binding.tvNativeWord.setTextColor(binding.tvWord.context.getColor(R.color.red_500))
-        } else if (word.score >= 5) {
-            binding.tvWord.setTextColor(binding.tvWord.context.getColor(R.color.text_highlight))
-            binding.tvNativeWord.setTextColor(binding.tvWord.context.getColor(R.color.text_highlight))
-        } else {
-            binding.tvWord.setTextColor(binding.tvWord.context.getColor(R.color.secondary_text))
-            binding.tvNativeWord.setTextColor(binding.tvWord.context.getColor(R.color.secondary_text))
+        // Set colors based on score
+        val textColor = when {
+            word.score < 0 -> R.color.red_500
+            word.score >= 5 -> R.color.text_highlight
+            else -> R.color.secondary_text
         }
+
+        binding.tvWord.setTextColor(requireContext().getColor(textColor))
+        binding.tvNativeWord.setTextColor(requireContext().getColor(textColor))
 
         binding.tvTranscription.text = prepareTranscription(word.transcription)
-
         binding.tvType.text = prepareType(word.type)
-
         binding.tvNativeWord.text = word.nativeWord
 
+        // Definition
         getRightData(word.definition, word.nativeDefinition)?.let {
             binding.tvDefinition.text = it
         } ?: run {
@@ -63,95 +73,124 @@ class WordFragment : Fragment() {
             binding.ibSpeechDefinition.visibility = View.INVISIBLE
         }
 
+        // Sentence
         getRightData(word.sentence, word.nativeSentence)?.let {
             binding.tvSentence.text = "→ ${prepareSentence(it)}"
         } ?: run {
             binding.tvSentence.visibility = View.INVISIBLE
             binding.ibSpeechSentence.visibility = View.INVISIBLE
         }
+    }
 
+    private fun setupClickListeners() {
+        // Word clicks
+        val wordClickListener = View.OnClickListener {
+            safeSpeak(word.word)
+        }
+
+        binding.tvWord.setOnClickListener(wordClickListener)
+        binding.tvTranscription.setOnClickListener(wordClickListener)
+        binding.tvType.setOnClickListener(wordClickListener)
+        binding.tvNativeWord.setOnClickListener(wordClickListener)
+        binding.ibSpeechWord.setOnClickListener(wordClickListener)
+
+        // Image click
         binding.image.setOnClickListener {
             if (!word.sentence.startsWith("null_of_")) {
-                viewModel.speakAloud(prepareSentence(word.sentence))
+                safeSpeak(prepareSentence(word.sentence))
             }
         }
 
-        binding.tvPageNumber.text = "${word.id + 1}"
-
-        binding.ibSpeechWord.setOnClickListener {
-            viewModel.speakAloud(word.word)
-        }
-
-        binding.tvWord.setOnClickListener {
-            viewModel.speakAloud(word.word)
-        }
-
-        binding.tvTranscription.setOnClickListener {
-            viewModel.speakAloud(word.word)
-        }
-
-        binding.tvType.setOnClickListener {
-            viewModel.speakAloud(word.word)
-        }
-
-        binding.tvNativeWord.setOnClickListener {
-            viewModel.speakAloud(word.word)
-        }
-
+        // Definition click
         binding.ibSpeechDefinition.setOnClickListener {
             if (!word.definition.startsWith("null_of_")) {
-                viewModel.speakAloud(word.definition)
-            }
-        }
-
-        binding.ibSpeechSentence.setOnClickListener {
-            if (!word.sentence.startsWith("null_of_")) {
-                viewModel.speakAloud(prepareSentence(word.sentence))
+                safeSpeak(word.definition)
             }
         }
 
         binding.tvDefinition.setOnClickListener {
-            if (binding.tvDefinition.text == word.definition) {
+            toggleDefinition()
+        }
+
+        // Sentence click
+        binding.ibSpeechSentence.setOnClickListener {
+            if (!word.sentence.startsWith("null_of_")) {
+                safeSpeak(prepareSentence(word.sentence))
+            }
+        }
+
+        binding.tvSentence.setOnClickListener {
+            toggleSentence()
+        }
+    }
+
+    private fun toggleDefinition() {
+        if (!isAdded || context == null) return
+
+        when {
+            binding.tvDefinition.text == word.definition -> {
                 if (word.nativeDefinition.startsWith("null_of_")) {
-                    Toast.makeText(requireContext(), "Tarjimasi mavjud emas", Toast.LENGTH_SHORT)
-                        .show()
+                    showToast("Tarjimasi mavjud emas")
                 } else {
                     binding.tvDefinition.text = word.nativeDefinition
                 }
-            } else {
+            }
+            else -> {
                 if (word.definition.startsWith("null_of_")) {
-                    Toast.makeText(requireContext(), "Tarjimasi mavjud emas", Toast.LENGTH_SHORT)
-                        .show()
+                    showToast("Tarjimasi mavjud emas")
                 } else {
                     binding.tvDefinition.text = word.definition
                 }
             }
         }
+    }
 
-        binding.tvSentence.setOnClickListener {
-            if (word.nativeSentence.startsWith("null_of_")) {
-                Toast.makeText(requireContext(), "Tarjimasi mavjud emas", Toast.LENGTH_SHORT).show()
+    private fun toggleSentence() {
+        if (!isAdded || context == null) return
+
+        if (word.nativeSentence.startsWith("null_of_")) {
+            showToast("Tarjimasi mavjud emas")
+        } else {
+            val currentSentence = prepareSentence(word.sentence)
+            val nativeSentence = prepareSentence(word.nativeSentence)
+
+            binding.tvSentence.text = if (binding.tvSentence.text == "→ $currentSentence") {
+                "→ $nativeSentence"
             } else {
-                if (binding.tvSentence.text == "→ ${prepareSentence(word.sentence)}") {
-                    binding.tvSentence.text = "→ ${prepareSentence(word.nativeSentence)}"
-                } else {
-                    binding.tvSentence.text = "→ ${prepareSentence(word.sentence)}"
-                }
+                "→ $currentSentence"
             }
         }
+    }
 
-        Glide.with(this)
-            .load("https://assets.4000.uz/assets/en/${word.collection}/picture/${word.imageSource}.jpg")
-            .placeholder(R.drawable.v_image)
-            .fallback(R.drawable.v_no_image)
-            .error(R.drawable.v_no_image)
-            .into(binding.image)
+    private fun safeSpeak(text: String) {
+        if (isAdded && context != null) {
+            viewModel.speakAloud(text)
+        }
+    }
 
-        return binding.root
+    private fun showToast(message: String) {
+        if (isAdded && context != null) {
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun loadImage() {
+        if (!isAdded || context == null) return
+
+        try {
+            Glide.with(this)
+                .load("https://assets.4000.uz/assets/en/${word.collection}/picture/${word.imageSource}.jpg")
+                .placeholder(R.drawable.v_image)
+                .fallback(R.drawable.v_no_image)
+                .error(R.drawable.v_no_image)
+                .into(binding.image)
+        } catch (e: Exception) {
+            // Silently handle image loading errors
+        }
     }
 
     private fun prepareType(type: String): String {
-        return "(${type})"
+        return "($type)"
     }
 
     private fun prepareTranscription(transcription: String): String {
@@ -183,19 +222,19 @@ class WordFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         _binding = null
+        super.onDestroyView()
     }
 
     companion object {
         const val ARG_WORD = "word"
 
         fun newInstance(word: WordUIState): WordFragment {
-            val fragment = WordFragment()
-            val args = Bundle()
-            args.putParcelable(ARG_WORD, word)
-            fragment.arguments = args
-            return fragment
+            return WordFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelable(ARG_WORD, word)
+                }
+            }
         }
     }
 }

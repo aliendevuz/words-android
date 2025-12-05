@@ -1,22 +1,34 @@
 package uz.alien.dictup.presentation.features.home
 
+import android.Manifest
+import android.app.ComponentCaller
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.view.postDelayed
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import uz.alien.dictup.App
 import uz.alien.dictup.BuildConfig
 import uz.alien.dictup.databinding.HomeActivityBinding
 import uz.alien.dictup.domain.model.WordCollection
@@ -45,6 +57,9 @@ class HomeActivity : BaseActivity() {
     private lateinit var beginnerBookAdapter: BeginnerBookAdapter
     private lateinit var essentialBookAdapter: EssentialBookAdapter
 
+    private lateinit var appUpdateManager: AppUpdateManager
+    private val UPDATE_REQUEST_CODE = 123
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -54,10 +69,6 @@ class HomeActivity : BaseActivity() {
         setContentLayout {
             binding.root
         }
-
-        handleIntent(intent)
-
-        // TODO: app update API ni ham ulab qo'yishim kerak
 
         if (viewModel.isFirstTime()) {
 
@@ -73,6 +84,44 @@ class HomeActivity : BaseActivity() {
         initViews()
 
         collectBooks()
+
+        appUpdateManager = AppUpdateManagerFactory.create(this)
+
+        checkForUpdate()
+
+        handleIntent(intent)
+
+        // TODO: I have rewarded ad ID - ca-app-pub-7031957988362944/4534925817
+    }
+
+    private fun checkForUpdate() {
+        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+
+        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+                appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+            ) {
+                appUpdateManager.startUpdateFlow(
+                    appUpdateInfo,
+                    this,
+                    AppUpdateOptions.defaultOptions(AppUpdateType.FLEXIBLE)
+                )
+            }
+        }
+    }
+
+    private fun askToPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    101
+                )
+            }
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -80,9 +129,26 @@ class HomeActivity : BaseActivity() {
         handleIntent(intent)
     }
 
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?,
+        caller: ComponentCaller
+    ) {
+        super.onActivityResult(requestCode, resultCode, data, caller)
+        if (requestCode == UPDATE_REQUEST_CODE && resultCode != RESULT_OK) {
+            Logger.d("Update", "Update bekor qilindi.")
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         viewModel.updateData()
+        appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
+                appUpdateManager.completeUpdate()
+            }
+        }
     }
 
     private fun handleIntent(intent: Intent) {
@@ -109,15 +175,15 @@ class HomeActivity : BaseActivity() {
                     val path = data.path ?: ""
                     when {
                         path.startsWith("/lesson") -> openLesson(data)
-                        path.startsWith("/next") -> openNextLesson(data)
-                        path.startsWith("/test") -> openTest(data)
+                        path.startsWith("/next") -> openNextLesson()
+                        path.startsWith("/test") -> openTest()
                         path.startsWith("/settings") -> openSettings(data)
-                        path.startsWith("/share") -> shareApp(data)
-                        path.startsWith("/rate") -> openPlayMarket(data)
-                        path.startsWith("/statistics") -> openStatistics(data)
-                        path.startsWith("/more_apps") -> openMoreApps(data)
+                        path.startsWith("/share") -> shareApp()
+                        path.startsWith("/rate") -> openPlayStore()
+                        path.startsWith("/statistics") -> openStatistics()
+                        path.startsWith("/more_apps") -> openMoreApps()
                         path.startsWith("/donate") -> openDonate(data)
-                        path.startsWith("/about") -> openAbout(data)
+                        path.startsWith("/about") -> openAbout()
                         else -> Logger.d("Opening Method", "Unknown path: $path")
                     }
                 }
@@ -148,7 +214,7 @@ class HomeActivity : BaseActivity() {
         if (collection == 0) {
             if (part !in 0..3) part = -1
             if (unit !in 0..19) unit = -1
-        } else if (collection == 1) {
+        } else {
             if (part !in 0..5) part = -1
             if (unit !in 0..29) unit = -1
         }
@@ -165,7 +231,7 @@ class HomeActivity : BaseActivity() {
         baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
     }
 
-    private fun openAbout(data: Uri?) {
+    private fun openAbout() {
         val intent = Intent(this, AboutActivity::class.java)
         baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
     }
@@ -189,33 +255,36 @@ class HomeActivity : BaseActivity() {
         }
     }
 
-    private fun openMoreApps(data: Uri?) {
+    private fun openMoreApps() {
         val intent = Intent(this, MoreActivity::class.java)
         baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
     }
 
-    private fun openStatistics(data: Uri?) {
+    private fun openStatistics() {
         val intent = Intent(this, StatisticsActivity::class.java)
         baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
     }
 
-    private fun openPlayMarket(data: Uri?) {
+    private fun openPlayStore() {
         val appPackageName = packageName // shu ilovaning packageId si
         try {
-            val intent = Intent(Intent.ACTION_VIEW, "market://details?id=$appPackageName".toUri()).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
+            val intent =
+                Intent(Intent.ACTION_VIEW, "market://details?id=$appPackageName".toUri()).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
             startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
-            val intent = Intent(Intent.ACTION_VIEW,
-                "https://play.google.com/store/apps/details?id=$appPackageName".toUri()).apply {
+        } catch (_: ActivityNotFoundException) {
+            val intent = Intent(
+                Intent.ACTION_VIEW,
+                "https://play.google.com/store/apps/details?id=$appPackageName".toUri()
+            ).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             startActivity(intent)
         }
     }
 
-    private fun shareApp(data: Uri?) {
+    private fun shareApp() {
         val shareText = "https://play.google.com/store/apps/details?id=$packageName"
         val sendIntent = Intent().apply {
             action = Intent.ACTION_SEND
@@ -232,54 +301,56 @@ class HomeActivity : BaseActivity() {
         baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
     }
 
-    private fun openTest(data: Uri?) {
+    private fun openTest() {
         val intent = Intent(this, SelectActivity::class.java)
         baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
     }
 
-    private fun openNextLesson(data: Uri?) {
+    private fun openNextLesson() {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-                val lastCollection = viewModel.getLastCollection()
+            val lastCollection = viewModel.getLastCollection()
 
-                // Helper: progress to‘liq bo‘lmagan collectionni aniqlash
-                suspend fun getNextIncompleteCollection(collectionId: Int): Int? {
-                    val state = when (collectionId) {
-                        WordCollection.BEGINNER.id -> viewModel.beginnerBooksState.first()
-                        WordCollection.ESSENTIAL.id -> viewModel.essentialBooksState.first()
-                        else -> return null
-                    }
-
-                    // Agar progress 100% bo‘lmagan bo‘lsa shu collectionni qaytaramiz
-                    return if (state.any { it.progress < 100 }) collectionId else null
+            // Helper: progress to‘liq bo‘lmagan collectionni aniqlash
+            suspend fun getNextIncompleteCollection(collectionId: Int): Int? {
+                val state = when (collectionId) {
+                    WordCollection.BEGINNER.id -> viewModel.beginnerBooksState.first()
+                    WordCollection.ESSENTIAL.id -> viewModel.essentialBooksState.first()
+                    else -> return null
                 }
 
-                val nextCollection = getNextIncompleteCollection(lastCollection)
-                    ?: getNextIncompleteCollection(
-                        if (lastCollection == WordCollection.BEGINNER.id) WordCollection.ESSENTIAL.id
-                        else WordCollection.BEGINNER.id
-                    )
+                // Agar progress 100% bo‘lmagan bo‘lsa shu collectionni qaytaramiz
+                return if (state.any { it.progress < 100 }) collectionId else null
+            }
 
-                if (nextCollection != null) {
-                    val intent = Intent(this@HomeActivity, PickActivity::class.java).apply {
-    //                    val lastPart = viewModel.getLastPart()
-                        val lastPart = if (nextCollection == 0 && viewModel.getLastPart() > 3) {
-                            0
-                        } else {
-                            viewModel.getLastPart()
-                        }
-                        putExtra("collection", nextCollection)
-                        putExtra("part", lastPart)
-                        putExtra("auto_open", true)
+            val nextCollection = getNextIncompleteCollection(lastCollection)
+                ?: getNextIncompleteCollection(
+                    if (lastCollection == WordCollection.BEGINNER.id) WordCollection.ESSENTIAL.id
+                    else WordCollection.BEGINNER.id
+                )
+
+            if (nextCollection != null) {
+                val intent = Intent(this@HomeActivity, PickActivity::class.java).apply {
+                    //                    val lastPart = viewModel.getLastPart()
+                    val lastPart = if (nextCollection == 0 && viewModel.getLastPart() > 3) {
+                        0
+                    } else {
+                        viewModel.getLastPart()
                     }
-                    baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
-                } else {
-                    // Ikkalasi ham 100% bo‘lsa → Test sahifasiga yo‘naltirish
-                    Toast.makeText(this@HomeActivity, "Siz barcha darslarni tugatdingiz 🎉", Toast.LENGTH_LONG).show()
-                    val intent = Intent(this@HomeActivity, SelectActivity::class.java)
-                    baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
+                    putExtra("collection", nextCollection)
+                    putExtra("part", lastPart)
+                    putExtra("auto_open", true)
                 }
+                baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
+            } else {
+                // Ikkalasi ham 100% bo‘lsa → Test sahifasiga yo‘naltirish
+                Toast.makeText(
+                    this@HomeActivity,
+                    "Siz barcha darslarni tugatdingiz 🎉",
+                    Toast.LENGTH_LONG
+                ).show()
+                val intent = Intent(this@HomeActivity, SelectActivity::class.java)
+                baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
             }
         }
     }
@@ -289,7 +360,11 @@ class HomeActivity : BaseActivity() {
 
     private val welcomeLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ) {}
+    ) {
+        binding.root.postDelayed(BuildConfig.DURATION) {
+            askToPermission()
+        }
+    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -297,7 +372,7 @@ class HomeActivity : BaseActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 0) {
+        if (requestCode == 101) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // TODO: We can use notification to make our app more useful. How?
                 //  Everyday we send notification for more practicing

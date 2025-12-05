@@ -17,8 +17,8 @@ android {
         applicationId = "uz.alien.dictup"
         minSdk = 24
         targetSdk = 36
-        versionCode = 26
-        versionName = "5.1.5"
+        versionCode = 30
+        versionName = "5.1.9"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -94,6 +94,10 @@ dependencies {
     implementation(libs.image.plugin)
     implementation(libs.glide.image.plugin)
     implementation(libs.konfetti)
+    implementation(libs.inapp.update)
+    implementation(libs.inapp.update.ktx)
+    implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.lifecycle.viewmodel.ktx)
     ksp(libs.glide)
     ksp(libs.androidx.room.compiler)
     ksp(libs.hilt.compiler)

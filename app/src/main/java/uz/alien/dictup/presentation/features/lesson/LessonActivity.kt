@@ -49,6 +49,7 @@ import uz.alien.dictup.presentation.features.base.BaseActivity
 import uz.alien.dictup.presentation.features.lesson.recycler.WordAdapter
 import uz.alien.dictup.presentation.features.story.StoryActivity
 import uz.alien.dictup.utils.Logger
+import java.util.concurrent.atomic.AtomicBoolean
 
 @AndroidEntryPoint
 class LessonActivity : BaseActivity() {
@@ -59,7 +60,10 @@ class LessonActivity : BaseActivity() {
     private var fragmentBounds: Rect? = null
     private var fragmentView: View? = null
     val itemBoundsMap = mutableMapOf<Int, Rect>()
-    private var isPagerOpened = false
+
+    // Thread-safe flag
+    private val isPagerOpened = AtomicBoolean(false)
+    private var isAnimatingDismiss = false
 
     var collection = 0
     var part = 0
@@ -83,14 +87,13 @@ class LessonActivity : BaseActivity() {
     }
 
     private fun initViews() {
-
         val unit = intent.getIntExtra("unit", 0)
         val storyNumber = intent.getIntExtra("sn", 0)
-
 
         val words = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableArrayListExtra("words", Word::class.java)
         } else {
+            @Suppress("DEPRECATION")
             intent.getParcelableArrayListExtra("words")
         }
 
@@ -98,49 +101,70 @@ class LessonActivity : BaseActivity() {
         part = intent.getIntExtra("part", 0)
         this.unit = unit
 
-        words?.forEach {
-            Logger.d("word", it.word)
-        } ?: Logger.d("word", "No words send!")
-
         val nativeWords = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableArrayListExtra("native_words", NativeWord::class.java)
         } else {
+            @Suppress("DEPRECATION")
             intent.getParcelableArrayListExtra("native_words")
         }
 
         val scores = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableArrayListExtra("scores", Score::class.java)
         } else {
+            @Suppress("DEPRECATION")
             intent.getParcelableArrayListExtra("scores")
         }
 
         val stories = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableArrayListExtra("stories", Story::class.java)
         } else {
+            @Suppress("DEPRECATION")
             intent.getParcelableArrayListExtra("stories")
         }
 
         setCaption("Unit ${unit + 1}")
 
         if (words != null && nativeWords != null && scores != null) {
-
             if (viewModel.words.value.isEmpty()) {
                 viewModel.getWords(words, nativeWords, scores)
             }
         }
 
+        setupRecyclerView(words, stories, storyNumber)
+        setupStory(stories, storyNumber, words)
+        observeWords()
+    }
+
+    private fun setupRecyclerView(
+        words: ArrayList<Word>?,
+        stories: ArrayList<Story>?,
+        storyNumber: Int
+    ) {
         val adapter = WordAdapter { position, view, wordId ->
-            if (!isPagerOpened) {
-                isPagerOpened = true
+            // Prevent multiple simultaneous opens
+            if (!isPagerOpened.compareAndSet(false, true)) {
+                return@WordAdapter
+            }
+
+            if (isFinishing || isDestroyed) {
+                isPagerOpened.set(false)
+                return@WordAdapter
+            }
+
+            try {
                 val bounds = Rect()
                 view.getGlobalVisibleRect(bounds)
-                itemBoundsMap[position] = bounds // Joylashuvni saqlash
+                itemBoundsMap[position] = bounds
 
                 val fragment = BaseFragment.newInstance(position, bounds)
                 fragmentBounds = bounds
+
                 supportFragmentManager.beginTransaction()
                     .add(R.id.drawerLayout, fragment)
-                    .commit()
+                    .commitNowAllowingStateLoss()
+            } catch (e: Exception) {
+                isPagerOpened.set(false)
+                Logger.d("LessonActivity", "Error opening fragment: ${e.message}")
             }
         }
 
@@ -159,170 +183,204 @@ class LessonActivity : BaseActivity() {
         }
 
         setCaptionOnLongClickListener {
-            stories?.get(storyNumber)?.let {
-                if (!it.title.startsWith("null_of_")) {
+            stories?.getOrNull(storyNumber)?.let { story ->
+                if (!story.title.startsWith("null_of_")) {
                     val intent = Intent(this, StoryActivity::class.java)
                     intent.putStringArrayListExtra(
                         "words",
-                        ArrayList(
-                            words!!.map { word ->
-                                word.word
-                            }
-                        )
+                        ArrayList(words?.map { it.word } ?: emptyList())
                     )
-                    intent.putExtra("title", it.title)
-                    intent.putExtra("content", it.content)
+                    intent.putExtra("title", story.title)
+                    intent.putExtra("content", story.content)
                     intent.putExtra("word_ui_states", ArrayList(viewModel.words.value))
                     baseViewModel.startActivityWithAnimation(intent, AnimationType.ZOOM)
                 }
             }
             true
         }
+    }
 
-        stories?.get(storyNumber)?.let {
-            if (!it.title.startsWith("null_of_")) {
-
-                val markwon = Markwon
-                    .builder(this)
+    private fun setupStory(
+        stories: ArrayList<Story>?,
+        storyNumber: Int,
+        words: ArrayList<Word>?
+    ) {
+        stories?.getOrNull(storyNumber)?.let { story ->
+            if (!story.title.startsWith("null_of_")) {
+                val markwon = Markwon.builder(this)
                     .usePlugin(ImagesPlugin.create())
                     .usePlugin(GlideImagesPlugin.create(this))
                     .build()
 
-                var content = viewModel.addTabsAfterParagraphs(it.content)
-
+                var content = viewModel.addTabsAfterParagraphs(story.content)
                 binding.tvStory.movementMethod = LinkMovementMethod.getInstance()
                 binding.tvStory.highlightColor = Color.TRANSPARENT
 
                 content = viewModel.setContent(content)
 
-                val headerText = "###         ${it.title}\n\n        "
+                val headerText = "###         ${story.title}\n\n        "
                 val node = markwon.parse("$headerText${content}")
                 val markwonSpannable = markwon.render(node) as Spannable
 
                 val headerLength = headerText.length
 
                 words?.forEach { word ->
-                    val regex = Regex("\\b${Regex.escape(word.word)}\\b", RegexOption.IGNORE_CASE)
-                    val matches = regex.findAll(markwonSpannable, startIndex = headerLength)
-
-                    matches.forEach { match ->
-                        val clickableSpan = object : ClickableSpan() {
-                            override fun onClick(widget: View) {
-                                val tv = widget as TextView
-                                val layout = tv.layout
-
-                                // Span bosilgan joyni aniqlash
-                                val start = match.range.first
-                                val end = match.range.last + 1
-                                val line = layout.getLineForOffset(start)
-
-                                val startX = layout.getPrimaryHorizontal(start)
-                                val endX = layout.getPrimaryHorizontal(end)
-                                val wordCenterX = (startX + endX) / 2
-
-                                val baselineY = layout.getLineBaseline(line)
-                                val ascentY = layout.getLineAscent(line)
-                                val wordTopY = baselineY + ascentY
-
-                                // Tooltip view
-                                val popupView = LessonTooltipTranslationBinding.inflate(layoutInflater)
-                                viewModel.words.value.forEach { w ->
-                                    if (w.word == word.word) {
-                                        popupView.root.text = w.nativeWord
-                                        return@forEach
-                                    }
-                                }
-
-                                val popupWindow = PopupWindow(
-                                    popupView.root,
-                                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                                    false
-                                ).apply {
-                                    isOutsideTouchable = true
-                                    elevation = 12f
-                                }
-
-                                popupView.root.measure(
-                                    View.MeasureSpec.UNSPECIFIED,
-                                    View.MeasureSpec.UNSPECIFIED
-                                )
-                                val popupWidth = popupView.root.measuredWidth
-                                val popupHeight = popupView.root.measuredHeight
-
-                                // So‘z markazidan hisoblab, popupni markazda chiqarish
-                                val offsetX = (wordCenterX - popupWidth / 2).toInt()
-                                val offsetY = (wordTopY - popupHeight - 4.dpToPx(tv.context))
-
-                                popupWindow.showAsDropDown(tv, offsetX, offsetY)
-                            }
-
-                            // Extension: dp -> px
-                            fun Int.dpToPx(context: Context): Int =
-                                (this * context.resources.displayMetrics.density).toInt()
-
-                            override fun updateDrawState(ds: TextPaint) {
-                                super.updateDrawState(ds)
-                                ds.isUnderlineText = false
-                                ds.color = getColor(R.color.text_highlight)
-                                ds.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-                            }
-                        }
-
-                        markwonSpannable.setSpan(
-                            clickableSpan,
-                            match.range.first,
-                            match.range.last + 1,
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
-
-                        markwonSpannable.setSpan(
-                            StyleSpan(Typeface.BOLD),
-                            match.range.first,
-                            match.range.last + 1,
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
-                    }
+                    addWordClickSpans(markwonSpannable, word, headerLength)
                 }
 
                 markwon.setParsedMarkdown(binding.tvStory, markwonSpannable)
-
-            } else null
+            } else {
+                binding.llStoryBackground.visibility = View.GONE
+            }
         } ?: run {
             binding.llStoryBackground.visibility = View.GONE
         }
+    }
 
+    private fun addWordClickSpans(
+        spannable: Spannable,
+        word: Word,
+        startIndex: Int
+    ) {
+        val regex = Regex("\\b${Regex.escape(word.word)}\\b", RegexOption.IGNORE_CASE)
+        val matches = regex.findAll(spannable, startIndex = startIndex)
+
+        matches.forEach { match ->
+            val clickableSpan = object : ClickableSpan() {
+                override fun onClick(widget: View) {
+                    showWordTooltip(widget as TextView, word.word, match)
+                }
+
+                override fun updateDrawState(ds: TextPaint) {
+                    super.updateDrawState(ds)
+                    ds.isUnderlineText = false
+                    ds.color = getColor(R.color.text_highlight)
+                    ds.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+                }
+            }
+
+            spannable.setSpan(
+                clickableSpan,
+                match.range.first,
+                match.range.last + 1,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+
+            spannable.setSpan(
+                StyleSpan(Typeface.BOLD),
+                match.range.first,
+                match.range.last + 1,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+    }
+
+    private fun showWordTooltip(textView: TextView, wordText: String, match: MatchResult) {
+        val layout = textView.layout ?: return
+
+        val start = match.range.first
+        val end = match.range.last + 1
+        val line = layout.getLineForOffset(start)
+
+        val startX = layout.getPrimaryHorizontal(start)
+        val endX = layout.getPrimaryHorizontal(end)
+        val wordCenterX = (startX + endX) / 2
+
+        val baselineY = layout.getLineBaseline(line)
+        val ascentY = layout.getLineAscent(line)
+        val wordTopY = baselineY + ascentY
+
+        val popupView = LessonTooltipTranslationBinding.inflate(layoutInflater)
+        viewModel.words.value.forEach { w ->
+            if (w.word == wordText) {
+                popupView.root.text = w.nativeWord
+                return@forEach
+            }
+        }
+
+        val popupWindow = PopupWindow(
+            popupView.root,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            false
+        ).apply {
+            isOutsideTouchable = true
+            elevation = 12f
+        }
+
+        popupView.root.measure(
+            View.MeasureSpec.UNSPECIFIED,
+            View.MeasureSpec.UNSPECIFIED
+        )
+        val popupWidth = popupView.root.measuredWidth
+        val popupHeight = popupView.root.measuredHeight
+
+        val offsetX = (wordCenterX - popupWidth / 2).toInt()
+        val offsetY = (wordTopY - popupHeight - 4.dpToPx(textView.context))
+
+        popupWindow.showAsDropDown(textView, offsetX, offsetY)
+    }
+
+    private fun Int.dpToPx(context: Context): Int =
+        (this * context.resources.displayMetrics.density).toInt()
+
+    private fun observeWords() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.words.collectLatest {
-                    adapter.submitList(it)
+                viewModel.words.collectLatest { words ->
+                    val adapter = binding.rvWord.adapter as? WordAdapter
+                    adapter?.submitList(words)
                 }
             }
         }
     }
 
-    private fun addTabsAfterParagraphs(content: String): String {
-        return content
-            .replace(Regex("(\n\n)(?! )"), "\n\n        ") // \n\n dan keyin tab qo‘shadi, agar allaqachon qo‘yilmagan bo‘lsa
-            .let { if (!it.startsWith("        ")) "        $it" else it } // birinchi paragrafga ham tab qo‘yish
-    }
-
-    fun dismissFragmentWithAnimation(fragment: BaseFragment, targetBounds: Rect?, onDone: () -> Unit = {}) {
+    fun dismissFragmentWithAnimation(
+        fragment: BaseFragment,
+        targetBounds: Rect?,
+        onDone: () -> Unit = {}
+    ) {
+        if (isAnimatingDismiss || isFinishing || isDestroyed) {
+            return
+        }
 
         viewModel.updateLessonProgress()
+        isAnimatingDismiss = true
 
-        isPagerOpened = false
+        val view = fragment.view
+        if (view == null) {
+            isPagerOpened.set(false)
+            isAnimatingDismiss = false
+            return
+        }
 
-        val view = fragment.view ?: return
-        val pagerBaseBinding = LessonFragmentBaseBinding.bind(view)
+        val pagerBaseBinding = try {
+            LessonFragmentBaseBinding.bind(view)
+        } catch (e: Exception) {
+            isPagerOpened.set(false)
+            isAnimatingDismiss = false
+            return
+        }
 
-        val isLastFragment = pagerBaseBinding.vpWord.currentItem == fragment.wordPagerAdapter.itemCount - 1
-        if (isLastFragment) {
-            pagerBaseBinding.vpWord.setCurrentItem(fragment.wordPagerAdapter.itemCount - 2, true)
+        val adapter = fragment.getWordPagerAdapter()
+        if (adapter == null) {
+            isPagerOpened.set(false)
+            isAnimatingDismiss = false
+            return
+        }
+
+        val isLastFragment = pagerBaseBinding.vpWord.currentItem == adapter.itemCount - 1
+        if (isLastFragment && adapter.itemCount > 1) {
+            pagerBaseBinding.vpWord.setCurrentItem(adapter.itemCount - 2, true)
         }
 
         fragmentView = view
-        val startBounds = targetBounds ?: fragmentBounds ?: return
+        val startBounds = targetBounds ?: fragmentBounds ?: run {
+            isPagerOpened.set(false)
+            isAnimatingDismiss = false
+            return
+        }
+
         val finalBounds = Rect(0, 0, pagerBaseBinding.flBackground.width, pagerBaseBinding.flBackground.height)
 
         val animator = ValueAnimator.ofFloat(0f, 1f)
@@ -344,8 +402,8 @@ class LessonActivity : BaseActivity() {
             pagerBaseBinding.flBackground.layoutParams = params
             pagerBaseBinding.tvItemWord.alpha = fraction
             pagerBaseBinding.vBackground.alpha = 1f - fraction
-//            pagerBaseBinding.root.elevation = DecelerateInterpolator(10f).getInterpolation(1f - fraction)
-            pagerBaseBinding.flBackground.elevation = 4f * resources.displayMetrics.density * AccelerateInterpolator(3f).getInterpolation(1f - fraction)
+            pagerBaseBinding.flBackground.elevation = 4f * resources.displayMetrics.density *
+                    AccelerateInterpolator(3f).getInterpolation(1f - fraction)
             (pagerBaseBinding.vpWord.getChildAt(0) as? RecyclerView)?.alpha = 1f - fraction
         }
 
@@ -355,29 +413,51 @@ class LessonActivity : BaseActivity() {
                 pagerBaseBinding.tvItemWord.alpha = 0f
                 pagerBaseBinding.vBackground.alpha = 1f
                 pagerBaseBinding.flBackground.elevation = 4f * resources.displayMetrics.density
-                pagerBaseBinding.tvItemWord.text = viewModel.words.value[fragment.getCurrentPage()].word
-                if (viewModel.words.value[fragment.getCurrentPage()].score < 0) {
-                    pagerBaseBinding.tvItemWord.setTextColor(pagerBaseBinding.tvItemWord.context.getColor(R.color.red_500))
-                } else if (viewModel.words.value[fragment.getCurrentPage()].score >= 5) {
-                    pagerBaseBinding.tvItemWord.setTextColor(pagerBaseBinding.tvItemWord.context.getColor(R.color.green_700))
-                } else {
-                    pagerBaseBinding.tvItemWord.setTextColor(pagerBaseBinding.tvItemWord.context.getColor(R.color.secondary_text))
+
+                val currentPage = fragment.getCurrentPage()
+                val wordsList = viewModel.words.value
+                if (currentPage >= 0 && currentPage < wordsList.size) {
+                    val currentWord = wordsList[currentPage]
+                    pagerBaseBinding.tvItemWord.text = currentWord.word
+
+                    val colorRes = when {
+                        currentWord.score < 0 -> R.color.red_500
+                        currentWord.score >= 5 -> R.color.green_700
+                        else -> R.color.secondary_text
+                    }
+                    pagerBaseBinding.tvItemWord.setTextColor(getColor(colorRes))
                 }
             }
+
             override fun onAnimationEnd(animation: Animator) {
                 (pagerBaseBinding.vpWord.getChildAt(0) as? RecyclerView)?.alpha = 0f
                 pagerBaseBinding.vBackground.alpha = 0f
                 pagerBaseBinding.flBackground.elevation = 0f
                 pagerBaseBinding.tvItemWord.alpha = 1f
                 pagerBaseBinding.root.visibility = View.GONE
-                supportFragmentManager.beginTransaction()
-                    .remove(fragment)
-                    .commitAllowingStateLoss()
+
+                if (!isFinishing && !isDestroyed) {
+                    try {
+                        supportFragmentManager.beginTransaction()
+                            .remove(fragment)
+                            .commitNowAllowingStateLoss()
+                    } catch (e: Exception) {
+                        Logger.d("LessonActivity", "Error removing fragment: ${e.message}")
+                    }
+                }
+
                 fragmentView = null
                 fragmentBounds = null
+                isPagerOpened.set(false)
+                isAnimatingDismiss = false
                 onDone()
             }
-            override fun onAnimationCancel(animation: Animator) {}
+
+            override fun onAnimationCancel(animation: Animator) {
+                isPagerOpened.set(false)
+                isAnimatingDismiss = false
+            }
+
             override fun onAnimationRepeat(animation: Animator) {}
         })
 
@@ -385,16 +465,16 @@ class LessonActivity : BaseActivity() {
     }
 
     override fun onCustomBackPressed(): Boolean {
-        return if (isPagerOpened) {
-            isPagerOpened = false
+        if (isPagerOpened.get() && !isAnimatingDismiss) {
             val fragment = supportFragmentManager.findFragmentById(R.id.drawerLayout) as? BaseFragment
-            val currentPage = fragment?.getCurrentPage() ?: return false
-            val targetBounds = itemBoundsMap[currentPage]
-            dismissFragmentWithAnimation(fragment, targetBounds)
-            true
-        } else {
-            false
+            if (fragment != null) {
+                val currentPage = fragment.getCurrentPage()
+                val targetBounds = itemBoundsMap[currentPage]
+                dismissFragmentWithAnimation(fragment, targetBounds)
+                return true
+            }
         }
+        return false
     }
 
     override fun finish() {
