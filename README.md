@@ -45,4 +45,6 @@
 - AppLinking
 - Dagger Hilt
 
+<!--
 `* Loyiha to'liq oxiriga yetmagan!`
+-->
