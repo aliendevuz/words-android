@@ -18,7 +18,7 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = 30
-        versionName = "5.1.9"
+        versionName = "5.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -27,7 +27,11 @@ android {
         debug {
             isMinifyEnabled = false
             isShrinkResources = false
-            buildConfigField("String", "BASE_URL", "\"https://assets.4000.uz/\"")
+            buildConfigField(
+                "String",
+                "BASE_URL",
+                "\"https://raw.githubusercontent.com/aliendevuz/words-assets/refs/heads/main/\""
+            )
             buildConfigField("Boolean", "DISABLE_LOGGING_ON_PROD", "false")
             buildConfigField("Boolean", "LOGGING_IS_AVAILABLE", "true")
             buildConfigField("Long", "DURATION", "274L")
@@ -35,7 +39,11 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            buildConfigField("String", "BASE_URL", "\"https://assets.4000.uz/\"")
+            buildConfigField(
+                "String",
+                "BASE_URL",
+                "\"https://raw.githubusercontent.com/aliendevuz/words-assets/refs/heads/main/\""
+            )
             buildConfigField("Boolean", "DISABLE_LOGGING_ON_PROD", "false")
             buildConfigField("Boolean", "LOGGING_IS_AVAILABLE", "true")
             buildConfigField("Long", "DURATION", "274L")

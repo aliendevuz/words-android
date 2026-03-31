@@ -46,58 +46,58 @@ class SyncDataUseCase(
     private suspend fun startSync(): Boolean {
         return listOf(
             syncData(
-                versionUrl = "${BuildConfig.BASE_URL}assets/.v/en/beginner/words.json",
-                hashUrl = "${BuildConfig.BASE_URL}assets/.hash/en/beginner/words.json.sha256",
-                fileUrl = "${BuildConfig.BASE_URL}assets/en/beginner/words.json",
+                versionUrl = "${BuildConfig.BASE_URL}.v/en/beginner/words.json",
+                hashUrl = "${BuildConfig.BASE_URL}.hash/en/beginner/words.json.sha256",
+                fileUrl = "${BuildConfig.BASE_URL}en/beginner/words.json",
                 versionKey = "${WORD_VERSION}en_beginner",
                 saveData = { cacheManagerRepository.saveBeginnerWords(it) }
             ),
             syncData(
-                versionUrl = "${BuildConfig.BASE_URL}assets/.v/en/beginner/uz/words.json",
-                hashUrl = "${BuildConfig.BASE_URL}assets/.hash/en/beginner/uz/words.json.sha256",
-                fileUrl = "${BuildConfig.BASE_URL}assets/en/beginner/uz/words.json",
+                versionUrl = "${BuildConfig.BASE_URL}.v/en/beginner/uz/words.json",
+                hashUrl = "${BuildConfig.BASE_URL}.hash/en/beginner/uz/words.json.sha256",
+                fileUrl = "${BuildConfig.BASE_URL}en/beginner/uz/words.json",
                 versionKey = "${NATIVE_WORD_VERSION}en_beginner",
                 saveData = { cacheManagerRepository.saveBeginnerUzWords(it) }
             ),
             syncData(
-                versionUrl = "${BuildConfig.BASE_URL}assets/.v/en/essential/words.json",
-                hashUrl = "${BuildConfig.BASE_URL}assets/.hash/en/essential/words.json.sha256",
-                fileUrl = "${BuildConfig.BASE_URL}assets/en/essential/words.json",
+                versionUrl = "${BuildConfig.BASE_URL}.v/en/essential/words.json",
+                hashUrl = "${BuildConfig.BASE_URL}.hash/en/essential/words.json.sha256",
+                fileUrl = "${BuildConfig.BASE_URL}en/essential/words.json",
                 versionKey = "${WORD_VERSION}en_essential",
                 saveData = { cacheManagerRepository.saveEssentialWords(it) }
             ),
             syncData(
-                versionUrl = "${BuildConfig.BASE_URL}assets/.v/en/essential/uz/words.json",
-                hashUrl = "${BuildConfig.BASE_URL}assets/.hash/en/essential/uz/words.json.sha256",
-                fileUrl = "${BuildConfig.BASE_URL}assets/en/essential/uz/words.json",
+                versionUrl = "${BuildConfig.BASE_URL}.v/en/essential/uz/words.json",
+                hashUrl = "${BuildConfig.BASE_URL}.hash/en/essential/uz/words.json.sha256",
+                fileUrl = "${BuildConfig.BASE_URL}en/essential/uz/words.json",
                 versionKey = "${NATIVE_WORD_VERSION}en_essential",
                 saveData = { cacheManagerRepository.saveEssentialUzWords(it) }
             ),
             syncData(
-                versionUrl = "${BuildConfig.BASE_URL}assets/.v/en/beginner/stories.json",
-                hashUrl = "${BuildConfig.BASE_URL}assets/.hash/en/beginner/stories.json.sha256",
-                fileUrl = "${BuildConfig.BASE_URL}assets/en/beginner/stories.json",
+                versionUrl = "${BuildConfig.BASE_URL}.v/en/beginner/stories.json",
+                hashUrl = "${BuildConfig.BASE_URL}.hash/en/beginner/stories.json.sha256",
+                fileUrl = "${BuildConfig.BASE_URL}en/beginner/stories.json",
                 versionKey = "${STORY_VERSION}en_beginner",
                 saveData = { cacheManagerRepository.saveBeginnerStories(it) }
             ),
             syncData(
-                versionUrl = "${BuildConfig.BASE_URL}assets/.v/en/beginner/uz/stories.json",
-                hashUrl = "${BuildConfig.BASE_URL}assets/.hash/en/beginner/uz/stories.json.sha256",
-                fileUrl = "${BuildConfig.BASE_URL}assets/en/beginner/uz/stories.json",
+                versionUrl = "${BuildConfig.BASE_URL}.v/en/beginner/uz/stories.json",
+                hashUrl = "${BuildConfig.BASE_URL}.hash/en/beginner/uz/stories.json.sha256",
+                fileUrl = "${BuildConfig.BASE_URL}en/beginner/uz/stories.json",
                 versionKey = "${NATIVE_STORY_VERSION}en_beginner",
                 saveData = { cacheManagerRepository.saveBeginnerUzStories(it) }
             ),
             syncData(
-                versionUrl = "${BuildConfig.BASE_URL}assets/.v/en/essential/stories.json",
-                hashUrl = "${BuildConfig.BASE_URL}assets/.hash/en/essential/stories.json.sha256",
-                fileUrl = "${BuildConfig.BASE_URL}assets/en/essential/stories.json",
+                versionUrl = "${BuildConfig.BASE_URL}.v/en/essential/stories.json",
+                hashUrl = "${BuildConfig.BASE_URL}.hash/en/essential/stories.json.sha256",
+                fileUrl = "${BuildConfig.BASE_URL}en/essential/stories.json",
                 versionKey = "${STORY_VERSION}en_essential",
                 saveData = { cacheManagerRepository.saveEssentialStories(it) }
             ),
             syncData(
-                versionUrl = "${BuildConfig.BASE_URL}assets/.v/en/essential/uz/stories.json",
-                hashUrl = "${BuildConfig.BASE_URL}assets/.hash/en/essential/uz/stories.json.sha256",
-                fileUrl = "${BuildConfig.BASE_URL}assets/en/essential/uz/stories.json",
+                versionUrl = "${BuildConfig.BASE_URL}.v/en/essential/uz/stories.json",
+                hashUrl = "${BuildConfig.BASE_URL}.hash/en/essential/uz/stories.json.sha256",
+                fileUrl = "${BuildConfig.BASE_URL}en/essential/uz/stories.json",
                 versionKey = "${NATIVE_STORY_VERSION}en_essential",
                 saveData = { cacheManagerRepository.saveEssentialUzStories(it) }
             )

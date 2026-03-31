@@ -2,7 +2,6 @@ package uz.alien.dictup.presentation.features.lesson
 
 import android.os.Build
 import android.os.Bundle
-import android.speech.tts.TextToSpeech
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,6 @@ import com.bumptech.glide.Glide
 import uz.alien.dictup.R
 import uz.alien.dictup.databinding.LessonFragmentWordBinding
 import uz.alien.dictup.presentation.features.lesson.model.WordUIState
-import kotlin.getValue
 
 class WordFragment : Fragment() {
 
@@ -179,12 +177,12 @@ class WordFragment : Fragment() {
 
         try {
             Glide.with(this)
-                .load("https://assets.4000.uz/assets/en/${word.collection}/picture/${word.imageSource}.jpg")
+                .load("https://raw.githubusercontent.com/aliendevuz/words-assets/refs/heads/main/en/${word.collection}/picture/${word.imageSource}.jpg")
                 .placeholder(R.drawable.v_image)
                 .fallback(R.drawable.v_no_image)
                 .error(R.drawable.v_no_image)
                 .into(binding.image)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             // Silently handle image loading errors
         }
     }
