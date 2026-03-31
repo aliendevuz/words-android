@@ -23,14 +23,14 @@
         "s": "null_of_uz_2_s"
       },
       {
-        "w": "yetib kelmoq, kelmoq",
+        "w": "yetib kelmoq",
         "t": "null_of_uz_3_t",
         "tp": "null_of_uz_3_tp",
         "d": "null_of_uz_3_d",
         "s": "null_of_uz_3_s"
       },
       {
-        "w": "hujum qilmoq, hujum uyushtirmoq",
+        "w": "hujum qilmoq",
         "t": "null_of_uz_4_t",
         "tp": "null_of_uz_4_tp",
         "d": "null_of_uz_4_d",
@@ -12937,7 +12937,7 @@
         "s": "null_of_uz_1820_s"
       },
       {
-        "w": " admiral",
+        "w": "admiral",
         "t": "null_of_uz_1821_t",
         "tp": "null_of_uz_1821_tp",
         "d": "null_of_uz_1821_d",
@@ -12951,7 +12951,7 @@
         "s": "null_of_uz_1822_s"
       },
       {
-        "w": " xarakter, fe'l-atvor",
+        "w": "xarakter, fe'l-atvor",
         "t": "null_of_uz_1823_t",
         "tp": "null_of_uz_1823_tp",
         "d": "null_of_uz_1823_d",
@@ -14094,7 +14094,7 @@
         "s": "null_of_uz_1983_s"
       },
       {
-        "w": " qurmoq, barpo etmoq",
+        "w": "qurmoq, barpo etmoq",
         "t": "null_of_uz_1984_t",
         "tp": "null_of_uz_1984_tp",
         "d": "null_of_uz_1984_d",
@@ -14469,7 +14469,7 @@
         "s": "null_of_uz_2036_s"
       },
       {
-        "w": "ketma-ketlik",
+        "w": "relyef",
         "t": "null_of_uz_2037_t",
         "tp": "null_of_uz_2037_tp",
         "d": "null_of_uz_2037_d",
@@ -14499,7 +14499,7 @@
         "s": "null_of_uz_2040_s"
       },
       {
-        "w": "imzo",
+        "w": "dastxat",
         "t": "null_of_uz_2041_t",
         "tp": "null_of_uz_2041_tp",
         "d": "null_of_uz_2041_d",
@@ -15642,7 +15642,7 @@
         "s": "null_of_uz_2201_s"
       },
       {
-        "w": "kiritib bormoq",
+        "w": "tarixga muhrlamoq",
         "t": "null_of_uz_2202_t",
         "tp": "null_of_uz_2202_tp",
         "d": "null_of_uz_2202_d",
@@ -15705,63 +15705,63 @@
         "s": "null_of_uz_2210_s"
       },
       {
-        "w": "lavozimini oshirmoq",
+        "w": "bog'liq bo'lmoq",
         "t": "null_of_uz_2211_t",
         "tp": "null_of_uz_2211_tp",
         "d": "null_of_uz_2211_d",
         "s": "null_of_uz_2211_s"
       },
       {
-        "w": "aloqador bo'lmoq, bog'liq bo'lmoq",
+        "w": "din",
         "t": "null_of_uz_2212_t",
         "tp": "null_of_uz_2212_tp",
         "d": "null_of_uz_2212_d",
         "s": "null_of_uz_2212_s"
       },
       {
-        "w": "din",
+        "w": "summa, yig'indi",
         "t": "null_of_uz_2213_t",
         "tp": "null_of_uz_2213_tp",
         "d": "null_of_uz_2213_d",
         "s": "null_of_uz_2213_s"
       },
       {
-        "w": "summa, yig'indi",
+        "w": "bank kotibi/kotibasi",
         "t": "null_of_uz_2214_t",
         "tp": "null_of_uz_2214_tp",
         "d": "null_of_uz_2214_d",
         "s": "null_of_uz_2214_s"
       },
       {
-        "w": "bankda ishlovchi kotib(a)",
+        "w": "ishonchli",
         "t": "null_of_uz_2215_t",
         "tp": "null_of_uz_2215_tp",
         "d": "null_of_uz_2215_d",
         "s": "null_of_uz_2215_s"
       },
       {
-        "w": "ishonchli",
+        "w": "yangilamoq",
         "t": "null_of_uz_2216_t",
         "tp": "null_of_uz_2216_tp",
         "d": "null_of_uz_2216_d",
         "s": "null_of_uz_2216_s"
       },
       {
-        "w": "zamonaviylashtirmoq",
+        "w": "vena tomiri",
         "t": "null_of_uz_2217_t",
         "tp": "null_of_uz_2217_tp",
         "d": "null_of_uz_2217_d",
         "s": "null_of_uz_2217_s"
       },
       {
-        "w": "vena tomiri",
+        "w": "zahar",
         "t": "null_of_uz_2218_t",
         "tp": "null_of_uz_2218_tp",
         "d": "null_of_uz_2218_d",
         "s": "null_of_uz_2218_s"
       },
       {
-        "w": "zahar",
+        "w": "lavozimini oshirmoq",
         "t": "null_of_uz_2219_t",
         "tp": "null_of_uz_2219_tp",
         "d": "null_of_uz_2219_d",
@@ -16571,7 +16571,7 @@
         "s": "null_of_uz_2332_s"
       },
       {
-        "w": "federativ; federal",
+        "w": "tuzilish",
         "t": "null_of_uz_2333_t",
         "tp": "null_of_uz_2333_tp",
         "d": "null_of_uz_2333_d",
@@ -16785,7 +16785,7 @@
         "s": "null_of_uz_2362_s"
       },
       {
-        "w": " korporativ",
+        "w": "korporativ",
         "t": "null_of_uz_2363_t",
         "tp": "null_of_uz_2363_tp",
         "d": "null_of_uz_2363_d",
