@@ -30,7 +30,7 @@ android {
             buildConfigField(
                 "String",
                 "BASE_URL",
-                "\"https://raw.githubusercontent.com/aliendevuz/words-assets/refs/heads/main/\""
+                "\"https://pub-6e47b1773dc442dc969c5d51b2cfe125.r2.dev/assets/\""
             )
             buildConfigField("Boolean", "DISABLE_LOGGING_ON_PROD", "false")
             buildConfigField("Boolean", "LOGGING_IS_AVAILABLE", "true")
@@ -42,7 +42,7 @@ android {
             buildConfigField(
                 "String",
                 "BASE_URL",
-                "\"https://raw.githubusercontent.com/aliendevuz/words-assets/refs/heads/main/\""
+                "\"https://pub-6e47b1773dc442dc969c5d51b2cfe125.r2.dev/assets/\""
             )
             buildConfigField("Boolean", "DISABLE_LOGGING_ON_PROD", "false")
             buildConfigField("Boolean", "LOGGING_IS_AVAILABLE", "true")

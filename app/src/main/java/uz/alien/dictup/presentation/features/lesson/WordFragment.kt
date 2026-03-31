@@ -177,7 +177,7 @@ class WordFragment : Fragment() {
 
         try {
             Glide.with(this)
-                .load("https://raw.githubusercontent.com/aliendevuz/words-assets/refs/heads/main/en/${word.collection}/picture/${word.imageSource}.jpg")
+                .load("https://pub-6e47b1773dc442dc969c5d51b2cfe125.r2.dev/assets/en/${word.collection}/picture/${word.imageSource}.jpg")
                 .placeholder(R.drawable.v_image)
                 .fallback(R.drawable.v_no_image)
                 .error(R.drawable.v_no_image)
